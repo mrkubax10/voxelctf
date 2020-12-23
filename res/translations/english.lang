@@ -1,0 +1,14 @@
+menu_play=Play
+menu_fastgame=Fast Game
+menu_editor=Editor
+menu_settings=Settings
+menu_authors=Authors
+menu_exit=Exit
+enter_ip=Enter IP:
+enter_name=Enter Name:
+play=Play
+editor_devinfo=Editor is still under heavy development so it may contain bugs.
+editor_edit=Edit
+editor_save=Save
+editor_return=Return
+editor_saveandexit=Save and exit
