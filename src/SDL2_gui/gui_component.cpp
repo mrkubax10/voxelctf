@@ -29,3 +29,9 @@ void GUIComponent::center(int containerW,int containerH,bool vertically,bool hor
     if(vertically)
         GUIComponent::y=(containerH-GUIComponent::h)/2;
 }
+void GUIComponent::setVisible(bool visible){
+    GUIComponent::visible=visible;
+}
+bool GUIComponent::isVisible(){
+    return GUIComponent::visible;
+}

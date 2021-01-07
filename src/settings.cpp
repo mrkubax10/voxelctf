@@ -10,7 +10,7 @@
 
 Settings::Settings() {
 	Settings::fov=70.0f;
-	Settings::sensitivity=0.2f;
+	Settings::sensitivity=0.08f;
 	Settings::keys=KeySettings();
 }
 void Settings::save(std::string file){

@@ -30,6 +30,7 @@ class Chunk {
 public:
 	Chunk(short x,short z);
 	Chunk();
+	void destroy();
 	void generateMesh(TextureAtlas* atlas);
 	void draw(Camera cam,ShaderProgram program,ShaderProgram waterProgram);
 	Block* getBlock(int x,int y,int z);

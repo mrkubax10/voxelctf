@@ -5,7 +5,7 @@
 class GUIComponent{
 protected:
     int x,y,w,h;
-    bool selected;
+    bool selected,visible;
     SDL_Renderer *render;
     GUIEffectTransition* transition;
 public:
@@ -20,7 +20,9 @@ public:
     int getW();
     int getH();
     bool isMouseOn(short mx,short my);
+    bool isVisible();
     void center(int containerW,int containerH,bool vertically=true,bool horizontally=true);
+    void setVisible(bool visible);
 };
 
 

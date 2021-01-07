@@ -15,6 +15,7 @@ class World {
 	float gravity;
 public:
 	World();
+	void destroy();
 	void draw(Camera cam,ShaderProgram program,ShaderProgram waterProgram);
 	void setBlock(int x,int y,int z,BlockType type);
 	Block* getBlock(int x,int y,int z);

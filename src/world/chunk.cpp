@@ -29,6 +29,16 @@ Chunk::Chunk(){
 	Chunk::z=0;
 	Chunk::hasGeneratedMesh=false;
 }
+void Chunk::destroy(){
+	glDeleteBuffers(1,&mesh.blocksVBO);
+	glDeleteBuffers(1,&mesh.blocksTBO);
+	glDeleteBuffers(1,&mesh.blocksEBO);
+	glDeleteBuffers(1,&mesh.waterVBO);
+	glDeleteBuffers(1,&mesh.waterTBO);
+	glDeleteBuffers(1,&mesh.waterEBO);
+	glDeleteVertexArrays(1,&mesh.blocksVAO);
+	glDeleteVertexArrays(1,&mesh.waterVAO);
+}
 void Chunk::generateMesh(TextureAtlas* atlas){
 	std::vector<float> blockVertices,blockUVs,waterVertices,waterUVs,blockLightValues,waterNormals;
 	std::vector<unsigned int> blockIndices,waterIndices;

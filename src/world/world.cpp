@@ -14,6 +14,13 @@ World::World() {
 		}
 	}
 }
+void World::destroy(){
+	for(int i=0; i<WORLD_SIZE; i++){
+		for(int j=0; j<WORLD_SIZE; j++){
+			World::chunks[i][j].destroy();
+		}
+	}
+}
 void World::draw(Camera cam,ShaderProgram program,ShaderProgram waterProgram){
 
 	for(int i=0; i<WORLD_SIZE; i++){

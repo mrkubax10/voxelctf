@@ -22,6 +22,7 @@
 #include "network/serverconnection.hpp"
 #include "editor/gui_blockinfo.hpp"
 #include "network/chat.hpp"
+#include "world/skybox.hpp"
 Uint32 timer1(Uint32 interval, void *param){
     SDL_Event event;
     SDL_UserEvent userevent;
@@ -51,6 +52,7 @@ int main(int argc,char *args[]){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	SDLNet_Init();
+	Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,1024);
 	bool running=true;
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
@@ -65,6 +67,7 @@ int main(int argc,char *args[]){
 	}
 	SDL_GL_MakeCurrent(window,contextGL);
 	glewInit();
+	
 	SDL_Event event;
 	GUIManager guiManager(render);
 	ResourceManager resManager(render);
@@ -78,19 +81,27 @@ int main(int argc,char *args[]){
 	GL2DRenderer gl2dRenderer(window,render);
 	int windowW,windowH;
 	SDL_GetWindowSize(window,&windowW,&windowH);
-	ServerConnection serverConnection;
+	Chat chat(render,resManager.getFont("default",15));
+	ServerConnection serverConnection(&chat);
 	std::string editorMapName="";
+	
 	while(running){
 		if(frame==0){
-			SDL_SetWindowTitle(window,"BlockCTF");
+			SDL_SetWindowTitle(window,"VoxelCTF");
 			guiManager.clear();
-			GUILabel labelLogo(10,5,"BlockCTF",resManager.getFont("default",80),{0,0,255},render);
+			GUILabel labelLogo(10,5,"VoxelCTF",resManager.getFont("default",80),{0,0,255},render);
 			GUIButton buttonPlay(15,100,200,50,langManager.getFromCurrentLanguage("menu_play"),resManager.getFont("default",20),render);
 			GUIButton buttonFastGame(15,170,200,50,langManager.getFromCurrentLanguage("menu_fastgame"),resManager.getFont("default",20),render);
 			GUIButton buttonEditor(15,240,200,50,langManager.getFromCurrentLanguage("menu_editor"),resManager.getFont("default",20),render);
 			GUIButton buttonSettings(15,310,200,50,langManager.getFromCurrentLanguage("menu_settings"),resManager.getFont("default",20),render);
 			GUIButton buttonAuthors(15,380,200,50,langManager.getFromCurrentLanguage("menu_authors"),resManager.getFont("default",20),render);
 			GUIButton buttonExit(15,450,200,50,langManager.getFromCurrentLanguage("menu_exit"),resManager.getFont("default",20),render);
+			buttonPlay.setCallback([](void* argument){
+				*((int*)argument)=1;
+			},(void*)(&frame));
+			buttonEditor.setCallback([](void* argument){
+				*((int*)argument)=3;
+			},(void*)&frame);
 			guiManager.add(&labelLogo);
 			guiManager.add(&buttonPlay);
 			guiManager.add(&buttonFastGame);
@@ -101,14 +112,6 @@ int main(int argc,char *args[]){
 			while(frame==0 && running){
 				while(SDL_PollEvent(&event)){
 					if(event.type==SDL_QUIT)running=0;
-					if(event.type==SDL_MOUSEBUTTONDOWN){
-						if(event.button.button==SDL_BUTTON_LEFT){
-							if(buttonPlay.isMouseOn(event.motion.x,event.motion.y))
-								frame=1;
-							if(buttonEditor.isMouseOn(event.motion.x,event.motion.y))
-								frame=3;
-						}
-					}
 					if(event.type==SDL_WINDOWEVENT){
 						if(event.window.event==SDL_WINDOWEVENT_RESIZED){
 							
@@ -169,6 +172,7 @@ int main(int argc,char *args[]){
 			SDL_TimerID moveTimer=SDL_AddTimer(50,timer2,0);
 			Model playerModel=createBoxModel();
 			guiManager.clear();
+			
 			while(frame==2 && running){
 				long fpsTime=SDL_GetTicks();
 				const Uint8* keyboard=SDL_GetKeyboardState(0);
@@ -179,13 +183,15 @@ int main(int argc,char *args[]){
 							glViewport(0,0,event.window.data1,event.window.data2);
 							cam.setProjection(glm::perspective(glm::radians(settings.fov),(float)event.window.data1/(float)event.window.data2,0.1f,1000.0f));
 							gl2dRenderer.setTextureSize(event.window.data1,event.window.data2);
+							windowW=event.window.data1;
+							windowH=event.window.data2;
 						}
 					}
 					if(event.type==SDL_USEREVENT){
 						//serverConnection.updateActivity();
 					}
 					if(event.type==SDL_USEREVENT+1){
-						serverConnection.sendPosition(player.getPosition());
+						//serverConnection.sendPosition(player.getPosition());
 					}
 					
 				}
@@ -205,13 +211,15 @@ int main(int argc,char *args[]){
 				SDL_SetRenderDrawColor(render,0,0,0,0);
 				//SDL_RenderFillRect(render,0);
 				//guiManager.draw();
+				chat.draw(windowW,windowH);
 				gl2dRenderer.finish(resManager.getShaderProgram("2dtextured"));
 				SDL_GL_SwapWindow(window);
 			}
 			serverConnection.disconnect();
+			world.destroy();
 		}
 		if(frame==3){
-			SDL_SetWindowTitle(window,"BlockCTF - Editor");
+			SDL_SetWindowTitle(window,"VoxelCTF - Editor");
 			guiManager.clear();
 			GUILabel menuInfo(2,2,langManager.getFromCurrentLanguage("editor_devinfo"),resManager.getFont("default",12),{255,0,0},render);
 			GUITextbox mapName(30,30,300,25,resManager.getFont("default",15),render,"Map name");
@@ -266,6 +274,7 @@ int main(int argc,char *args[]){
 			glm::vec3 fillPosition[2];
 			if(fileExists("res/maps/"+editorMapName+".blockctf"))
 				world.loadMap(editorMapName,&textureAtlas);
+			Skybox skybox;
 			while(frame==4 && running){
 				const Uint8* keyboard=SDL_GetKeyboardState(0);
 				while(SDL_PollEvent(&event)){
@@ -356,11 +365,15 @@ int main(int argc,char *args[]){
 								for(int y=fillPosition[0].y; y<fillPosition[1].y; y++){
 									for(int z=fillPosition[0].z; z<fillPosition[1].z; z++){
 										world.setBlock(x,y,z,(BlockType)currentBlockType);
-										
+										if(!findChunkInVector(chunksToUpdate,glm::vec2(x/CHUNK_SIZE_WD,z/CHUNK_SIZE_WD))){
+											chunksToUpdate.push_back(glm::vec2(x/CHUNK_SIZE_WD,z/CHUNK_SIZE_WD));
+										}
 									}
 								}
 							}
-							world.generateMesh(&textureAtlas);
+							for(int i=0; i<chunksToUpdate.size(); i++){
+								world.getChunk(chunksToUpdate[i].x,chunksToUpdate[i].y)->generateMesh(&textureAtlas);
+							}
 						}
 					}
 					
@@ -377,9 +390,10 @@ int main(int argc,char *args[]){
 					glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 				else
 					glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-				
+				skybox.draw(resManager.getShaderProgram("skybox"),cam);
 				textureAtlas.use();
 				world.draw(cam,resManager.getShaderProgram("world"),resManager.getShaderProgram("fluid"));
+				
 				gl2dRenderer.start();
 				SDL_SetRenderDrawColor(render,0,0,0,0);
 				SDL_RenderFillRect(render,0);
@@ -389,6 +403,8 @@ int main(int argc,char *args[]){
 				gl2dRenderer.finish(resManager.getShaderProgram("2dtextured"));
 				SDL_GL_SwapWindow(window);
 			}
+			world.destroy();
+			//skybox.destroy();
 		}
 	}
 	if(serverConnection.isConnected())

@@ -48,3 +48,11 @@ ShaderProgram ResourceManager::getShaderProgram(std::string name){
 	std::cout<<"(Log) [ResourceManager] Loaded shaderprogram "<<name<<std::endl;
 	return ResourceManager::shaderprograms[name];
 }
+Mix_Music* ResourceManager::getMusic(std::string name){
+	if(ResourceManager::music.count(name)){
+		return ResourceManager::music[name];
+	}
+	ResourceManager::music[name]=Mix_LoadMUS(std::string("res/music/"+name+".ogg").c_str());
+	std::cout<<"(Log) [ResourceManager] Loaded music "<<name<<std::endl;
+	return ResourceManager::music[name];
+}

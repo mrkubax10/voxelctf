@@ -8,9 +8,10 @@
 #include "serverconnection.hpp"
 #include <GL/glew.h>
 #include <GL/gl.h>
-ServerConnection::ServerConnection(){
+ServerConnection::ServerConnection(Chat* chat){
 	ServerConnection::connected=false;
 	ServerConnection::lastActivityResponse=0;
+	ServerConnection::chat=chat;
 }
 bool ServerConnection::connect(std::string ip,int port,std::string playerName){
 
@@ -43,14 +44,18 @@ bool ServerConnection::connect(std::string ip,int port,std::string playerName){
 	char* playerData=(char*)malloc(MAX_MESSAGE_LENGTH);
 	SDLNet_TCP_Recv(socket,playerData,MAX_MESSAGE_LENGTH);
 	int dataOffset=2;
+	std::cout<<(int)playerData[0]<<std::endl;
+	std::cout<<(int)playerData[1]<<std::endl;
 	if(playerData[0]==1 && playerData[1]!=0){
 		for(int i=0; i<playerData[1]; i++){
 			ConnectedPlayer player("",glm::vec3(),playerData[dataOffset]);
 			char* name=(char*)malloc(playerData[dataOffset+1]+1);
-			for(int b=0; b<playerData[dataOffset]; b++){
+			for(int b=0; b<playerData[dataOffset+1]; b++){
 				name[b]=playerData[dataOffset+1+b];
 			}
+			std::cout<<(int)playerData[dataOffset+1]<<std::endl;
 			name[playerData[dataOffset+1]]='\0';
+			std::cout<<name<<std::endl;
 			((uint8_t*)&player.position.x)[0]=playerData[dataOffset+1+playerData[dataOffset+1]];
 			((uint8_t*)&player.position.x)[1]=playerData[dataOffset+1+playerData[dataOffset+1]+1];
 			((uint8_t*)&player.position.x)[2]=playerData[dataOffset+1+playerData[dataOffset+1]+2];
@@ -69,6 +74,7 @@ bool ServerConnection::connect(std::string ip,int port,std::string playerName){
 		}
 	}
 	free(playerData);
+	
 	return true;
 
 }
@@ -107,6 +113,7 @@ bool ServerConnection::initGame(World* world,TextureAtlas* atlas){
 		world->generateMesh(atlas);
 	}
 	free(worldData);
+	
 	return true;
 }
 void ServerConnection::update(){
@@ -142,7 +149,17 @@ void ServerConnection::update(){
 			}
 			name[data[2]]='\0';
 			players.push_back(ConnectedPlayer(std::string(name),glm::vec3(0,0,0),data[1]));
+			ServerConnection::chat->addEntry("Player "+std::string(name)+" joined the game");
 			free(name);
+		}else if(data[0]==ServerConnectionCommand::EXIT){
+			for(int i=0; i<ServerConnection::players.size(); i++){
+				if(ServerConnection::players[i].id==data[1]){
+					ServerConnection::players.erase(players.begin()+i);
+					for(int b=i+1; b<ServerConnection::players.size(); b++){
+						ServerConnection::players[b].id--;
+					}
+				}
+			}
 		}
 	}
 }

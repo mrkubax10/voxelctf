@@ -12,6 +12,7 @@
 #include "../world/textureatlas.hpp"
 #include "connectedplayer.hpp"
 #include "../render/model.hpp"
+#include "chat.hpp"
 enum ServerConnectionCommand{
 	MOVE,ACTIVITY,EXIT,READY,CHAT_MESSAGE,WORLD_DATA,REJECT,NEW_PLAYER,CONNECTION
 };
@@ -27,9 +28,10 @@ class ServerConnection {
 	int lastCommandTime;
 	SDLNet_SocketSet sockets;
 	std::vector<ConnectedPlayer> players;
+	Chat* chat;
 	
 public:
-	ServerConnection();
+	ServerConnection(Chat* chat);
 	bool connect(std::string ip,int port,std::string playerName);
 	void sendNetworkCommand(int id,char* params,int len);
 	void send(char* data,int len);
