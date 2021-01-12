@@ -368,6 +368,16 @@ void Chunk::generateSimpleTerrain(int maxHeight,int minHeight){
 	}
 }
 
+bool Chunk::findChunkInVector(std::vector<glm::vec2> vec,glm::vec2 chunk){
+	bool out=false;
+	for(int i=0; i<vec.size(); i++){
+		if(vec[i]==chunk){
+			out=true;
+			break;
+		}
+	}
+	return out;
+}
 bool Chunk::blockHasMetadata(int x,int y,int z){
 	if(Chunk::metadata.count(x)){
 		if(Chunk::metadata.count(y)){

@@ -18,11 +18,13 @@
 #include "editor/editorutils.hpp"
 #include <thread>
 #include "render/gl2drenderer.hpp"
-#include "maths/ray.hpp"
 #include "network/serverconnection.hpp"
 #include "editor/gui_blockinfo.hpp"
 #include "network/chat.hpp"
 #include "world/skybox.hpp"
+#include "editor/editorfilltool.hpp"
+#include "editor/editorbuildtool.hpp"
+#include "editor/gui_toolinfo.hpp"
 Uint32 timer1(Uint32 interval, void *param){
     SDL_Event event;
     SDL_UserEvent userevent;
@@ -52,7 +54,10 @@ int main(int argc,char *args[]){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	SDLNet_Init();
-	Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,1024);
+	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,1024)<0){
+		std::cout<<"(Err) [SDL2_mixer] Failed to initialize: "<<Mix_GetError()<<std::endl;
+		return 0;
+	};
 	bool running=true;
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
@@ -88,6 +93,7 @@ int main(int argc,char *args[]){
 	while(running){
 		if(frame==0){
 			SDL_SetWindowTitle(window,"VoxelCTF");
+			Mix_PlayMusic(resManager.getMusic("menu"),-1);
 			guiManager.clear();
 			GUILabel labelLogo(10,5,"VoxelCTF",resManager.getFont("default",80),{0,0,255},render);
 			GUIButton buttonPlay(15,100,200,50,langManager.getFromCurrentLanguage("menu_play"),resManager.getFont("default",20),render);
@@ -102,6 +108,9 @@ int main(int argc,char *args[]){
 			buttonEditor.setCallback([](void* argument){
 				*((int*)argument)=3;
 			},(void*)&frame);
+			buttonExit.setCallback([](void* argument){
+				*((bool*)argument)=false;
+			},(void*)&running);
 			guiManager.add(&labelLogo);
 			guiManager.add(&buttonPlay);
 			guiManager.add(&buttonFastGame);
@@ -128,6 +137,7 @@ int main(int argc,char *args[]){
 			}
 		}
 		if(frame==1){
+			Mix_FadeOutMusic(400);
 			guiManager.clear();
 			GUITextbox textboxIp(10,40,200,25,resManager.getFont("default",15),render);
 			GUILabel textboxIpInfo(10,10,langManager.getFromCurrentLanguage("enter_ip"),resManager.getFont("default",20),{255,255,255},render);
@@ -219,6 +229,7 @@ int main(int argc,char *args[]){
 			world.destroy();
 		}
 		if(frame==3){
+			Mix_FadeOutMusic(400);
 			SDL_SetWindowTitle(window,"VoxelCTF - Editor");
 			guiManager.clear();
 			GUILabel menuInfo(2,2,langManager.getFromCurrentLanguage("editor_devinfo"),resManager.getFont("default",12),{255,0,0},render);
@@ -269,37 +280,36 @@ int main(int argc,char *args[]){
 			buttonSave.center(windowW,windowH,false);
 			GUIButton buttonSaveAndExit(0,60,100,25,langManager.getFromCurrentLanguage("editor_saveandexit"),resManager.getFont("default",15),render);
 			buttonSaveAndExit.center(windowW,windowH,false);
+			GUIToolInfo toolInfo(200,2,render,&resManager);
+			GUILabel positionInfo(0,0,"",resManager.getFont("default",15),{255,255,255},render);
+			guiManager.add(&toolInfo);
 			guiManager.add(&crossair);
+			guiManager.add(&positionInfo);
 			guiManager.add(&blockInfo);
-			glm::vec3 fillPosition[2];
+			
 			if(fileExists("res/maps/"+editorMapName+".blockctf"))
 				world.loadMap(editorMapName,&textureAtlas);
-			Skybox skybox;
+			//Skybox skybox;
+			EditorTool* editorTool=new EditorBuildTool;
+
 			while(frame==4 && running){
 				const Uint8* keyboard=SDL_GetKeyboardState(0);
 				while(SDL_PollEvent(&event)){
 					guiManager.update(&event);
 					if(event.type==SDL_QUIT)running=0;
 					if(event.type==SDL_MOUSEBUTTONDOWN){
-						if(event.button.button==SDL_BUTTON_RIGHT){
-							if(!pause){
-								glm::vec3 raypos=ray.cast(&world,player.getPosition(),false);
-								world.setBlock(player.getPosition().x+raypos.x,player.getPosition().y+raypos.y,player.getPosition().z+raypos.z,(BlockType)currentBlockType);
-								world.getChunk((player.getPosition().x+raypos.x)/CHUNK_SIZE_WD,(player.getPosition().z+raypos.z)/CHUNK_SIZE_WD)->generateMesh(&textureAtlas);
-							}
+						if(!pause){
+							editorTool->update(&world,&player,&ray,event.button.button,(BlockType)currentBlockType,&textureAtlas);
 						}
 						if(event.button.button==SDL_BUTTON_LEFT){
-							if(!pause){
-								glm::vec3 raypos=ray.cast(&world,player.getPosition(),true);
-								world.setBlock(player.getPosition().x+raypos.x,player.getPosition().y+raypos.y,player.getPosition().z+raypos.z,BlockType::AIR);
-								world.getChunk((player.getPosition().x+raypos.x)/CHUNK_SIZE_WD,(player.getPosition().z+raypos.z)/CHUNK_SIZE_WD)->generateMesh(&textureAtlas);
-							}
 							if(pause){
 								if(buttonReturn.isMouseOn(event.motion.x,event.motion.y)){
 									pause=false;
 									guiManager.clear();
 									guiManager.add(&blockInfo);
 									guiManager.add(&crossair);
+									guiManager.add(&toolInfo);
+									guiManager.add(&positionInfo);
 									SDL_CaptureMouse(SDL_TRUE);
 									SDL_SetRelativeMouseMode(SDL_TRUE);
 								}
@@ -338,6 +348,8 @@ int main(int argc,char *args[]){
 								guiManager.clear();
 								guiManager.add(&blockInfo);
 								guiManager.add(&crossair);
+								guiManager.add(&toolInfo);
+								guiManager.add(&positionInfo);
 								SDL_CaptureMouse(SDL_TRUE);
 								SDL_SetRelativeMouseMode(SDL_TRUE);
 							}else{
@@ -349,32 +361,14 @@ int main(int argc,char *args[]){
 								SDL_SetRelativeMouseMode(SDL_FALSE);
 							}
 						}
-						if(event.key.keysym.scancode==SDL_SCANCODE_1){
-							fillPosition[0]=player.getPosition();
-						}
-						if(event.key.keysym.scancode==SDL_SCANCODE_2){
-							fillPosition[1]=player.getPosition();
-							glm::vec3 tempPos;
-							std::vector<glm::vec2> chunksToUpdate;
-							if(fillPosition[0].x>fillPosition[1].x || fillPosition[0].y>fillPosition[1].y || fillPosition[0].z>fillPosition[1].z){
-								tempPos=fillPosition[0];
-								fillPosition[0]=fillPosition[1];
-								fillPosition[1]=tempPos;
-							}
-							for(int x=fillPosition[0].x; x<fillPosition[1].x; x++){
-								for(int y=fillPosition[0].y; y<fillPosition[1].y; y++){
-									for(int z=fillPosition[0].z; z<fillPosition[1].z; z++){
-										world.setBlock(x,y,z,(BlockType)currentBlockType);
-										if(!findChunkInVector(chunksToUpdate,glm::vec2(x/CHUNK_SIZE_WD,z/CHUNK_SIZE_WD))){
-											chunksToUpdate.push_back(glm::vec2(x/CHUNK_SIZE_WD,z/CHUNK_SIZE_WD));
-										}
-									}
-								}
-							}
-							for(int i=0; i<chunksToUpdate.size(); i++){
-								world.getChunk(chunksToUpdate[i].x,chunksToUpdate[i].y)->generateMesh(&textureAtlas);
-							}
-						}
+					}
+					if(event.key.keysym.scancode==SDL_SCANCODE_1){
+						delete editorTool;
+						editorTool=new EditorBuildTool;
+					}
+					if(event.key.keysym.scancode==SDL_SCANCODE_2){
+						delete editorTool;
+						editorTool=new EditorFillTool;
 					}
 					
 				}
@@ -390,7 +384,7 @@ int main(int argc,char *args[]){
 					glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 				else
 					glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-				skybox.draw(resManager.getShaderProgram("skybox"),cam);
+				//skybox.draw(resManager.getShaderProgram("skybox"),cam);
 				textureAtlas.use();
 				world.draw(cam,resManager.getShaderProgram("world"),resManager.getShaderProgram("fluid"));
 				
@@ -398,6 +392,9 @@ int main(int argc,char *args[]){
 				SDL_SetRenderDrawColor(render,0,0,0,0);
 				SDL_RenderFillRect(render,0);
 				SDL_GetWindowSize(window,&windowW,&windowH);
+				positionInfo.setText("X:"+std::to_string((int)player.getPosition().x)+" Y:"+std::to_string((int)player.getPosition().y)+" Z:"+std::to_string((int)player.getPosition().z));
+				positionInfo.setX(windowW-positionInfo.getW()-2);
+				positionInfo.setY(2);
 				crossair.center(windowW,windowH);
 				guiManager.draw();
 				gl2dRenderer.finish(resManager.getShaderProgram("2dtextured"));

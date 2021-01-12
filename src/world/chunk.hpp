@@ -39,6 +39,7 @@ public:
 	bool isHasGeneratedMesh();
 	void setHasGeneratedMesh(bool hasGeneratedMesh);
 	bool blockHasMetadata(int x,int y,int z);
+	static bool findChunkInVector(std::vector<glm::vec2> vec,glm::vec2 chunk);
 };
 
 #endif /* SRC_WORLD_CHUNK_HPP_ */

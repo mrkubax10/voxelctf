@@ -96,11 +96,3 @@ Model createBoxModel(){
 	Model box(verts,uvs,indices);
 	return box;
 }
-bool findChunkInVector(std::vector<glm::vec2> vec,glm::vec2 v){
-	for(int i=0; i<vec.size(); i++){
-		if(vec[i]==v){
-			return true;
-		}
-	}
-	return false;
-}

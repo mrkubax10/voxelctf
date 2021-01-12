@@ -53,6 +53,10 @@ Mix_Music* ResourceManager::getMusic(std::string name){
 		return ResourceManager::music[name];
 	}
 	ResourceManager::music[name]=Mix_LoadMUS(std::string("res/music/"+name+".ogg").c_str());
+	if(!ResourceManager::music[name]){
+		std::cout<<"(Warn) [ResourceManager] Failed to load music "<<name<<std::endl;
+		return 0;
+	}
 	std::cout<<"(Log) [ResourceManager] Loaded music "<<name<<std::endl;
 	return ResourceManager::music[name];
 }
