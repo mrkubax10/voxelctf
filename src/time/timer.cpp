@@ -8,6 +8,7 @@ void Timer::reset(){
 bool Timer::update(){
     Timer::end=SDL_GetTicks();
     if(Timer::start+Timer::interval<=Timer::end){
+        Timer::reset();
         return true;
     }
     else

@@ -36,7 +36,7 @@ void EditorFrame::begin(){
     SDL_CaptureMouse(SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	EditorFrame::editorTool=new EditorBuildTool;
-	EditorFrame::updateTimer=new Timer(5000);
+	EditorFrame::updateTimer=new Timer(2);
 	EditorFrame::updateTimer->reset();
 }
 void EditorFrame::render(){
@@ -121,10 +121,10 @@ void EditorFrame::render(){
     }
     glClearColor(0,0.5f,1,1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	if(!pause && EditorFrame::updateTimer->update()){
-		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
+	if(!pause && EditorFrame::updateTimer->update())
 		player->update(keyboard,world,app->getSettings(),true);
-    }
+	if(!pause)
+		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
 	app->getGL2DRenderer()->start();
