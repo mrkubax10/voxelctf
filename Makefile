@@ -2,7 +2,7 @@
 CC        := g++
 LD        := g++
 
-MODULES   := world world/blockmetadata SDL2_gui render network maths managers gameplay editor .
+MODULES   := world world/blockmetadata SDL2_gui render network maths managers gameplay editor time frames framework .
 SRC_DIR   := $(addprefix src/,$(MODULES))
 BUILD_DIR := $(addprefix build/,$(MODULES))
 

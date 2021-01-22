@@ -14,7 +14,7 @@ class FPSCamera : public Camera {
 	bool firstMouse;
 public:
 	FPSCamera();
-	void update(short mx,short my,Settings settings);
+	void update(short mx,short my,Settings* settings);
 
 };
 

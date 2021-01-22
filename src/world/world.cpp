@@ -51,18 +51,14 @@ void World::generateMesh(TextureAtlas* atlas){
 void World::loadMapFromMemory(std::vector<unsigned char> chunkData){
 	int blockDataID=0;
 	BlockType lastBlockType=BlockType::AIR;
-	for(int cx=0; cx<WORLD_SIZE; cx++){
-		for(int cz=0; cz<WORLD_SIZE; cz++){
-			for(int x=0; x<CHUNK_SIZE_WD; x++){
-				for(int y=0; y<CHUNK_SIZE_H; y++){
-					for(int z=0; z<CHUNK_SIZE_WD; z++){
-						if(chunkData[blockDataID]==cx*WORLD_SIZE+x && chunkData[blockDataID+1]==y && chunkData[blockDataID+2]==cz*WORLD_SIZE+z){
-							lastBlockType=(BlockType)chunkData[blockDataID+3];
-							blockDataID+=4;
-						}
-						World::getChunk(cx,cz)->setBlock(x,y,z,lastBlockType);
-					}
+	for(int cx=0; cx<WORLD_SIZE*CHUNK_SIZE_WD; cx++){
+		for(int y=0; y<CHUNK_SIZE_H; y++){
+			for(int cz=0; cz<WORLD_SIZE*CHUNK_SIZE_WD; cz++){
+				if(chunkData[blockDataID]==cx && chunkData[blockDataID+1]==y && chunkData[blockDataID+2]==cz){
+					lastBlockType=(BlockType)chunkData[blockDataID+3];
+					blockDataID+=4;
 				}
+				World::setBlock(cx,y,cz,lastBlockType);
 			}
 		}
 	}
@@ -107,19 +103,15 @@ void World::saveMap(std::string name){
 	mapData.push_back(0);
 	mapData.push_back(0);
 	mapData.push_back(World::getChunk(0,0)->getBlock(0,0,0)->type);
-	for(int cx=0; cx<WORLD_SIZE; cx++){
-		for(int cz=0; cz<WORLD_SIZE; cz++){
-			for(int x=0; x<CHUNK_SIZE_WD; x++){
-				for(int y=0; y<CHUNK_SIZE_H; y++){
-					for(int z=0; z<CHUNK_SIZE_WD; z++){
-						if(World::getChunk(cx,cz)->getBlock(x,y,z)->type!=(uint8_t)lastBlockType){
-							lastBlockType=(BlockType)World::getChunk(cx,cz)->getBlock(x,y,z)->type;
-							mapData.push_back(cx*CHUNK_SIZE_WD+x);
-							mapData.push_back(y);
-							mapData.push_back(cz*CHUNK_SIZE_WD+z);
-							mapData.push_back(World::getChunk(cx,cz)->getBlock(x,y,z)->type);
-						}
-					}
+	for(int cx=0; cx<WORLD_SIZE*CHUNK_SIZE_WD; cx++){
+		for(int y=0; y<CHUNK_SIZE_H; y++){
+			for(int cz=0; cz<WORLD_SIZE*CHUNK_SIZE_WD; cz++){
+				if(lastBlockType!=World::getBlock(cx,y,cz)->type){
+					lastBlockType=(BlockType)World::getBlock(cx,y,cz)->type;
+					mapData.push_back(cx);
+					mapData.push_back(y);
+					mapData.push_back(cz);
+					mapData.push_back(World::getBlock(cx,y,cz)->type);
 				}
 			}
 		}

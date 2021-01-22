@@ -11,7 +11,7 @@ FPSCamera::FPSCamera() {
 	FPSCamera::firstMouse=true;
 
 }
-void FPSCamera::update(short mx,short my,Settings settings){
+void FPSCamera::update(short mx,short my,Settings* settings){
 	if(FPSCamera::firstMouse){
 		FPSCamera::lastMousePos.x=mx;
 		FPSCamera::lastMousePos.y=my;
@@ -20,7 +20,7 @@ void FPSCamera::update(short mx,short my,Settings settings){
 	glm::vec2 offset;
 	offset.x=mx-lastMousePos.x;
 	offset.y=lastMousePos.y-my;
-	offset*=settings.sensitivity;
+	offset*=settings->sensitivity;
 	FPSCamera::setRotation(offset.y+pitch,offset.x+yaw);
 	if(pitch>89)
 		pitch=89;

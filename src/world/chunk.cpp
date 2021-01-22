@@ -40,10 +40,16 @@ void Chunk::destroy(){
 	glDeleteVertexArrays(1,&mesh.waterVAO);
 }
 void Chunk::generateMesh(TextureAtlas* atlas){
-	std::vector<float> blockVertices,blockUVs,waterVertices,waterUVs,blockLightValues,waterNormals;
-	std::vector<unsigned int> blockIndices,waterIndices;
-	std::vector<float> *currentVertices=&blockVertices,*currentUVs=&blockUVs,*currentLightValues=&blockLightValues;
-	std::vector<unsigned int> *currentIndices=&blockIndices;
+	std::vector<float>* blockVertices=new std::vector<float>;
+	std::vector<float>* blockUVs=new std::vector<float>;
+	std::vector<float>* waterVertices=new std::vector<float>;
+	std::vector<float>* waterUVs=new std::vector<float>;
+	std::vector<float>* blockLightValues=new std::vector<float>;
+	std::vector<float>* waterNormals=new std::vector<float>;
+	std::vector<unsigned int>* blockIndices=new std::vector<unsigned int>;
+	std::vector<unsigned int>* waterIndices=new std::vector<unsigned int>;
+	std::vector<float> *currentVertices=blockVertices,*currentUVs=blockUVs,*currentLightValues=blockLightValues;
+	std::vector<unsigned int> *currentIndices=blockIndices;
 	int faces=0;
 	float lightValue=1.0f;
 	for(int x=0; x<CHUNK_SIZE_WD; x++){
@@ -59,15 +65,15 @@ void Chunk::generateMesh(TextureAtlas* atlas){
 						!BlockInformations::getBlockInformations(Chunk::getBlock(x,y,z-1)->type).transparent)
 					continue;
 				if((BlockType)Chunk::getBlock(x,y,z)->type==10 || (BlockType)Chunk::getBlock(x,y,z)->type==11){
-					currentVertices=&waterVertices;
-					currentUVs=&waterUVs;
-					currentIndices=&waterIndices;
-					currentLightValues=&waterNormals;
+					currentVertices=waterVertices;
+					currentUVs=waterUVs;
+					currentIndices=waterIndices;
+					currentLightValues=waterNormals;
 				}else{
-					currentVertices=&blockVertices;
-					currentUVs=&blockUVs;
-					currentIndices=&blockIndices;
-					currentLightValues=&blockLightValues;
+					currentVertices=blockVertices;
+					currentUVs=blockUVs;
+					currentIndices=blockIndices;
+					currentLightValues=blockLightValues;
 				}
 				if(BlockInformations::getBlockInformations(Chunk::getBlock(x+1,y,z)->type).transparent){
 					currentVertices->push_back(Chunk::x*CHUNK_SIZE_WD+x+1);
@@ -271,31 +277,39 @@ void Chunk::generateMesh(TextureAtlas* atlas){
 	}
 	glBindVertexArray(Chunk::mesh.blocksVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,Chunk::mesh.blocksVBO);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockVertices.size(),blockVertices.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockVertices->size(),blockVertices->data(),GL_STATIC_DRAW);
 	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,Chunk::mesh.blocksEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int)*blockIndices.size(),blockIndices.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int)*blockIndices->size(),blockIndices->data(),GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,Chunk::mesh.blocksTBO);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockUVs.size(),blockUVs.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockUVs->size(),blockUVs->data(),GL_STATIC_DRAW);
 	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER,Chunk::mesh.blockNormals);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockLightValues.size(),blockLightValues.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*blockLightValues->size(),blockLightValues->data(),GL_STATIC_DRAW);
 	glVertexAttribPointer(2,1,GL_FLOAT,GL_FALSE,1*sizeof(float),(void*)0);
 	glBindVertexArray(0);
 	
 	glBindVertexArray(Chunk::mesh.waterVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,Chunk::mesh.waterVBO);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*waterVertices.size(),waterVertices.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*waterVertices->size(),waterVertices->data(),GL_STATIC_DRAW);
 	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,Chunk::mesh.waterEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int)*waterIndices.size(),waterIndices.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int)*waterIndices->size(),waterIndices->data(),GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,Chunk::mesh.waterTBO);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*waterUVs.size(),waterUVs.data(),GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(float)*waterUVs->size(),waterUVs->data(),GL_STATIC_DRAW);
 	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
 	
-	Chunk::mesh.blockIndicesCount=blockIndices.size();
-	Chunk::mesh.waterIndicesCount=waterIndices.size();
+	Chunk::mesh.blockIndicesCount=blockIndices->size();
+	Chunk::mesh.waterIndicesCount=waterIndices->size();
 	Chunk::setHasGeneratedMesh(true);
+	delete blockVertices;
+	delete blockUVs;
+	delete blockLightValues;
+	delete waterVertices;
+	delete waterUVs;
+	delete waterNormals;
+	delete blockIndices;
+	delete waterIndices;
 	
 }
 Block* Chunk::getBlock(int x,int y,int z){

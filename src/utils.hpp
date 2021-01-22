@@ -15,5 +15,6 @@ void renderDrawScaled(SDL_Renderer *render,SDL_Texture *tex,int x,int y,int w,in
 std::vector<std::string> split(std::string str,char ch);
 std::string stringToLower(std::string str);
 bool fileExists(std::string name);
-Model createBoxModel();
+Model* createBoxModel();
+Uint32 timer(Uint32 interval,void* argument);
 #endif /* SRC_UTILS_HPP_ */

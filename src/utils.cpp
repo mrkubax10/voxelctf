@@ -47,7 +47,7 @@ bool fileExists(std::string name){
 		return false;
 	}
 }
-Model createBoxModel(){
+Model* createBoxModel(){
 	std::vector<float> verts={
 		0.0f,1.0f,1.0f,
 		0.0f,0.0f,1.0f,
@@ -93,6 +93,18 @@ Model createBoxModel(){
 		uvs.push_back(1.0f);
 		uvs.push_back(0.0f);
 	}
-	Model box(verts,uvs,indices);
+	Model* box=new Model(verts,uvs,indices);
 	return box;
+}
+Uint32 timer(Uint32 interval,void* argument){
+    SDL_Event event;
+    SDL_UserEvent userevent;
+    userevent.type = SDL_USEREVENT;
+    userevent.code = 0;
+    userevent.data1 = NULL;
+    userevent.data2 = NULL;
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+    SDL_PushEvent(&event);
+    return(interval);
 }
