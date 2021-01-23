@@ -11,6 +11,7 @@
 #include "../render/fpscamera.hpp"
 #include "../editor/editorfilltool.hpp"
 #include "../editor/editorbuildtool.hpp"
+#include "../editor/editorerasetool.hpp"
 #include "../time/timer.hpp"
 class EditorFrame : public Frame{
     Ray* ray;

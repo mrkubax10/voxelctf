@@ -11,10 +11,14 @@ void GUIToolInfo::draw(){
     guiRect.y=GUIToolInfo::y;
     SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/build_tool"),0,0,&guiRect.w,&guiRect.h);
     SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/build_tool"),0,&guiRect);
-    guiRect.x=GUIToolInfo::x+guiRect.w;
+    guiRect.x+=guiRect.w;
     guiRect.y=GUIToolInfo::y;
     SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/fill_tool"),0,0,&guiRect.w,&guiRect.h);
     SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/fill_tool"),0,&guiRect);
+    guiRect.x+=guiRect.w;
+    guiRect.y=GUIToolInfo::y;
+    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/fill_tool"),0,0,&guiRect.w,&guiRect.h);
+    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/erase_tool"),0,&guiRect);
     guiRect.x=GUIToolInfo::x+GUIToolInfo::selectedTool*16;
     guiRect.y=GUIToolInfo::y;
     guiRect.w=17;
@@ -24,7 +28,7 @@ void GUIToolInfo::draw(){
 }
 void GUIToolInfo::update(SDL_Event* ev){
     if(ev->type==SDL_KEYDOWN){
-        if(ev->key.keysym.scancode>=SDL_SCANCODE_1 && ev->key.keysym.scancode<=SDL_SCANCODE_2)
+        if(ev->key.keysym.scancode>=SDL_SCANCODE_1 && ev->key.keysym.scancode<=SDL_SCANCODE_3)
             GUIToolInfo::selectedTool=ev->key.keysym.scancode-SDL_SCANCODE_1;
     }
 }

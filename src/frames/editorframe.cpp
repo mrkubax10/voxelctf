@@ -108,15 +108,23 @@ void EditorFrame::render(){
 					SDL_SetRelativeMouseMode(SDL_FALSE);
 				}
 		    }
+			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_1){
+				std::cout<<"2"<<std::endl;
+				delete editorTool;
+				editorTool=new EditorBuildTool;
+			}
+			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_2){
+				std::cout<<"3"<<std::endl;
+				delete editorTool;
+				editorTool=new EditorFillTool;
+			}
+			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_3){
+				std::cout<<"1"<<std::endl;
+				delete editorTool;
+				editorTool=new EditorEraseTool;
+			}
 		}
-		if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_1){
-			delete editorTool;
-			editorTool=new EditorBuildTool;
-		}
-		if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_2){
-			delete editorTool;
-			editorTool=new EditorFillTool;
-		}
+		
 		app->getGUIManager()->update(app->getEvent());
     }
     glClearColor(0,0.5f,1,1);
@@ -140,13 +148,6 @@ void EditorFrame::render(){
 }
 void EditorFrame::finish(){
     world->destroy();
-	delete toolInfo;
-	delete blockInfo;
-	delete crossair;
-	delete buttonReturn;
-	delete buttonSave;
-	delete buttonSaveAndExit;
-	delete positionInfo;
 	delete ray;
 	delete cam;
 }
