@@ -30,7 +30,7 @@ App::App(std::string title,int w,int h,Uint32 hints){
     App::textureAtlas=new TextureAtlas(App::render);
     App::textureAtlas->generateTextureAtlas(resManager);
     App::gl2dRenderer=new GL2DRenderer(App::window,App::render);
-    App::chat=new Chat(render,resManager->getFont("default",15));
+    App::chat=new Chat(0,0,render,resManager->getFont("default",15));
     App::serverConnection=new ServerConnection(chat);
 }
 SDL_Window* App::getWindow(){
@@ -94,6 +94,9 @@ LanguageManager* App::getLanguageManager(){
 }
 ServerConnection* App::getServerConnection(){
     return serverConnection;
+}
+Chat* App::getChat(){
+    return chat;
 }
 void App::setFrame(Frame* frame){
     if(App::frame!=0)

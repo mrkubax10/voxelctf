@@ -23,7 +23,7 @@ void GameMenuFrame::render(){
             if(app->getEvent()->button.button==SDL_BUTTON_LEFT){
                 if(buttonPlay->isMouseOn(app->getEvent()->motion.x,app->getEvent()->motion.y)){
                     if(app->getServerConnection()->connect(textboxIp->getText(),1255,textboxName->getText())){
-                        //app->setFrame(GAME_FRAME);
+                        app->setFrame(GAME_FRAME);
                     }
                 }
             }

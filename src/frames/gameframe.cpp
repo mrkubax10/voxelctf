@@ -15,6 +15,7 @@ void GameFrame::begin(){
 	SDL_SetRelativeMouseMode(SDL_TRUE);
     app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
     app->getGUIManager()->clear();
+    app->getGUIManager()->add(app->getChat());
 }
 void GameFrame::render(){
     const Uint8* keyboard=SDL_GetKeyboardState(0);
@@ -34,6 +35,7 @@ void GameFrame::render(){
     }
     glClearColor(0.0f,0.5f,1.0f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    app->getServerConnection()->update();
     player->update(keyboard,world,app->getSettings(),false);
     cam->update(app->getEvent()->motion.x,app->getEvent()->motion.y,app->getSettings());
     app->getTextureAtlas()->use();
@@ -43,6 +45,7 @@ void GameFrame::render(){
     app->getGUIManager()->draw();
 
     app->getGL2DRenderer()->finish(app->getResourceManager()->getShaderProgram("2dtextured"));
+
     SDL_GL_SwapWindow(app->getWindow());
 }
 void GameFrame::finish(){

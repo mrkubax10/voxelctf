@@ -41,6 +41,32 @@ bool ServerConnection::connect(std::string ip,int port,std::string playerName){
 	ServerConnection::connected=true;
 	sockets=SDLNet_AllocSocketSet(1);
 	SDLNet_TCP_AddSocket(sockets,socket);
+	
+	
+	return true;
+
+}
+void ServerConnection::sendNetworkCommand(int id,char* params,int len){
+	char* fullData=(char*)malloc(len+1);
+	fullData[0]=id;
+	if(params!=0){
+		for(int i=1; i<len; i++){
+			fullData[i]=params[i-1];
+		}
+	}
+	ServerConnection::send(fullData,1+len);
+	free(fullData);
+}
+void ServerConnection::send(char* data,int len){
+	SDLNet_TCP_Send(socket,data,len);
+}
+void ServerConnection::disconnect(){
+	std::cout<<"(Log) [ServerConnection] Disconnecting!"<<std::endl;
+	ServerConnection::sendNetworkCommand(ServerConnectionCommand::EXIT,0,0);
+	SDLNet_TCP_Close(socket);
+	ServerConnection::connected=false;
+}
+bool ServerConnection::initGame(World* world,TextureAtlas* atlas){
 	char* playerData=(char*)malloc(MAX_MESSAGE_LENGTH);
 	SDLNet_TCP_Recv(socket,playerData,MAX_MESSAGE_LENGTH);
 	int dataOffset=2;
@@ -74,32 +100,6 @@ bool ServerConnection::connect(std::string ip,int port,std::string playerName){
 		}
 	}
 	free(playerData);
-	
-	return true;
-
-}
-void ServerConnection::sendNetworkCommand(int id,char* params,int len){
-	char* fullData=(char*)malloc(len+1);
-	fullData[0]=id;
-	if(params!=0){
-		for(int i=1; i<len; i++){
-			fullData[i]=params[i-1];
-		}
-	}
-	ServerConnection::send(fullData,1+len);
-	free(fullData);
-}
-void ServerConnection::send(char* data,int len){
-	SDLNet_TCP_Send(socket,data,len);
-}
-void ServerConnection::disconnect(){
-	std::cout<<"(Log) [ServerConnection] Disconnecting!"<<std::endl;
-	ServerConnection::sendNetworkCommand(ServerConnectionCommand::EXIT,0,0);
-	SDLNet_TCP_Close(socket);
-	ServerConnection::connected=false;
-}
-bool ServerConnection::initGame(World* world,TextureAtlas* atlas){
-	
 	char* worldData=(char*)malloc(MAX_MESSAGE_LENGTH);
 	SDLNet_TCP_Recv(ServerConnection::socket,worldData,MAX_MESSAGE_LENGTH);
 	if(worldData[0]==0){
@@ -113,14 +113,17 @@ bool ServerConnection::initGame(World* world,TextureAtlas* atlas){
 		world->generateMesh(atlas);
 	}
 	free(worldData);
-	
+	char* sendData=(char*)malloc(1);
+	sendData[0]=ServerConnectionCommand::READY;
+	ServerConnection::send(sendData,1);
+	free(sendData);
 	return true;
 }
 void ServerConnection::update(){
-	if(ServerConnection::lastActivityResponse+5000<=SDL_GetTicks()){
-		std::cout<<"(Warn) [ServerConnection] Timed out"<<std::endl;
-		ServerConnection::disconnect();
-	}
+	// if(ServerConnection::lastActivityResponse+5000<=SDL_GetTicks()){
+	// 	std::cout<<"(Warn) [ServerConnection] Timed out"<<std::endl;
+	// 	ServerConnection::disconnect();
+	// 
 	if(SDLNet_CheckSockets(sockets,10)>0){
 		char* data=(char*)malloc(MAX_MESSAGE_LENGTH);
 		SDLNet_TCP_Recv(socket,data,MAX_MESSAGE_LENGTH);
@@ -150,6 +153,7 @@ void ServerConnection::update(){
 			name[data[2]]='\0';
 			players.push_back(ConnectedPlayer(std::string(name),glm::vec3(0,0,0),data[1]));
 			ServerConnection::chat->addEntry("Player "+std::string(name)+" joined the game");
+			std::cout<<name<<std::endl;
 			free(name);
 		}else if(data[0]==ServerConnectionCommand::EXIT){
 			for(int i=0; i<ServerConnection::players.size(); i++){

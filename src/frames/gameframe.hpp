@@ -5,6 +5,7 @@
 #include "../gameplay/player.hpp"
 #include "../render/fpscamera.hpp"
 #include "../render/model.hpp"
+#include "../network/chat.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

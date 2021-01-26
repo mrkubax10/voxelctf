@@ -43,6 +43,7 @@ public:
     Settings* getSettings();
     TextureAtlas* getTextureAtlas();
     GL2DRenderer* getGL2DRenderer();
+    Chat* getChat();
     std::string getEditorMapName();
     std::string getTitle();
     int getWindowW();
