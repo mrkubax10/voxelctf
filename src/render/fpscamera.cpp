@@ -9,13 +9,13 @@
 
 FPSCamera::FPSCamera() {
 	FPSCamera::firstMouse=true;
-
 }
 void FPSCamera::update(short mx,short my,Settings* settings){
 	if(FPSCamera::firstMouse){
 		FPSCamera::lastMousePos.x=mx;
 		FPSCamera::lastMousePos.y=my;
 		FPSCamera::firstMouse=false;
+		
 	}
 	glm::vec2 offset;
 	offset.x=mx-lastMousePos.x;

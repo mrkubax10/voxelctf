@@ -6,9 +6,10 @@ void GameMenuFrame::begin(){
 	app->getGUIManager()->clear();
     textboxIp=new GUITextbox(10,40,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer());
 	textboxIpInfo=new GUILabel(10,10,app->getLanguageManager()->getFromCurrentLanguage("enter_ip"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
-	textboxName=new GUITextbox(10,90,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer());
-	textboxNameInfo=new GUILabel(10,63,app->getLanguageManager()->getFromCurrentLanguage("enter_name"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
+	textboxName=new GUITextbox(10,90,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer(),app->getSettings()->lastName);
+    textboxNameInfo=new GUILabel(10,63,app->getLanguageManager()->getFromCurrentLanguage("enter_name"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
 	buttonPlay=new GUIButton(5,400,100,25,app->getLanguageManager()->getFromCurrentLanguage("play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
+    
     app->getGUIManager()->add(textboxIp);
 	app->getGUIManager()->add(textboxIpInfo);
 	app->getGUIManager()->add(textboxName);
@@ -36,9 +37,11 @@ void GameMenuFrame::render(){
     SDL_RenderPresent(app->getRenderer());
 }
 void GameMenuFrame::finish(){
+    app->getSettings()->lastName=textboxName->getText();
     delete textboxIp;
     delete textboxIpInfo;
     delete textboxName;
     delete textboxNameInfo;
     delete buttonPlay;
 }
+///////////////////////////////////

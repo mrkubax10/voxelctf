@@ -8,21 +8,21 @@
 #include "player.hpp"
 #include "../maths/aabb.hpp"
 Player::Player(FPSCamera* cam) {
+	Player::vel.x=0;
+	Player::vel.y=0;
+	Player::vel.z=0;
 	Player::cam=cam;
-	Player::cam->setPosition(glm::vec3(15*16+5,50,15*16+4));
-	Player::cam->setRotation(0,0);
+	Player::setPosition(glm::vec3(0,0,0));
 	Player::speed=0.02f;
 	Player::jumping=false;
 	Player::falling=true;
-	Player::vel.y=-0.05;
+	//Player::vel.y=-0.05;
 	Player::mass=0.4f;
 	Player::playerSize=glm::vec3(0.5,0.5,0.5);
-
 }
 void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool editor){
 
 	if(!editor){
-
 		// Normal game - enable physics
 		if(keyboard[settings->keys.jump] && !Player::jumping){
 			Player::vel.y=0.03;
@@ -60,7 +60,6 @@ void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool e
 			Player::vel.x=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).x;
 			Player::vel.z=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).z;
 		}
-
 	}else{
 		if(keyboard[settings->keys.up])
 			Player::vel=Player::speed*Player::cam->getFront();
@@ -75,8 +74,8 @@ void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool e
 			Player::vel.y=-Player::speed;
 		if(keyboard[settings->keys.jump])
 			Player::vel.y=Player::speed;
+		
 	}
-	
 	Player::setPosition(Player::getPosition()+Player::vel);
 	if(editor) Player::vel.y=0;
 	Player::vel.x=0;

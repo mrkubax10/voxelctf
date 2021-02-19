@@ -31,7 +31,4 @@ void EditorMenuFrame::render(){
     SDL_RenderPresent(app->getRenderer());
 }
 void  EditorMenuFrame::finish(){
-    delete menuInfo;
-    delete mapName;
-    delete edit;
 }

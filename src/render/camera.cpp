@@ -30,7 +30,7 @@ void Camera::setPosition(glm::vec3 pos){
 	direction.z=std::sin(glm::radians(yaw))*std::cos(glm::radians(pitch));
 	direction=glm::normalize(direction);
 	Camera::cameraFront=direction;
-	Camera::view=glm::lookAt(Camera::position,Camera::position+direction,glm::vec3(0,1,0));
+	Camera::view=glm::lookAt(Camera::position,Camera::position+cameraFront,glm::vec3(0,1,0));
 }
 void Camera::setRotation(float pitch,float yaw){
 	Camera::pitch=pitch;
@@ -42,7 +42,7 @@ void Camera::setRotation(float pitch,float yaw){
 	direction.z=std::sin(glm::radians(yaw))*std::cos(glm::radians(pitch));
 	direction=glm::normalize(direction);
 	Camera::cameraFront=direction;
-	Camera::view=glm::lookAt(Camera::position,Camera::position+direction,glm::vec3(0,1,0));
+	Camera::view=glm::lookAt(Camera::position,Camera::position+cameraFront,glm::vec3(0,1,0));
 }
 glm::vec3 Camera::getFront(){
 	return Camera::cameraFront;

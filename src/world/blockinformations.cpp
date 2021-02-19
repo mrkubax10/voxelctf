@@ -45,6 +45,7 @@ BlockInformations::BlockInformations() {
 	informations[BlockType::GLASS].invisible=false;
 	informations[BlockType::GLASS].model=&BlockInformations::cubeBlock;
 	informations[BlockType::GRASS]=BlockInformation::createDefault();
+	informations[BlockType::POLISHED_STONE]=BlockInformation::createDefault();
 }
 BlockInformation BlockInformations::_getBlockInformations(uint8_t type){
 	return BlockInformations::informations[type];

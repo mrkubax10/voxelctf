@@ -9,7 +9,7 @@
 #define SRC_GLOBAL_HPP_
 #include <iostream>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
+#include <enet/enet.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>

@@ -29,6 +29,7 @@ class EditorFrame : public Frame{
 	GUILabel* positionInfo;
     uint8_t blockType;
     Timer* updateTimer;
+    void createEmptyMap();
 public:
     void begin();
     void render();

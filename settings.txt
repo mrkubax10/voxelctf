@@ -1,0 +1,8 @@
+fov=70
+sensitivity=0.08
+keys_up=26
+keys_down=22
+keys_left=4
+keys_right=7
+keys_jump=44
+last_name=1234

@@ -17,6 +17,7 @@ class Settings {
 public:
 	KeySettings keys;
 	float sensitivity,fov;
+	std::string lastName;
 	Settings();
 	void save(std::string file);
 	void load(std::string file);

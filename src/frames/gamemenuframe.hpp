@@ -8,6 +8,7 @@ class GameMenuFrame : public Frame{
 	GUITextbox* textboxName;
 	GUILabel* textboxNameInfo;
 	GUIButton* buttonPlay;
+    std::vector<std::string> v1;
 public:
     void begin();
     void render();

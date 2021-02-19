@@ -26,12 +26,14 @@ void EditorFrame::begin(){
     app->getGUIManager()->add(crossair);
     app->getGUIManager()->add(positionInfo);
     app->getGUIManager()->add(blockInfo);
-    if(fileExists("res/maps/"+app->getEditorMapName()+".voxelctf")){
+    if(fileExists("res/maps/"+app->getEditorMapName()+".blockctf")){
 		world->loadMap(app->getEditorMapName(),app->getTextureAtlas());
 		world->generateMesh(app->getTextureAtlas());
 		std::cout<<"(Log) [Editor] Loaded map "<<app->getEditorMapName()<<std::endl;
 	}
-    
+    else{
+		
+	}
     EditorFrame::blockType=BlockType::STONE;
     SDL_CaptureMouse(SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -109,17 +111,14 @@ void EditorFrame::render(){
 				}
 		    }
 			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_1){
-				std::cout<<"2"<<std::endl;
 				delete editorTool;
 				editorTool=new EditorBuildTool;
 			}
 			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_2){
-				std::cout<<"3"<<std::endl;
 				delete editorTool;
 				editorTool=new EditorFillTool;
 			}
 			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_3){
-				std::cout<<"1"<<std::endl;
 				delete editorTool;
 				editorTool=new EditorEraseTool;
 			}
@@ -150,4 +149,12 @@ void EditorFrame::finish(){
     world->destroy();
 	delete ray;
 	delete cam;
+}
+void EditorFrame::createEmptyMap(){
+	for(int x=0; x<WORLD_SIZE*CHUNK_SIZE_WD; x++){
+		for(int z=0; z<WORLD_SIZE*CHUNK_SIZE_WD; z++){
+			EditorFrame::world->setBlock(x,0,z,BlockType::COBBLE);
+		}
+	}
+	EditorFrame::world->generateMesh(app->getTextureAtlas());
 }

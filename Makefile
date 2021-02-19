@@ -22,7 +22,7 @@ endef
 all: checkdirs build/BlockCTF
 
 build/BlockCTF: $(OBJ)
-	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lSDL2_net -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW
+	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW
 
 
 checkdirs: $(BUILD_DIR)

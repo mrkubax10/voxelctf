@@ -23,7 +23,7 @@ App::App(std::string title,int w,int h,Uint32 hints){
 	glewInit();
     App::frame=0;
     App::running=true;
-    App::settings=new Settings;
+    App::settings=new Settings();
     App::resManager=new ResourceManager(App::render);
     App::langManager=new LanguageManager("res/translations");
     App::guiManager=new GUIManager(App::render);

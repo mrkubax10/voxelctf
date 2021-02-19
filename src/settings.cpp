@@ -23,6 +23,7 @@ void Settings::save(std::string file){
 	fileHandle<<"keys_left="<<keys.left<<std::endl;
 	fileHandle<<"keys_right="<<keys.right<<std::endl;
 	fileHandle<<"keys_jump="<<keys.jump<<std::endl;
+	fileHandle<<"last_name="<<lastName<<std::endl;
 	fileHandle.close();
 }
 void Settings::load(std::string file){
@@ -46,6 +47,8 @@ void Settings::load(std::string file){
 			keys.right=(SDL_Scancode)value;
 		if(id=="keys_jump")
 			keys.jump=(SDL_Scancode)value;
+		if(id=="last_name")
+			Settings::lastName=value;
 	}
 }
 
