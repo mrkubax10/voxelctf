@@ -9,7 +9,7 @@ GUIBlockInfo::GUIBlockInfo(int x,int y,TTF_Font* font,SDL_Renderer* render){
 }
 std::string blockNames[]={
     "Stone","Cobblestone","Stone Bricks","Grass","Bricks","Sand","Iron","Gold","Crystal","Water","Lava","Dirt","Glass",
-    "Cardboard","Polished Stone"
+    "Cardboard","Polished Stone","Wood","Planks","Leaves"
 };
 void GUIBlockInfo::update(SDL_Event* ev){
     if(ev->type==SDL_MOUSEWHEEL){

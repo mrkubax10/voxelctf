@@ -40,9 +40,11 @@ void Camera::setRotation(float pitch,float yaw){
 	direction.x=std::cos(glm::radians(yaw))*std::cos(glm::radians(pitch));
 	direction.y=std::sin(glm::radians(pitch));
 	direction.z=std::sin(glm::radians(yaw))*std::cos(glm::radians(pitch));
+	
 	direction=glm::normalize(direction);
 	Camera::cameraFront=direction;
 	Camera::view=glm::lookAt(Camera::position,Camera::position+cameraFront,glm::vec3(0,1,0));
+	
 }
 glm::vec3 Camera::getFront(){
 	return Camera::cameraFront;

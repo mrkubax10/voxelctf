@@ -5,19 +5,13 @@
 #include "../utils.hpp"
 void GameFrame::begin(){
     GameFrame::cam=new FPSCamera();
-    GameFrame::world=new World();
-    GameFrame::player=new Player(GameFrame::cam);
     GameFrame::cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
-    GameFrame::activityTimer=SDL_AddTimer(1000,timer,(void*)SDL_USEREVENT);
-    GameFrame::moveTimer=SDL_AddTimer(50,timer,(void*)(SDL_USEREVENT+1));
-    GameFrame::playerModel=createBoxModel();
+    GameFrame::world=new World();
+    GameFrame::player=new Player(cam);
+    app->getServerConnection()->initGame(world,app->getTextureAtlas());
+    app->getGUIManager()->clear();
     SDL_CaptureMouse(SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-    app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
-    app->getGUIManager()->clear();
-    app->getGUIManager()->add(app->getChat());
-    app->getServerConnection()->initGame(world,app->getTextureAtlas());
-    app->getChat()->addEntry("Siema");
     
 }
 void GameFrame::render(){

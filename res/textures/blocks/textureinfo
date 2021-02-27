@@ -31,3 +31,11 @@ all=glass.png
 all=cardboard.png
 [15]
 all=polished_stone.png
+[16]
+side=wood.png
+top=wood_top.png
+bottom=wood_top.png
+[17]
+all=planks.png
+[18]
+all=leaves.png

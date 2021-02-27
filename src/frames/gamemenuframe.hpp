@@ -2,12 +2,14 @@
 #define SRC_FRAMES_GAMEMENUFRAME_HPP
 #include "../framework/frame.hpp"
 #include "../SDL2_gui/SDLGui.h"
+#include "../gameplay/gui_serverlist.hpp"
 class GameMenuFrame : public Frame{
     GUITextbox* textboxIp;
 	GUILabel* textboxIpInfo;
 	GUITextbox* textboxName;
 	GUILabel* textboxNameInfo;
 	GUIButton* buttonPlay;
+    GUIServerlist* serverlist;
     std::vector<std::string> v1;
 public:
     void begin();

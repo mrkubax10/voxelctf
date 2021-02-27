@@ -8,13 +8,14 @@ void GameMenuFrame::begin(){
 	textboxIpInfo=new GUILabel(10,10,app->getLanguageManager()->getFromCurrentLanguage("enter_ip"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
 	textboxName=new GUITextbox(10,90,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer(),app->getSettings()->lastName);
     textboxNameInfo=new GUILabel(10,63,app->getLanguageManager()->getFromCurrentLanguage("enter_name"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
-	buttonPlay=new GUIButton(5,400,100,25,app->getLanguageManager()->getFromCurrentLanguage("play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
-    
+	buttonPlay=new GUIButton(5,400,100,25,      app->getLanguageManager()->getFromCurrentLanguage("play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
+    serverlist=new GUIServerlist(app->getWindowW()-310,10,300,app->getWindowH()-20,app->getResourceManager()->getFont("default",15),app->getLanguageManager(),app->getRenderer());
     app->getGUIManager()->add(textboxIp);
 	app->getGUIManager()->add(textboxIpInfo);
 	app->getGUIManager()->add(textboxName);
 	app->getGUIManager()->add(textboxNameInfo);
 	app->getGUIManager()->add(buttonPlay);
+    app->getGUIManager()->add(serverlist);
 }
 void GameMenuFrame::render(){
     while(SDL_PollEvent(app->getEvent())){
@@ -27,6 +28,11 @@ void GameMenuFrame::render(){
                         app->setFrame(GAME_FRAME);
                     }
                 }
+            }
+        }
+        if(app->getEvent()->type==SDL_WINDOWEVENT){
+            if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
+                serverlist->setX(app->getWindowW()-310);
             }
         }
         app->getGUIManager()->update(app->getEvent());

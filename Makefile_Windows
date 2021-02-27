@@ -1,0 +1,36 @@
+
+CC        := x86_64-w64-mingw32-g++
+LD        := x86_64-w64-mingw32-g++
+
+MODULES   := world world/blockmetadata SDL2_gui render network maths managers gameplay editor time frames framework .
+SRC_DIR   := $(addprefix src/,$(MODULES))
+BUILD_DIR := $(addprefix build/,$(MODULES))
+
+SRC       := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.cpp))
+OBJ       := $(patsubst src/%.cpp,build/%.o,$(SRC))
+INCLUDES  := $(addprefix -I,$(SRC_DIR))
+
+vpath %.cpp $(SRC_DIR)
+
+define make-goal
+$1/%.o: %.cpp
+	$(CC) $(INCLUDES) -c $$< -o $$@ -I/home/kuba/Dokumenty/Windows/SDL2-2.0.14/x86_64-w64-mingw32/include -I/home/kuba/Dokumenty/Windows/SDL2_mixer-2.0.4/x86_64-w64-mingw32/include -I/home/kuba/Dokumenty/Windows/SDL2_ttf-2.0.15/x86_64-w64-mingw32/include -I/home/kuba/Dokumenty/Windows/SDL2_image-2.0.5/x86_64-w64-mingw32/header -I/home/kuba/Dokumenty/Windows/glm-0.9.9.8/glm -I/home/kuba/Dokumenty/Windows/glew-2.1.0-win32/glew-2.1.0/include
+endef
+
+.PHONY: all checkdirs clean
+
+all: checkdirs build/BlockCTF.exe
+
+build/BlockCTF.exe: $(OBJ)
+	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW
+
+
+checkdirs: $(BUILD_DIR)
+
+$(BUILD_DIR):
+	@mkdir -p $@
+
+clean:
+	@rm -rf $(BUILD_DIR)
+
+$(foreach bdir,$(BUILD_DIR),$(eval $(call make-goal,$(bdir))))

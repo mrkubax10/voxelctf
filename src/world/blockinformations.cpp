@@ -46,6 +46,13 @@ BlockInformations::BlockInformations() {
 	informations[BlockType::GLASS].model=&BlockInformations::cubeBlock;
 	informations[BlockType::GRASS]=BlockInformation::createDefault();
 	informations[BlockType::POLISHED_STONE]=BlockInformation::createDefault();
+	informations[BlockType::WOOD]=BlockInformation::createDefault();
+	informations[BlockType::PLANKS]=BlockInformation::createDefault();
+	informations[BlockType::LEAVES].collidable=true;
+	informations[BlockType::LEAVES].fluid=false;
+	informations[BlockType::LEAVES].invisible=false;
+	informations[BlockType::LEAVES].transparent=true;
+	informations[BlockType::LEAVES].model=&BlockInformations::cubeBlock;
 }
 BlockInformation BlockInformations::_getBlockInformations(uint8_t type){
 	return BlockInformations::informations[type];

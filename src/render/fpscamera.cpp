@@ -15,9 +15,8 @@ void FPSCamera::update(short mx,short my,Settings* settings){
 		FPSCamera::lastMousePos.x=mx;
 		FPSCamera::lastMousePos.y=my;
 		FPSCamera::firstMouse=false;
-		
 	}
-	glm::vec2 offset;
+	glm::vec2 offset=glm::vec2(0.0f,0.0f);
 	offset.x=mx-lastMousePos.x;
 	offset.y=lastMousePos.y-my;
 	offset*=settings->sensitivity;
@@ -32,4 +31,5 @@ void FPSCamera::update(short mx,short my,Settings* settings){
 		yaw=360;
 	lastMousePos.x=mx;
 	lastMousePos.y=my;
+	std::cout<<lastMousePos.x<<" "<<lastMousePos.y<<std::endl;
 }
