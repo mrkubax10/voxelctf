@@ -1,0 +1,2 @@
+server1234=server.pl
+inny_server=inny_server.pl

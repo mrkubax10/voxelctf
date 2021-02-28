@@ -8,6 +8,12 @@ void GUIComponent::setX(int x){
 void GUIComponent::setY(int y){
     GUIComponent::y=y;
 }
+void GUIComponent::setW(int w){
+    GUIComponent::w=w;
+}
+void GUIComponent::setH(int h){
+    GUIComponent::h=h;
+}
 int GUIComponent::getX(){
     return GUIComponent::x;
 }

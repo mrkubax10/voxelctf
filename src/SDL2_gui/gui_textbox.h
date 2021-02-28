@@ -14,6 +14,7 @@ public:
     void draw();
     void update(SDL_Event *ev);
     std::string getText();
+    void setText(std::string text);
 };
 
 

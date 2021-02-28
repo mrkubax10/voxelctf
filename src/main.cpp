@@ -23,7 +23,7 @@ int main(int argc,char *args[]){
 	EDITOR_MENU_FRAME=new EditorMenuFrame();
 	EDITOR_FRAME=new EditorFrame();
 	App app("VoxelCTF",1024,720,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
-	app.getSettings()->load("settings.txt");
+	//app.getSettings()->load("settings.txt");
 	app.setFrame(MENU_FRAME);
 	app.loop();
 	app.getSettings()->save("settings.txt");

@@ -14,6 +14,8 @@ public:
     void setTransition(GUIEffectTransition* transition);
     void setX(int x);
     void setY(int y);
+    void setW(int w);
+    void setH(int h);
 
     int getX();
     int getY();

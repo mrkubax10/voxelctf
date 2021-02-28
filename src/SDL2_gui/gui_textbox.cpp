@@ -59,3 +59,10 @@ void GUITextbox::update(SDL_Event *ev){
 std::string GUITextbox::getText(){
 	return buffer;
 }
+void GUITextbox::setText(std::string text){
+    SDL_Surface* surfText=TTF_RenderText_Blended(GUITextbox::font,text.c_str(),{255,255,255});
+    SDL_DestroyTexture(GUITextbox::textureBuffer);
+    GUITextbox::textureBuffer=SDL_CreateTextureFromSurface(GUITextbox::render,surfText);
+    SDL_FreeSurface(surfText);
+    GUITextbox::buffer=text;
+}

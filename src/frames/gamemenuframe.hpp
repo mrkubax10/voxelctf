@@ -10,6 +10,9 @@ class GameMenuFrame : public Frame{
 	GUILabel* textboxNameInfo;
 	GUIButton* buttonPlay;
     GUIServerlist* serverlist;
+    GUIButton* buttonAddServer;
+    GUITextbox* textboxServerName;
+    GUILabel* textboxServerNameInfo;
     std::vector<std::string> v1;
 public:
     void begin();
