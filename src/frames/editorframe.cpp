@@ -129,7 +129,7 @@ void EditorFrame::render(){
     glClearColor(0,0.5f,1,1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	if(!pause && EditorFrame::updateTimer->update())
-		player->update(keyboard,world,app->getSettings(),true);
+		player->update(keyboard,world,app->getSettings(),false);
 	if(!pause)
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
     app->getTextureAtlas()->use();

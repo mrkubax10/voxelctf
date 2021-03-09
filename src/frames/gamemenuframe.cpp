@@ -56,7 +56,7 @@ void GameMenuFrame::render(){
     SDL_RenderPresent(app->getRenderer());
 }
 void GameMenuFrame::finish(){
-    app->getSettings()->lastName=textboxName->getText();
+    //app->getSettings()->lastName=textboxName->getText();
     serverlist->saveListToFile();
     delete textboxIp;
     delete textboxIpInfo;

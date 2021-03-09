@@ -31,5 +31,4 @@ void FPSCamera::update(short mx,short my,Settings* settings){
 		yaw=360;
 	lastMousePos.x=mx;
 	lastMousePos.y=my;
-	std::cout<<lastMousePos.x<<" "<<lastMousePos.y<<std::endl;
 }

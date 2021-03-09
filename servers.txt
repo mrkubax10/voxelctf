@@ -1,2 +1,3 @@
 server1234=server.pl
 inny_server=inny_server.pl
+my server=127.0.0.1

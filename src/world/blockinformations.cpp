@@ -29,7 +29,10 @@ BlockInformations::BlockInformations() {
 	informations[BlockType::COBBLE]=BlockInformation::createDefault();
 	informations[BlockType::STONE_BRICKS]=BlockInformation::createDefault();
 	informations[BlockType::BRICKS]=BlockInformation::createDefault();
+	informations[BlockType::SAND]=BlockInformation::createDefault();
 	informations[BlockType::IRON]=BlockInformation::createDefault();
+	informations[BlockType::CRYSTAL]=BlockInformation::createDefault();
+
 	informations[BlockType::WATER].collidable=false;
 	informations[BlockType::WATER].transparent=true;
 	informations[BlockType::WATER].invisible=false;
