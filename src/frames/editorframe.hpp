@@ -13,6 +13,7 @@
 #include "../editor/editorbuildtool.hpp"
 #include "../editor/editorerasetool.hpp"
 #include "../time/timer.hpp"
+#include "../world/skybox.hpp"
 class EditorFrame : public Frame{
     Ray* ray;
     World* world;
@@ -29,6 +30,7 @@ class EditorFrame : public Frame{
 	GUILabel* positionInfo;
     uint8_t blockType;
     Timer* updateTimer;
+    Skybox* skybox;
     void createEmptyMap();
 public:
     void begin();

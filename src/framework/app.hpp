@@ -27,6 +27,7 @@ class App{
     Chat* chat;
     int windowW,windowH,mouseX,mouseY;
     std::string editorMapName;
+    
 public:
     App(std::string title,int w,int h,Uint32 hints);
     ~App();

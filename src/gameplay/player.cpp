@@ -8,11 +8,9 @@
 #include "player.hpp"
 #include "../maths/aabb.hpp"
 Player::Player(FPSCamera* cam) {
-	Player::vel.x=0;
-	Player::vel.y=0;
-	Player::vel.z=0;
 	Player::cam=cam;
-	Player::setPosition(glm::vec3(5,20,5));
+	Player::vel=glm::vec3(0,0,0);
+	Player::setPosition(glm::vec3(128,20,128));
 	Player::speed=0.02f;
 	Player::jumping=false;
 	Player::falling=true;
@@ -103,7 +101,6 @@ void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool e
 		if(Player::falling && Player::vel.y>-0.1f) Player::vel.y-=0.0002f;
 		if(!Player::falling) Player::vel.y=0;
 		if(Player::vel.y==0) Player::jumping=false;
-		std::cout<<vel.x<<" "<<vel.y<<" "<<vel.z<<std::endl;
 		Player::vel.x=0;
 		Player::vel.z=0;
 	}else{

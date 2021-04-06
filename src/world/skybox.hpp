@@ -6,9 +6,8 @@
 #include "../render/fpscamera.hpp"
 #include "../utils.hpp"
 class Skybox{
-    unsigned int textureid;
-    SDL_Surface** surfaces;
-    unsigned int vao,vbo;
+    unsigned int vao,vbo,colorBuffer;
+    std::vector<float> colorValues;
 public:
     Skybox();
     void draw(ShaderProgram program,Camera cam);

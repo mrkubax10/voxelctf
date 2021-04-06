@@ -27,6 +27,7 @@ int main(int argc,char *args[]){
 	app.setFrame(MENU_FRAME);
 	app.loop();
 	app.getSettings()->save("settings.txt");
+	SDL_DestroyWindow(app.getWindow());
 	SDL_Quit();
 	return 0;
 }

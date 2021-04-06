@@ -29,6 +29,7 @@ void FPSCamera::update(short mx,short my,Settings* settings){
 		yaw=0;
 	if(yaw<0)
 		yaw=360;
+	
 	lastMousePos.x=mx;
 	lastMousePos.y=my;
 }

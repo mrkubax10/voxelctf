@@ -6,14 +6,25 @@
 
 #include "../utils.hpp"
 void GameFrame::begin(){
-    GameFrame::cam=new FPSCamera();
-    GameFrame::cam->setProjection(glm::perspective(glm::radians(70.0f),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
     GameFrame::world=new World();
-    GameFrame::player=new Player(cam);
-    app->getServerConnection()->initGame(world,app->getTextureAtlas());
-    app->getGUIManager()->clear();
     SDL_CaptureMouse(SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
+	GameFrame::updateTimer=new Timer(2);
+	GameFrame::updateTimer->reset();
+	GameFrame::updateTimer=new Timer(10);
+	GameFrame::activityTimer->reset();
+	GameFrame::skybox=new Skybox();
+	app->getServerConnection()->initGame(world,app->getTextureAtlas());
+	GameFrame::cam=new FPSCamera();
+    GameFrame::cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
+	GameFrame::ray=new Ray(cam);
+	GameFrame::player=new Player(cam);
+	app->getGUIManager()->clear();
+	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getTexture("crossair"));
+	app->getGUIManager()->add(crossair);
+	app->getGUIManager()->add(app->getChat());
+	app->getChat()->addEntry("Test");
+	app->getChat()->addEntry("Test1");
 }
 void GameFrame::render(){
     const Uint8* keyboard=SDL_GetKeyboardState(0);
@@ -25,19 +36,27 @@ void GameFrame::render(){
 				glViewport(0,0,app->getEvent()->window.data1,app->getEvent()->window.data2);
 				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getEvent()->window.data1/(float)app->getEvent()->window.data2,0.1f,1000.0f));
 				app->getGL2DRenderer()->setTextureSize(app->getEvent()->window.data1,app->getEvent()->window.data2);
+				
 			}
 		}
 		app->getGUIManager()->update(app->getEvent());
     }
     glClearColor(0,0.5f,1,1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    player->update(keyboard,world,app->getSettings(),false);
-	cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
+	if(!pause && GameFrame::updateTimer->update())
+		player->update(keyboard,world,app->getSettings(),false);
+	if(!pause)
+		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
+	
+	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
+	app->getServerConnection()->update();
+	app->getChat()->updateEntries();
 	app->getGL2DRenderer()->start();
 	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);
 	SDL_RenderFillRect(app->getRenderer(),0);
+	crossair->center(app->getWindowW(),app->getWindowH());
 	app->getGUIManager()->draw();
 	app->getGL2DRenderer()->finish(app->getResourceManager()->getShaderProgram("2dtextured"));
 	SDL_GL_SwapWindow(app->getWindow());
@@ -45,4 +64,5 @@ void GameFrame::render(){
 void GameFrame::finish(){
     world->destroy();
 	delete cam;
+	app->getServerConnection()->disconnect();
 }

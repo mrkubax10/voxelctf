@@ -9,6 +9,7 @@
 class Chat : public GUIComponent{
     std::vector<std::string> chatEntries;
     std::vector<SDL_Texture*> chatEntryTextures;
+    std::vector<long> chatEntryTime;
     SDL_Renderer* render;
     int posy;
     int w2,h2;
@@ -18,5 +19,6 @@ public:
     void addEntry(std::string str);
     void draw();
     void update(SDL_Event* ev);
+    void updateEntries();
 };
 #endif

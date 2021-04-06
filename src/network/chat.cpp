@@ -18,8 +18,21 @@ void Chat::draw(){
 }
 void Chat::addEntry(std::string str){
     Chat::chatEntries.push_back(str);
-    Chat::chatEntryTextures.push_back(SDL_CreateTextureFromSurface(render,TTF_RenderText_Blended(font,str.c_str(),{0,0,0})));
+    SDL_Surface* surf=TTF_RenderText_Blended(font,str.c_str(),{0,0,0});
+    Chat::chatEntryTextures.push_back(SDL_CreateTextureFromSurface(render,surf));
+    SDL_FreeSurface(surf);
+    Chat::chatEntryTime.push_back(SDL_GetTicks());
 }
 void Chat::update(SDL_Event* ev){
     
+}
+void Chat::updateEntries(){
+    for(int i=0; i<Chat::chatEntries.size(); i++){
+        if(Chat::chatEntryTime[i]+10000<=SDL_GetTicks()){
+            Chat::chatEntries.erase(Chat::chatEntries.begin()+i);
+            SDL_DestroyTexture(Chat::chatEntryTextures[i]);
+            Chat::chatEntryTextures.erase(Chat::chatEntryTextures.begin()+i);
+            Chat::chatEntryTime.erase(Chat::chatEntryTime.begin()+i);
+        }
+    }
 }

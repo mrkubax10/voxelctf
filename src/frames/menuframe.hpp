@@ -11,6 +11,7 @@ class MenuFrame : public Frame{
 	GUIButton* buttonSettings;
 	GUIButton* buttonAuthors;
 	GUIButton* buttonExit;
+	GUILabel* labelVersion;
 public:
     void begin();
     void render();
