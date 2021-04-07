@@ -30,8 +30,8 @@ App::App(std::string title,int w,int h,Uint32 hints){
     App::textureAtlas=new TextureAtlas(App::render);
     App::textureAtlas->generateTextureAtlas(resManager);
     App::gl2dRenderer=new GL2DRenderer(App::window,App::render);
-    App::chat=new Chat(0,0,render,resManager->getFont("default",15));
-    App::serverConnection=new ServerConnection(chat);
+    App::chat=new Chat(0,0,render,resManager->getFont("default",15),this);
+    App::serverConnection=new ServerConnection(chat,this);
 }
 SDL_Window* App::getWindow(){
     return window;
@@ -118,5 +118,11 @@ void App::loop(){
             App::frame->render();
     }
     App::frame->finish();
+}
+void App::setUsername(std::string username){
+    App::username=username;
+}
+std::string App::getUsername(){
+    return App::username;
 }
 App::~App(){}

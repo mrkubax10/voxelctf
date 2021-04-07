@@ -50,15 +50,17 @@ void ServerConnection::initGame(World* world,TextureAtlas* atlas){
                     ((uint8_t*)&z)[1]=event.packet->data[dataOffset+name.length()+10];
                     ((uint8_t*)&z)[2]=event.packet->data[dataOffset+name.length()+11];
                     ((uint8_t*)&z)[3]=event.packet->data[dataOffset+name.length()+12];
-                    ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(x,y,z),event.packet->data[dataOffset+name.length()+12+1]));
+                    ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(x,y,z),event.packet->data[dataOffset+name.length()+12+1],0));
                     dataOffset+=2+name.length()+12;
                 }
             }
             enet_packet_destroy(event.packet);
         }
     }
+    else{
+        std::cout<<"(Warn) [ServerConnection] Failed to recieve player data from server"<<std::endl;
+    }
     if(enet_host_service(host,&event,10000)>0){
-        
         if(event.type==ENET_EVENT_TYPE_RECEIVE){
             if(event.packet->data[0]==ServerInitializationCommand::MAP_DATA){
                 std::vector<unsigned char> mapData;
@@ -68,6 +70,9 @@ void ServerConnection::initGame(World* world,TextureAtlas* atlas){
             }
             enet_packet_destroy(event.packet);
         }
+    }
+    else{
+        std::cout<<"(Warn) [ServerConnection] Failed to receive map data from server"<<std::endl;
     }
 }
 void ServerConnection::send(char* data,int len){
@@ -100,10 +105,32 @@ void ServerConnection::update(){
             else if(event.packet->data[0]==ServerNetworkCommand::EXIT){
                 std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
                 ServerConnection::chat->addEntry(exitInfo);
+                for(int i=event.packet->data[1]+1; i<ServerConnection::connectedPlayers.size(); i++){
+                    ServerConnection::connectedPlayers[i].id--;
+                }
                 ServerConnection::connectedPlayers.erase(ServerConnection::connectedPlayers.begin()+event.packet->data[1]);
+            
             }
             else if(event.packet->data[0]==ServerNetworkCommand::ACTIVITY){
                 ServerConnection::lastActivityResponse=time(0);
+            }
+            else if(event.packet->data[0]==ServerNetworkCommand::CHAT_MESSAGE){
+                short messageLength;
+                std::string message;
+                ((uint8_t*)&messageLength)[0]=event.packet->data[2];
+                ((uint8_t*)&messageLength)[1]=event.packet->data[3];
+                for(int i=0; i<messageLength; i++){
+                    message+=event.packet->data[4+i];
+                }
+                ServerConnection::chat->addEntry(message);
+            }
+            else if(event.packet->data[0]==ServerNetworkCommand::NEW_PLAYER){
+                std::string name;
+                for(int i=0; i<event.packet->data[3]; i++){
+                    name+=event.packet->data[4+i];
+                }
+                ServerConnection::chat->addEntry("<message><element color=\"255;255;0\">[SERVER] Player "+name+" joined the game</element></message>");
+                ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1]));
             }
         }
     }
@@ -112,6 +139,36 @@ void ServerConnection::updateActivity(){
     char* sendData=(char*)malloc(1);
     sendData[0]=ServerNetworkCommand::ACTIVITY;
     ServerConnection::send(sendData,1);
+}
+void ServerConnection::sendChatMessage(std::string message){
+    char* sendData=(char*)malloc(3+message.length());
+    sendData[0]=ServerNetworkCommand::CHAT_MESSAGE;
+    short messageLength=message.length();
+    sendData[1]=((uint8_t*)&messageLength)[0];
+    sendData[2]=((uint8_t*)&messageLength)[1];
+    for(int i=0; i<message.length(); i++){
+        sendData[3+i]=message[i];
+    }
+    ServerConnection::send(sendData,3+message.length());
+    free(sendData);
+}
+void ServerConnection::sendPosition(glm::vec3 position){
+    char* sendData=(char*)malloc(1+12);
+    sendData[0]=ServerNetworkCommand::MOVE;
+    sendData[1]=((uint8_t*)&position.x)[0];
+    sendData[2]=((uint8_t*)&position.x)[1];
+    sendData[3]=((uint8_t*)&position.x)[2];
+    sendData[4]=((uint8_t*)&position.x)[3];
+    sendData[5]=((uint8_t*)&position.y)[0];
+    sendData[6]=((uint8_t*)&position.y)[1];
+    sendData[7]=((uint8_t*)&position.y)[2];
+    sendData[8]=((uint8_t*)&position.y)[3];
+    sendData[9]=((uint8_t*)&position.z)[0];
+    sendData[10]=((uint8_t*)&position.z)[1];
+    sendData[11]=((uint8_t*)&position.z)[2];
+    sendData[12]=((uint8_t*)&position.z)[3];
+    ServerConnection::send(sendData,1+12);
+    free(sendData);
 }
 void ServerConnection::disconnect(){
     if(!ServerConnection::connected)

@@ -23,6 +23,7 @@ class GameFrame : public Frame{
     GUIImage* crossair;
     Timer* updateTimer;
     Timer* activityTimer;
+    Timer* positionTimer;
     Skybox* skybox;
 public:
     void begin();

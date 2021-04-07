@@ -27,7 +27,7 @@ class App{
     Chat* chat;
     int windowW,windowH,mouseX,mouseY;
     std::string editorMapName;
-    
+    std::string username;
 public:
     App(std::string title,int w,int h,Uint32 hints);
     ~App();
@@ -55,6 +55,8 @@ public:
     void setRunning(bool running);
     void setEditorMapName(std::string editorMapName);
     void setTitle(std::string title);
+    void setUsername(std::string username);
+    std::string getUsername();
     
 };
 #endif

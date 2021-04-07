@@ -29,6 +29,8 @@ public:
     void update();
     void updateActivity();
     void send(char* data,int len);
+    void sendChatMessage(std::string message);
+    void sendPosition(glm::vec3 position);
     void disconnect();
 };
 #endif

@@ -7,6 +7,7 @@ public:
     std::string name;
     glm::vec3 position;
     int id;
-    ConnectedPlayer(std::string name,glm::vec3 position,int id);
+    uint8_t team;
+    ConnectedPlayer(std::string name,glm::vec3 position,int id,uint8_t team);
 };
 #endif
