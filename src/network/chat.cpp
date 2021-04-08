@@ -38,12 +38,9 @@ void Chat::draw(){
 }
 void Chat::addEntry(std::string str){
     Chat::chatEntries.push_back({str,SDL_GetTicks()});
-    if(Chat::font==0)
-        return;
     SDL_Surface* surf=TTF_RenderText_Blended(Chat::font,str.c_str(),{0,0,0});
     Chat::chatEntries.back().textures.push_back(SDL_CreateTextureFromSurface(Chat::render,surf));
     SDL_FreeSurface(surf);
-    
 }
 void Chat::update(SDL_Event* ev){
     if(ev->type==SDL_TEXTINPUT && Chat::enteringMessage && !Chat::textfieldOpened){
@@ -64,9 +61,9 @@ void Chat::update(SDL_Event* ev){
     if(ev->type==SDL_KEYDOWN && Chat::enteringMessage){
         if(ev->key.keysym.scancode==SDL_SCANCODE_RETURN){
             if(Chat::messageBuffer.length()>0){
-                std::string message=app->getUsername()+": "+Chat::messageBuffer;
-                Chat::addEntry(message);
-                Chat::app->getServerConnection()->sendChatMessage(message);
+                
+                Chat::addEntry(app->getUsername()+": "+Chat::messageBuffer);
+                Chat::app->getServerConnection()->sendChatMessage(Chat::messageBuffer);
                 Chat::enteringMessage=false;
                 Chat::messageBuffer="";
             }

@@ -8,13 +8,13 @@ BUILD_DIR := $(addprefix build/,$(MODULES))
 
 SRC       := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.cpp))
 OBJ       := $(patsubst src/%.cpp,build/%.o,$(SRC))
-INCLUDES  := $(addprefix -I,$(SRC_DIR))
+INCLUDES  := $(addprefix -I,$(SRC_DIR)) -I../rapidjson1
 
 vpath %.cpp $(SRC_DIR)
 
 define make-goal
 $1/%.o: %.cpp
-	$(CC) $(INCLUDES) -c $$< -o $$@
+	$(CC) $(INCLUDES) -c $$< -o $$@ -I../rapidjson
 endef
 
 .PHONY: all checkdirs clean
@@ -22,7 +22,7 @@ endef
 all: checkdirs build/BlockCTF
 
 build/BlockCTF: $(OBJ)
-	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW
+	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW -ljsoncpp
 
 
 checkdirs: $(BUILD_DIR)

@@ -7,7 +7,7 @@
 #include "../utils.hpp"
 #include "../SDL2_gui/SDLGui.h"
 struct ChatElement{
-    std::string text;
+    std::string str;
     long sendTime;
     std::vector<SDL_Texture*> textures;
 };

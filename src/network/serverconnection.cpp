@@ -116,12 +116,13 @@ void ServerConnection::update(){
             }
             else if(event.packet->data[0]==ServerNetworkCommand::CHAT_MESSAGE){
                 short messageLength;
-                std::string message;
+                std::string message=ServerConnection::connectedPlayers[event.packet->data[1]-1].name+": ";
                 ((uint8_t*)&messageLength)[0]=event.packet->data[2];
                 ((uint8_t*)&messageLength)[1]=event.packet->data[3];
                 for(int i=0; i<messageLength; i++){
                     message+=event.packet->data[4+i];
                 }
+                std::cout<<std::endl;
                 ServerConnection::chat->addEntry(message);
             }
             else if(event.packet->data[0]==ServerNetworkCommand::NEW_PLAYER){
@@ -129,16 +130,17 @@ void ServerConnection::update(){
                 for(int i=0; i<event.packet->data[3]; i++){
                     name+=event.packet->data[4+i];
                 }
-                ServerConnection::chat->addEntry("<message><element color=\"255;255;0\">[SERVER] Player "+name+" joined the game</element></message>");
+                ServerConnection::chat->addEntry("[SERVER] Player "+name+" joined the game");
                 ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1]));
             }
         }
     }
 }
 void ServerConnection::updateActivity(){
-    char* sendData=(char*)malloc(1);
+    char* sendData=new char;
     sendData[0]=ServerNetworkCommand::ACTIVITY;
     ServerConnection::send(sendData,1);
+    delete sendData;
 }
 void ServerConnection::sendChatMessage(std::string message){
     char* sendData=(char*)malloc(3+message.length());

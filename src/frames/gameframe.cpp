@@ -38,9 +38,9 @@ void GameFrame::render(){
             app->setRunning(false);
 		if(app->getEvent()->type==SDL_WINDOWEVENT){
 			if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
-				glViewport(0,0,app->getEvent()->window.data1,app->getEvent()->window.data2);
-				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getEvent()->window.data1/(float)app->getEvent()->window.data2,0.1f,1000.0f));
-				app->getGL2DRenderer()->setTextureSize(app->getEvent()->window.data1,app->getEvent()->window.data2);
+				glViewport(0,0,app->getWindowW(),app->getWindowH());
+				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
+				app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
 			}
 		}
 		app->getGUIManager()->update(app->getEvent());
@@ -51,8 +51,8 @@ void GameFrame::render(){
 		player->update(keyboard,world,app->getSettings(),false);
 	if(!pause && !app->getChat()->isEnteringMessage())
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
-	if(positionTimer->update())
-		app->getServerConnection()->sendPosition(player->getPosition());
+	// if(positionTimer->update())
+	// 	app->getServerConnection()->sendPosition(player->getPosition());
 	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
