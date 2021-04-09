@@ -69,6 +69,11 @@ void ShaderProgram::use(){
 void ShaderProgram::setVec4(std::string name,glm::vec4 v){
 	glUniform4fv(glGetUniformLocation(ShaderProgram::program,name.c_str()),4,&v[0]);
 }
+void ShaderProgram::destroy(){
+	glDeleteShader(ShaderProgram::vertex);
+	glDeleteShader(ShaderProgram::fragment);
+	glDeleteProgram(ShaderProgram::program);
+}
 void ShaderProgram::setVec3(std::string name,glm::vec3 v){
 	glUniform3fv(glGetUniformLocation(ShaderProgram::program,name.c_str()),3,&v[0]);
 }

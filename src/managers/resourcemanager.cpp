@@ -60,3 +60,15 @@ Mix_Music* ResourceManager::getMusic(std::string name){
 	std::cout<<"(Log) [ResourceManager] Loaded music "<<name<<std::endl;
 	return ResourceManager::music[name];
 }
+void ResourceManager::destroy(){
+	std::cout<<"(Log) [ResourceManager] Destroying data"<<std::endl;
+	for(std::map<std::string,ShaderProgram>::iterator i=ResourceManager::shaderprograms.begin(); i!=ResourceManager::shaderprograms.end(); i++){
+		i->second.destroy();
+	}
+	for(std::map<std::string,SDL_Texture*>::iterator i=ResourceManager::textures.begin(); i!=ResourceManager::textures.end(); i++){
+		SDL_DestroyTexture(i->second);
+	}
+	for(std::map<std::string,Mix_Music*>::iterator i=ResourceManager::music.begin(); i!=ResourceManager::music.end(); i++){
+		Mix_FreeMusic(i->second);
+	}
+}

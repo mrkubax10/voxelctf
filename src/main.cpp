@@ -27,7 +27,13 @@ int main(int argc,char *args[]){
 	app.setFrame(MENU_FRAME);
 	app.loop();
 	app.getSettings()->save("settings.txt");
+	app.getResourceManager()->destroy();
 	SDL_DestroyWindow(app.getWindow());
+	SDL_DestroyRenderer(app.getRenderer());
+	SDL_GL_DeleteContext(app.getGLContext());
+	TTF_Quit();
+	Mix_Quit();
 	SDL_Quit();
+	std::cout<<"(Log) [Main] Exiting"<<std::endl;
 	return 0;
 }

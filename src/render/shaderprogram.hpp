@@ -20,6 +20,7 @@ public:
 	void setVec3(std::string name,glm::vec3 v);
 	void setVec4(std::string name,glm::vec4 v);
 	void use();
+	void destroy();
 };
 
 #endif /* SRC_RENDER_SHADERPROGRAM_HPP_ */

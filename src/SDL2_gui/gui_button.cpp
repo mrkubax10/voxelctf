@@ -11,6 +11,7 @@ GUIButton::GUIButton(int x,int y,int w,int h,std::string caption,TTF_Font *font,
     GUIButton::render=render;
     GUIButton::textureCaption=SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,caption.c_str(),{255,255,255}));
     GUIButton::callback=0;
+    GUIButton::visible=true;
 }
 void GUIButton::draw(){
     guiRect.x=GUIButton::x-2;

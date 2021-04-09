@@ -3,7 +3,7 @@
 #include "frameconstants.hpp"
 void MenuFrame::begin(){
     MenuFrame::app->setTitle("VoxelCTF");
-    Mix_PlayMusic(MenuFrame::app->getResourceManager()->getMusic("menu"),-1);
+    //Mix_PlayMusic(MenuFrame::app->getResourceManager()->getMusic("menu"),-1);
     MenuFrame::app->getGUIManager()->clear();
     labelLogo=new GUILabel(10,5,"VoxelCTF",app->getResourceManager()->getFont("default",80),{0,0,255},app->getRenderer());
 	buttonPlay=new GUIButton(15,100,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_play"),app->getResourceManager()->getFont("default",20),app->getRenderer());

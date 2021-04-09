@@ -22,6 +22,7 @@ public:
 	SDL_Texture* getTexture(std::string name);
 	ShaderProgram getShaderProgram(std::string name);
 	Mix_Music* getMusic(std::string name);
+	void destroy();
 };
 
 #endif /* SRC_MANAGERS_RESOURCEMANAGER_HPP_ */

@@ -14,6 +14,7 @@
 #include "../editor/editorerasetool.hpp"
 #include "../time/timer.hpp"
 #include "../world/skybox.hpp"
+#include "../SDL2_gui/SDLGui.h"
 class GameFrame : public Frame{
     Ray* ray;
     World* world;
@@ -25,6 +26,8 @@ class GameFrame : public Frame{
     Timer* activityTimer;
     Timer* positionTimer;
     Skybox* skybox;
+    GUIButton* buttonExit;
+    GUIButton* buttonReturn;
 public:
     void begin();
     void render();

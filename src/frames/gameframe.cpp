@@ -21,12 +21,19 @@ void GameFrame::begin(){
     GameFrame::cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
 	GameFrame::ray=new Ray(cam);
 	GameFrame::player=new Player(cam);
+	GameFrame::pause=false;
 	app->getGUIManager()->clear();
 	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getTexture("crossair"));
+	buttonReturn=new GUIButton(0,10,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_return"),app->getResourceManager()->getFont("default",15),app->getRenderer());
+	buttonExit=new GUIButton(0,40,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_exit"),app->getResourceManager()->getFont("default",15),app->getRenderer());
+	buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
+	buttonExit->center(app->getWindowW(),app->getWindowH(),false,true);
+	app->getGUIManager()->add(buttonReturn);
+	app->getGUIManager()->add(buttonExit);
+	buttonReturn->setVisible(false);
+	buttonExit->setVisible(false);
 	app->getGUIManager()->add(crossair);
 	app->getGUIManager()->add(app->getChat());
-	app->getChat()->addEntry("Test");
-	app->getChat()->addEntry("Test1");
 	app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
 	glViewport(0,0,app->getWindowW(),app->getWindowH());
 	cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
@@ -41,6 +48,44 @@ void GameFrame::render(){
 				glViewport(0,0,app->getWindowW(),app->getWindowH());
 				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
 				app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
+				buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
+				buttonExit->center(app->getWindowW(),app->getWindowH(),false,true);
+			}
+		}
+		if(app->getEvent()->type==SDL_KEYDOWN){
+			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_ESCAPE){
+				if(!app->getChat()->isEnteringMessage()){
+					GameFrame::pause=!GameFrame::pause;
+					if(pause){
+						buttonReturn->setVisible(true);
+						buttonExit->setVisible(true);
+						SDL_SetRelativeMouseMode(SDL_FALSE);
+						SDL_CaptureMouse(SDL_FALSE);
+					}
+					else{
+						buttonExit->setVisible(false);
+						buttonReturn->setVisible(false);
+						SDL_SetRelativeMouseMode(SDL_TRUE);
+						SDL_CaptureMouse(SDL_TRUE);
+					}
+				}
+				
+			}
+		}
+		if(app->getEvent()->type==SDL_MOUSEBUTTONDOWN){
+			if(app->getEvent()->button.button==SDL_BUTTON_LEFT){
+				if(GameFrame::pause){
+					if(buttonReturn->isMouseOn(app->getEvent()->motion.x,app->getEvent()->motion.y)){
+						GameFrame::pause=false;
+						buttonExit->setVisible(false);
+						buttonReturn->setVisible(false);
+						SDL_SetRelativeMouseMode(SDL_TRUE);
+						SDL_CaptureMouse(SDL_TRUE);
+					}
+					if(buttonExit->isMouseOn(app->getEvent()->motion.x,app->getEvent()->motion.y)){
+						app->setFrame(GAME_MENU_FRAME);
+					}
+				}
 			}
 		}
 		app->getGUIManager()->update(app->getEvent());
@@ -67,6 +112,6 @@ void GameFrame::render(){
 	SDL_GL_SwapWindow(app->getWindow());
 }
 void GameFrame::finish(){
-    world->destroy();
+    //world->destroy();
 	app->getServerConnection()->disconnect();
 }

@@ -46,6 +46,7 @@ public:
     GL2DRenderer* getGL2DRenderer();
     Chat* getChat();
     std::string getEditorMapName();
+    SDL_GLContext getGLContext();
     std::string getTitle();
     int getWindowW();
     int getWindowH();

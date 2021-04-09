@@ -18,3 +18,5 @@ editor_return=Return
 editor_saveandexit=Save and exit
 in_exit1=[SERVER] Player
 in_exit2=left the game
+in_exit=Disconnect
+in_return=Return

@@ -119,6 +119,9 @@ void App::loop(){
     }
     App::frame->finish();
 }
+SDL_GLContext App::getGLContext(){
+    return App::contextGL;
+}
 void App::setUsername(std::string username){
     App::username=username;
 }

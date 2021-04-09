@@ -7,7 +7,8 @@ void GUIManager::add(GUIComponent *component){
 }
 void GUIManager::draw(){
     for(int i=0; i<GUIManager::components.size(); i++){
-        GUIManager::components[i]->draw();
+        if(GUIManager::components[i]->isVisible())
+            GUIManager::components[i]->draw();
     }
 }
 void GUIManager::update(SDL_Event *event){
