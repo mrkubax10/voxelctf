@@ -39,7 +39,7 @@ Model::Model(std::vector<float> verts,std::vector<float> uvs,std::vector<int> in
 	Model::generateTransform();
 }
 void Model::generateTransform(){
-	Model::transformation=glm::mat4();
+	Model::transformation=glm::mat4(1);
 	Model::transformation=glm::translate(Model::transformation,Model::position);
 	Model::transformation=glm::scale(Model::transformation,Model::scale);
 }

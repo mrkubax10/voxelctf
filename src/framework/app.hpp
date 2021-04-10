@@ -58,6 +58,6 @@ public:
     void setTitle(std::string title);
     void setUsername(std::string username);
     std::string getUsername();
-    
+    void destroy();
 };
 #endif

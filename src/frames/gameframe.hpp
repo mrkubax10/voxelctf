@@ -28,6 +28,7 @@ class GameFrame : public Frame{
     Skybox* skybox;
     GUIButton* buttonExit;
     GUIButton* buttonReturn;
+    Model* playerModel;
 public:
     void begin();
     void render();

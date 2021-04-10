@@ -13,10 +13,12 @@ GUIServerlist::GUIServerlist(int x,int y,int w,int h,TTF_Font* font,LanguageMana
     GUIServerlist::titleServerIP=SDL_CreateTextureFromSurface(render,TTF_RenderText_Blended(font,langManager->getFromCurrentLanguage("gamemenu_serverlistip").c_str(),{255,255,255}));
     GUIServerlist::textboxIP=textboxIP;
     GUIServerlist::loadListFromFile();
+    GUIServerlist::visible=true;
     for(int i=0; i<GUIServerlist::entries.size(); i++){
         GUIServerlist::entries[i].textureName=SDL_CreateTextureFromSurface(GUIServerlist::render,TTF_RenderText_Blended(font,GUIServerlist::entries[i].name.c_str(),{255,255,255}));
         GUIServerlist::entries[i].textureIP=SDL_CreateTextureFromSurface(GUIServerlist::render,TTF_RenderText_Blended(font,GUIServerlist::entries[i].ip.c_str(),{255,255,255}));
     }
+    
 }
 void GUIServerlist::loadListFromFile(){
     std::fstream file;

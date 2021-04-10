@@ -69,3 +69,10 @@ void GL2DRenderer::setTextureSize(int x,int y){
 	SDL_DestroyTexture(GL2DRenderer::texture);
 	GL2DRenderer::texture=SDL_CreateTexture(GL2DRenderer::render,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,x,y);
 }
+void GL2DRenderer::destroy(){
+	SDL_DestroyTexture(GL2DRenderer::texture);
+	glDeleteBuffers(1,&vbo);
+	glDeleteBuffers(1,&tbo);
+	glDeleteBuffers(1,&ebo);
+	glDeleteVertexArrays(1,&vao);	
+}

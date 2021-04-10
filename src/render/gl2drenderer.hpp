@@ -22,6 +22,7 @@ public:
 	void start();
 	void finish(ShaderProgram program);
 	void setTextureSize(int w,int h);
+	void destroy();
 };
 
 #endif /* SRC_RENDER_GL2DRENDERER_HPP_ */

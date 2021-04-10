@@ -128,4 +128,11 @@ void App::setUsername(std::string username){
 std::string App::getUsername(){
     return App::username;
 }
+void App::destroy(){
+    App::resManager->destroy();
+    App::gl2dRenderer->destroy();
+    SDL_DestroyWindow(App::window);
+    SDL_DestroyRenderer(App::render);
+    SDL_GL_DeleteContext(App::contextGL);
+}
 App::~App(){}

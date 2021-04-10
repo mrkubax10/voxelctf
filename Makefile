@@ -14,7 +14,7 @@ vpath %.cpp $(SRC_DIR)
 
 define make-goal
 $1/%.o: %.cpp
-	$(CC) $(INCLUDES) -c $$< -o $$@ -I../rapidjson
+	$(CC) $(INCLUDES) -c $$< -o $$@
 endef
 
 .PHONY: all checkdirs clean
@@ -22,7 +22,7 @@ endef
 all: checkdirs build/BlockCTF
 
 build/BlockCTF: $(OBJ)
-	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW -ljsoncpp
+	$(LD) $^ -o $@ -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lenet -lSDL2_gfx -lSDL2_mixer -lGL -lGLEW
 
 
 checkdirs: $(BUILD_DIR)

@@ -10,9 +10,11 @@ GUITextbox::GUITextbox(int x,int y,int w,int h,TTF_Font *font,SDL_Renderer *rend
     GUITextbox::font=font;
     GUITextbox::selected=false;
     GUITextbox::active=false;
+    GUITextbox::visible=true;
     GUITextbox::r=r;
     GUITextbox::g=g;
     GUITextbox::b=b;
+    
 }
 void GUITextbox::draw(){
     guiRect.x=GUITextbox::x-2;

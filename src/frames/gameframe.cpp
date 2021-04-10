@@ -13,7 +13,7 @@ void GameFrame::begin(){
 	GameFrame::updateTimer->reset();
 	GameFrame::activityTimer=new Timer(10);
 	GameFrame::activityTimer->reset();
-	GameFrame::positionTimer=new Timer(1);
+	GameFrame::positionTimer=new Timer(30);
 	GameFrame::positionTimer->reset();
 	GameFrame::skybox=new Skybox();
 	app->getServerConnection()->initGame(world,app->getTextureAtlas());
@@ -21,6 +21,7 @@ void GameFrame::begin(){
     GameFrame::cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
 	GameFrame::ray=new Ray(cam);
 	GameFrame::player=new Player(cam);
+	GameFrame::playerModel=createBoxModel();
 	GameFrame::pause=false;
 	app->getGUIManager()->clear();
 	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getTexture("crossair"));
@@ -96,13 +97,19 @@ void GameFrame::render(){
 		player->update(keyboard,world,app->getSettings(),false);
 	if(!pause && !app->getChat()->isEnteringMessage())
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
-	// if(positionTimer->update())
-	// 	app->getServerConnection()->sendPosition(player->getPosition());
+	if(positionTimer->update())
+		app->getServerConnection()->sendPosition(player->getPosition());
 	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
 	app->getServerConnection()->update();
 	app->getChat()->updateEntries();
+	for(int i=0; i<app->getServerConnection()->getPlayerList().size(); i++){
+		playerModel->setScale(glm::vec3(1,1.70,1));
+		playerModel->translate(app->getServerConnection()->getPlayerList().at(i).position);
+		playerModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
+		
+	}
 	app->getGL2DRenderer()->start();
 	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);
 	SDL_RenderFillRect(app->getRenderer(),0);
@@ -112,6 +119,8 @@ void GameFrame::render(){
 	SDL_GL_SwapWindow(app->getWindow());
 }
 void GameFrame::finish(){
-    //world->destroy();
+    world->destroy();
+	skybox->destroy();
 	app->getServerConnection()->disconnect();
+	SDL_GL_SwapWindow(app->getWindow());
 }

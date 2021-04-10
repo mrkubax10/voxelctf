@@ -32,5 +32,6 @@ public:
     void sendChatMessage(std::string message);
     void sendPosition(glm::vec3 position);
     void disconnect();
+    std::vector<ConnectedPlayer> getPlayerList();
 };
 #endif

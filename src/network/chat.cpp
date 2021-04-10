@@ -15,6 +15,7 @@ Chat::Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app){
     SDL_FreeSurface(surf);
     Chat::textfieldOpened=false;
     Chat::messageBuffer="";
+    Chat::visible=true;
 }
 void Chat::draw(){
     Chat::posy=y;
@@ -30,7 +31,7 @@ void Chat::draw(){
         guiRect.y=400;
         guiRect.w=200;
         guiRect.h=50;
-        SDL_SetRenderDrawColor(Chat::render,100,100,100,200);
+        SDL_SetRenderDrawColor(Chat::render,100,100,100,255);
         SDL_RenderFillRect(Chat::render,&guiRect);
         SDL_QueryTexture(Chat::messageTexture,0,0,&guiRect.w,&guiRect.h);
         SDL_RenderCopy(Chat::render,Chat::messageTexture,0,&guiRect);

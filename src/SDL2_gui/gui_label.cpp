@@ -17,10 +17,12 @@ GUILabel::GUILabel(int x,int y,std::string text,TTF_Font* font,SDL_Color color,S
 	GUILabel::clicked=false;
 	GUILabel::color=color;
 	SDL_Surface* textSurface=TTF_RenderUTF8_Blended(font,text.c_str(),color);
+	GUILabel::visible=true;
 	GUILabel::textureText=SDL_CreateTextureFromSurface(render,textSurface);
 	SDL_SetTextureAlphaMod(GUILabel::textureText,alpha);
 	SDL_QueryTexture(GUILabel::textureText,0,0,&w,&h);
 	SDL_FreeSurface(textSurface);
+	
 }
 void GUILabel::update(SDL_Event *ev){
 	if(ev->type==SDL_MOUSEBUTTONDOWN){

@@ -79,7 +79,8 @@ void ServerConnection::send(char* data,int len){
     ENetPacket* packet=enet_packet_create(data,len,ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(socket,0,packet);
     enet_host_flush(host);
-    enet_packet_destroy(packet);
+    // if(packet)
+    //     enet_packet_destroy(packet);
 }
 void ServerConnection::update(){
     while(enet_host_service(host,&event,0)){
@@ -98,12 +99,13 @@ void ServerConnection::update(){
                 ((uint8_t*)&z)[1]=event.packet->data[11];
                 ((uint8_t*)&z)[2]=event.packet->data[12];
                 ((uint8_t*)&z)[3]=event.packet->data[12+1];
-                ServerConnection::connectedPlayers[event.packet->data[1]].position.x=x;
-                ServerConnection::connectedPlayers[event.packet->data[1]].position.y=y;
-                ServerConnection::connectedPlayers[event.packet->data[1]].position.z=z;
+                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.x=x;
+                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.y=y;
+                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.z=z;
+                std::cout<<"Player "<<ServerConnection::connectedPlayers[event.packet->data[1]-1].name<<" moved to "<<x<<" "<<y<<" "<<z<<std::endl;
             }
             else if(event.packet->data[0]==ServerNetworkCommand::EXIT){
-                std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
+                std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]-1].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
                 ServerConnection::chat->addEntry(exitInfo);
                 for(int i=event.packet->data[1]+1; i<ServerConnection::connectedPlayers.size(); i++){
                     ServerConnection::connectedPlayers[i].id--;
@@ -122,7 +124,6 @@ void ServerConnection::update(){
                 for(int i=0; i<messageLength; i++){
                     message+=event.packet->data[4+i];
                 }
-                std::cout<<std::endl;
                 ServerConnection::chat->addEntry(message);
             }
             else if(event.packet->data[0]==ServerNetworkCommand::NEW_PLAYER){
@@ -152,7 +153,6 @@ void ServerConnection::sendChatMessage(std::string message){
         sendData[3+i]=message[i];
     }
     ServerConnection::send(sendData,3+message.length());
-    free(sendData);
 }
 void ServerConnection::sendPosition(glm::vec3 position){
     char* sendData=(char*)malloc(1+12);
@@ -180,4 +180,7 @@ void ServerConnection::disconnect(){
     ServerConnection::send(sendData,1);
     free(sendData);
     ServerConnection::connected=false;
+}
+std::vector<ConnectedPlayer> ServerConnection::getPlayerList(){
+    return connectedPlayers;
 }
