@@ -67,7 +67,7 @@ void ShaderProgram::use(){
 	glUseProgram(program);
 }
 void ShaderProgram::setVec4(std::string name,glm::vec4 v){
-	glUniform4fv(glGetUniformLocation(ShaderProgram::program,name.c_str()),4,&v[0]);
+	glUniform4f(glGetUniformLocation(ShaderProgram::program,name.c_str()),v.x,v.y,v.z,v.w);
 }
 void ShaderProgram::destroy(){
 	glDeleteShader(ShaderProgram::vertex);

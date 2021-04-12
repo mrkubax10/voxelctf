@@ -6,7 +6,7 @@
 
 #include "connectedplayer.hpp"
 enum ServerInitializationCommand{
-    PLAYER_NAME,PLAYER_DATA,MAP_DATA
+    PLAYER_NAME,PLAYER_DATA,MAP_DATA,PLAYER_INIT
 };
 enum ServerNetworkCommand{
     MOVE,ACTIVITY,EXIT,READY,CHAT_MESSAGE,WORLD_DATA,REJECT,NEW_PLAYER,CONNECTION
@@ -22,6 +22,7 @@ class ServerConnection{
     std::vector<ConnectedPlayer> connectedPlayers;
     bool connected;
     long lastActivityResponse;
+    uint8_t team;
 public:
     ServerConnection(Chat* chat,App* app);
     void initGame(World* world,TextureAtlas* atlas);
@@ -33,5 +34,6 @@ public:
     void sendPosition(glm::vec3 position);
     void disconnect();
     std::vector<ConnectedPlayer> getPlayerList();
+    uint8_t getTeam();
 };
 #endif

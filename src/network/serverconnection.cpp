@@ -28,10 +28,13 @@ bool ServerConnection::connect(std::string ip,int port,std::string name){
     return true;
 }
 void ServerConnection::initGame(World* world,TextureAtlas* atlas){
+    ServerConnection::connectedPlayers.push_back(ConnectedPlayer("",glm::vec3(1000,0,1000),0,0,ServerConnection::app));
     if(enet_host_service(host,&event,10000)>0){
         if(event.type==ENET_EVENT_TYPE_RECEIVE){
             if(event.packet->data[0]==ServerInitializationCommand::PLAYER_DATA){
                 int dataOffset=2;
+                if(event.packet->data[1]>0)
+                    ServerConnection::connectedPlayers.erase(ServerConnection::connectedPlayers.begin());
                 for(int i=0; i<event.packet->data[1]; i++){
                     std::string name;
                     for(int a=0; a<event.packet->data[dataOffset]; a++){
@@ -50,8 +53,9 @@ void ServerConnection::initGame(World* world,TextureAtlas* atlas){
                     ((uint8_t*)&z)[1]=event.packet->data[dataOffset+name.length()+10];
                     ((uint8_t*)&z)[2]=event.packet->data[dataOffset+name.length()+11];
                     ((uint8_t*)&z)[3]=event.packet->data[dataOffset+name.length()+12];
-                    ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(x,y,z),event.packet->data[dataOffset+name.length()+12+1],0));
-                    dataOffset+=2+name.length()+12;
+                    
+                    ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(x,y,z),event.packet->data[dataOffset+name.length()+12+1],event.packet->data[dataOffset+name.length()+14],ServerConnection::app));
+                    dataOffset+=3+name.length()+12;
                 }
             }
             enet_packet_destroy(event.packet);
@@ -73,6 +77,16 @@ void ServerConnection::initGame(World* world,TextureAtlas* atlas){
     }
     else{
         std::cout<<"(Warn) [ServerConnection] Failed to receive map data from server"<<std::endl;
+    }
+    if(enet_host_service(host,&event,10000)>0){
+        if(event.type==ENET_EVENT_TYPE_RECEIVE){
+            if(event.packet->data[0]==ServerInitializationCommand::PLAYER_INIT){
+                ServerConnection::team=event.packet->data[1];
+            }
+        }
+    }
+    else{
+        std::cout<<"(Warn) [ServerConnection] Failed to receive player init data"<<std::endl;
     }
 }
 void ServerConnection::send(char* data,int len){
@@ -99,13 +113,12 @@ void ServerConnection::update(){
                 ((uint8_t*)&z)[1]=event.packet->data[11];
                 ((uint8_t*)&z)[2]=event.packet->data[12];
                 ((uint8_t*)&z)[3]=event.packet->data[12+1];
-                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.x=x;
-                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.y=y;
-                ServerConnection::connectedPlayers[event.packet->data[1]-1].position.z=z;
-                std::cout<<"Player "<<ServerConnection::connectedPlayers[event.packet->data[1]-1].name<<" moved to "<<x<<" "<<y<<" "<<z<<std::endl;
+                ServerConnection::connectedPlayers[event.packet->data[1]].position.x=x;
+                ServerConnection::connectedPlayers[event.packet->data[1]].position.y=y;
+                ServerConnection::connectedPlayers[event.packet->data[1]].position.z=z;
             }
             else if(event.packet->data[0]==ServerNetworkCommand::EXIT){
-                std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]-1].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
+                std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
                 ServerConnection::chat->addEntry(exitInfo);
                 for(int i=event.packet->data[1]+1; i<ServerConnection::connectedPlayers.size(); i++){
                     ServerConnection::connectedPlayers[i].id--;
@@ -118,7 +131,7 @@ void ServerConnection::update(){
             }
             else if(event.packet->data[0]==ServerNetworkCommand::CHAT_MESSAGE){
                 short messageLength;
-                std::string message=ServerConnection::connectedPlayers[event.packet->data[1]-1].name+": ";
+                std::string message=ServerConnection::connectedPlayers[event.packet->data[1]].name+": ";
                 ((uint8_t*)&messageLength)[0]=event.packet->data[2];
                 ((uint8_t*)&messageLength)[1]=event.packet->data[3];
                 for(int i=0; i<messageLength; i++){
@@ -132,7 +145,7 @@ void ServerConnection::update(){
                     name+=event.packet->data[4+i];
                 }
                 ServerConnection::chat->addEntry("[SERVER] Player "+name+" joined the game");
-                ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1]));
+                ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1],ServerConnection::app));
             }
         }
     }
@@ -183,4 +196,7 @@ void ServerConnection::disconnect(){
 }
 std::vector<ConnectedPlayer> ServerConnection::getPlayerList(){
     return connectedPlayers;
+}
+uint8_t ServerConnection::getTeam(){
+    return ServerConnection::team;
 }

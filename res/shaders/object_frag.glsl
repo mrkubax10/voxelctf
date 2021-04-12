@@ -2,6 +2,7 @@
 in vec2 outUV;
 out vec4 outColor;
 uniform sampler2D textureid;
+uniform vec4 color;
 void main(){
     //vec4 c=texture(textureid,outUV);
     //if(c.a==0)

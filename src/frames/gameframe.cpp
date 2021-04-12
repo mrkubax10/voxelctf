@@ -106,7 +106,14 @@ void GameFrame::render(){
 	app->getChat()->updateEntries();
 	for(int i=0; i<app->getServerConnection()->getPlayerList().size(); i++){
 		playerModel->setScale(glm::vec3(1,1.70,1));
-		playerModel->translate(app->getServerConnection()->getPlayerList().at(i).position);
+		glm::vec3 pos=app->getServerConnection()->getPlayerList().at(i).position;
+		playerModel->translate(glm::vec3(pos.x-0.5f,pos.y-1.70f,pos.z-0.5f));
+		// if(app->getServerConnection()->getPlayerList().at(i).team==0)
+		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(0,1,0,1));
+		// else if(app->getServerConnection()->getPlayerList().at(i).team==1)
+		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,0,1));
+		// else
+		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,1,1));
 		playerModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
 		
 	}
