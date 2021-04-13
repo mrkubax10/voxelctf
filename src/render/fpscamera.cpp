@@ -20,15 +20,20 @@ void FPSCamera::update(short mx,short my,Settings* settings){
 	offset.x=mx-lastMousePos.x;
 	offset.y=lastMousePos.y-my;
 	offset*=settings->sensitivity;
-	FPSCamera::setRotation(offset.y+pitch,offset.x+yaw);
-	if(pitch>89)
+	if(offset.y+pitch>89){
 		pitch=89;
-	if(pitch<-89)
+		offset.y=0;
+	}
+	if(offset.y+pitch<-89){
 		pitch=-89;
+		offset.y=0;
+	}
 	if(yaw>360)
 		yaw=0;
 	if(yaw<0)
 		yaw=360;
+	FPSCamera::setRotation(offset.y+pitch,offset.x+yaw);
+	
 	
 	lastMousePos.x=mx;
 	lastMousePos.y=my;

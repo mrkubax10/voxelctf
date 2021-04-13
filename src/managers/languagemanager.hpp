@@ -21,6 +21,7 @@ public:
 	void setCurrentLanguage(std::string lang);
 	std::string getText(std::string lang,std::string name);
 	std::string getFromCurrentLanguage(std::string name);
+	std::string getFromLanguage(std::string name,std::string data);
 };
 
 

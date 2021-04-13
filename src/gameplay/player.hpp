@@ -20,7 +20,7 @@ class Player {
 	glm::vec3 playerSize;
 public:
 	Player(FPSCamera* cam);
-	void update(const Uint8* keyboard,World* world,Settings* settings,bool editor);
+	void update(const Uint8* keyboard,World* world,Settings* settings,bool editor,bool pause);
 	glm::vec3 getPosition();
 	void setPosition(glm::vec3 pos);
 

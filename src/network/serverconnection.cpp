@@ -1,5 +1,6 @@
 #include "serverconnection.hpp"
 #include "../framework/app.hpp"
+#include "../frames/frameconstants.hpp"
 ServerConnection::ServerConnection(Chat* chat,App* app){
     ServerConnection::chat=chat;
     ServerConnection::app=app;
@@ -118,8 +119,7 @@ void ServerConnection::update(){
                 ServerConnection::connectedPlayers[event.packet->data[1]].position.z=z;
             }
             else if(event.packet->data[0]==ServerNetworkCommand::EXIT){
-                std::string exitInfo=app->getLanguageManager()->getFromCurrentLanguage("in_exit1")+" "+ServerConnection::connectedPlayers[event.packet->data[1]].name+" "+app->getLanguageManager()->getFromCurrentLanguage("in_exit2");
-                ServerConnection::chat->addEntry(exitInfo);
+                ServerConnection::chat->addEntry(ServerConnection::app->getLanguageManager()->getFromLanguage("in_playerexit",connectedPlayers[event.packet->data[1]].name));
                 for(int i=event.packet->data[1]+1; i<ServerConnection::connectedPlayers.size(); i++){
                     ServerConnection::connectedPlayers[i].id--;
                 }
@@ -144,10 +144,14 @@ void ServerConnection::update(){
                 for(int i=0; i<event.packet->data[3]; i++){
                     name+=event.packet->data[4+i];
                 }
-                ServerConnection::chat->addEntry("[SERVER] Player "+name+" joined the game");
+                ServerConnection::chat->addEntry(ServerConnection::app->getLanguageManager()->getFromLanguage("in_newplayer",name));
                 ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1],ServerConnection::app));
             }
         }
+    }
+    if(ServerConnection::lastActivityResponse+5<time(0)){
+        std::cout<<"(Log) [ServerConnection] Disconnected from server: Timed out"<<std::endl;
+        ServerConnection::app->setFrame(GAME_MENU_FRAME);
     }
 }
 void ServerConnection::updateActivity(){

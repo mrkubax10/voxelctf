@@ -93,12 +93,14 @@ void GameFrame::render(){
     }
     glClearColor(0,0.5f,1,1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	if(!pause && GameFrame::updateTimer->update() && !app->getChat()->isEnteringMessage())
-		player->update(keyboard,world,app->getSettings(),false);
+	if(GameFrame::updateTimer->update())
+		player->update(keyboard,world,app->getSettings(),false,pause||app->getChat()->isEnteringMessage());
 	if(!pause && !app->getChat()->isEnteringMessage())
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
 	if(positionTimer->update())
 		app->getServerConnection()->sendPosition(player->getPosition());
+	if(activityTimer->update())
+		app->getServerConnection()->updateActivity();
 	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
@@ -130,4 +132,6 @@ void GameFrame::finish(){
 	skybox->destroy();
 	app->getServerConnection()->disconnect();
 	SDL_GL_SwapWindow(app->getWindow());
+	SDL_CaptureMouse(SDL_FALSE);
+	SDL_SetRelativeMouseMode(SDL_FALSE);
 }

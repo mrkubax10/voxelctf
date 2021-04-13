@@ -33,8 +33,10 @@ void Chat::draw(){
         guiRect.h=50;
         SDL_SetRenderDrawColor(Chat::render,100,100,100,255);
         SDL_RenderFillRect(Chat::render,&guiRect);
-        SDL_QueryTexture(Chat::messageTexture,0,0,&guiRect.w,&guiRect.h);
-        SDL_RenderCopy(Chat::render,Chat::messageTexture,0,&guiRect);
+        if(Chat::messageBuffer.length()>0){
+            SDL_QueryTexture(Chat::messageTexture,0,0,&guiRect.w,&guiRect.h);
+            SDL_RenderCopy(Chat::render,Chat::messageTexture,0,&guiRect);
+        }
     }
 }
 void Chat::addEntry(std::string str){
@@ -77,7 +79,11 @@ void Chat::update(SDL_Event* ev){
             if(Chat::messageBuffer.length()>0){
                 Chat::messageBuffer.pop_back();
                 SDL_DestroyTexture(Chat::messageTexture);
-                SDL_Surface* surf=TTF_RenderText_Blended(Chat::font,Chat::messageBuffer.c_str(),{0,0,0});
+                SDL_Surface* surf;
+                if(Chat::messageBuffer=="")
+                    surf=TTF_RenderText_Blended(Chat::font,"",{0,0,0});
+                else
+                    surf=TTF_RenderText_Blended(Chat::font,Chat::messageBuffer.c_str(),{0,0,0});
                 Chat::messageTexture=SDL_CreateTextureFromSurface(Chat::render,surf);
                 SDL_FreeSurface(surf);
             }

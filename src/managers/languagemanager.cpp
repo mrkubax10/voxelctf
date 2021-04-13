@@ -39,3 +39,17 @@ std::string LanguageManager::getText(std::string lang,std::string name){
 std::string LanguageManager::getFromCurrentLanguage(std::string name){
 	return LanguageManager::getText(LanguageManager::currentLanguage,name);
 }
+std::string LanguageManager::getFromLanguage(std::string name,std::string data){
+	std::string ret="";
+	std::string translation=LanguageManager::getText("english",name);
+	for(int i=0; i<translation.length(); i++){
+		if(i+1<translation.length()){
+			if(translation[i]=='%' && translation[i+1]=='d'){
+				ret+=data;
+				continue;
+			}
+		}
+		ret+=translation[i];
+	}
+	return ret;
+}

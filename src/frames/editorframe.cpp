@@ -130,7 +130,7 @@ void EditorFrame::render(){
     glClearColor(0,0.5f,1,1);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	if(!pause && EditorFrame::updateTimer->update())
-		player->update(keyboard,world,app->getSettings(),true);
+		player->update(keyboard,world,app->getSettings(),true,pause);
 	if(!pause)
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
 	skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);

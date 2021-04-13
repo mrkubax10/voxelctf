@@ -18,28 +18,33 @@ Player::Player(FPSCamera* cam) {
 	Player::mass=0.4f;
 	Player::playerSize=glm::vec3(0.5,0.5,0.5);
 }
-void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool editor){
-
+void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool editor,bool pause){
+	glm::vec3 dir=glm::vec3(0,0,0);
+	dir.x=std::cos(glm::radians(cam->getYaw()));
+	dir.y=1;
+	dir.z=std::sin(glm::radians(cam->getYaw()));
 	if(!editor){
-		if(keyboard[settings->keys.up]){
-			Player::vel.x=(Player::speed*Player::cam->getFront()).x;
-			Player::vel.z=(Player::speed*Player::cam->getFront()).z;
-		}
-		if(keyboard[settings->keys.right]){
-			Player::vel.x=(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).x;
-			Player::vel.z=(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).z;
-		}
-		if(keyboard[settings->keys.down]){
-			Player::vel.x=-(Player::speed*Player::cam->getFront()).x;
-			Player::vel.z=-(Player::speed*Player::cam->getFront()).z;
-		}
-		if(keyboard[settings->keys.left]){
-			Player::vel.x=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).x;
-			Player::vel.z=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).z;
-		}
-		if(keyboard[settings->keys.jump] && !Player::falling && !Player::jumping){
-			Player::vel.y=0.07f;
-			Player::jumping=true;
+		if(!pause){
+			if(keyboard[settings->keys.up]){
+				Player::vel.x=(Player::speed*dir).x;
+				Player::vel.z=(Player::speed*dir).z;
+			}
+			if(keyboard[settings->keys.right]){
+				Player::vel.x=(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).x;
+				Player::vel.z=(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).z;
+			}
+			if(keyboard[settings->keys.down]){
+				Player::vel.x=-(Player::speed*dir).x;
+				Player::vel.z=-(Player::speed*dir).z;
+			}
+			if(keyboard[settings->keys.left]){
+				Player::vel.x=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).x;
+				Player::vel.z=-(glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed).z;
+			}
+			if(keyboard[settings->keys.jump] && !Player::falling && !Player::jumping){
+				Player::vel.y=0.03f;
+				Player::jumping=true;
+			}
 		}
 		glm::vec3 newPosition=glm::vec3(Player::getPosition().x+Player::vel.x,Player::getPosition().y+Player::vel.y,Player::getPosition().z+Player::vel.z);
 		if(Player::vel.x<0){
@@ -105,11 +110,11 @@ void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool e
 		Player::vel.z=0;
 	}else{
 		if(keyboard[settings->keys.up])
-			Player::vel=Player::speed*Player::cam->getFront();
+			Player::vel=Player::speed*dir;
 		if(keyboard[settings->keys.right])
 			Player::vel=glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed;
 		if(keyboard[settings->keys.down])
-			Player::vel=-Player::cam->getFront()*Player::speed;
+			Player::vel=-dir*Player::speed;
 		if(keyboard[settings->keys.left])
 			Player::vel=-glm::normalize(glm::cross(Player::cam->getFront(),glm::vec3(0,1,0)))*Player::speed;
 		Player::vel.y=0;
