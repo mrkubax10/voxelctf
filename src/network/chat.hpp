@@ -9,7 +9,9 @@
 struct ChatElement{
     std::string str;
     long sendTime;
+    bool timedOut;
     std::vector<SDL_Texture*> textures;
+    
 };
 class App;
 class Chat : public GUIComponent{
@@ -23,6 +25,7 @@ class Chat : public GUIComponent{
     App* app;
     SDL_Texture* messageTexture;
     bool textfieldOpened;
+    int messageOffset=0;
 public:
     Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app);
     void addEntry(std::string str);
