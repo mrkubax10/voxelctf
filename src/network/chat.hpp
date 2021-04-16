@@ -26,6 +26,7 @@ class Chat : public GUIComponent{
     SDL_Texture* messageTexture;
     bool textfieldOpened;
     int messageOffset=0;
+    SDL_Texture* chatTexture;
 public:
     Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app);
     void addEntry(std::string str);

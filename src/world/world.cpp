@@ -97,6 +97,12 @@ void World::saveMap(std::string name){
 	std::ofstream file("res/maps/"+name+".blockctf",std::ios::out|std::ios::binary);
 	file.write("BlockCTF",sizeof("BlockCTF"));
 	file.write(GAME_VERSION,sizeof(GAME_VERSION));
+	file.write((char*)&World::metadata.team1FlagPosition.x,1);
+	file.write((char*)&World::metadata.team1FlagPosition.y,1);
+	file.write((char*)&World::metadata.team1FlagPosition.z,1);
+	file.write((char*)&World::metadata.team2FlagPosition.x,1);
+	file.write((char*)&World::metadata.team2FlagPosition.y,1);
+	file.write((char*)&World::metadata.team2FlagPosition.z,1);
 	std::vector<char> mapData;
 	BlockType lastBlockType=BlockType::AIR;
 	mapData.push_back(0);

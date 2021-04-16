@@ -10,8 +10,8 @@
 #include "global.hpp"
 #include <fstream>
 struct KeySettings{
-	SDL_Scancode up,down,left,right,jump,editor_down,chat;
-	KeySettings():up(SDL_SCANCODE_W),down(SDL_SCANCODE_S),left(SDL_SCANCODE_A),right(SDL_SCANCODE_D),jump(SDL_SCANCODE_SPACE),editor_down(SDL_SCANCODE_LSHIFT),chat(SDL_SCANCODE_T){}
+	SDL_Scancode up,down,left,right,jump,editor_down,chat,scoreboard;
+	KeySettings():up(SDL_SCANCODE_W),down(SDL_SCANCODE_S),left(SDL_SCANCODE_A),right(SDL_SCANCODE_D),jump(SDL_SCANCODE_SPACE),editor_down(SDL_SCANCODE_LSHIFT),chat(SDL_SCANCODE_T),scoreboard(SDL_SCANCODE_TAB){}
 };
 class Settings {
 public:

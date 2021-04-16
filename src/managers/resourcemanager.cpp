@@ -60,6 +60,18 @@ Mix_Music* ResourceManager::getMusic(std::string name){
 	std::cout<<"(Log) [ResourceManager] Loaded music "<<name<<std::endl;
 	return ResourceManager::music[name];
 }
+Model* ResourceManager::getOBJModel(std::string name){
+	std::fstream file;
+	file.open("res/models/"+name+".obj",std::ios::in);
+	
+	std::string line;
+	std::vector<float> vertices;
+	while(getline(file,line)){
+		if(line[0]=='#')
+			continue;
+		
+	}
+}
 void ResourceManager::destroy(){
 	std::cout<<"(Log) [ResourceManager] Destroying data"<<std::endl;
 	for(std::map<std::string,ShaderProgram>::iterator i=ResourceManager::shaderprograms.begin(); i!=ResourceManager::shaderprograms.end(); i++){

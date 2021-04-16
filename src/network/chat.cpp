@@ -16,17 +16,10 @@ Chat::Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app){
     Chat::textfieldOpened=false;
     Chat::messageBuffer="";
     Chat::visible=true;
+    Chat::chatTexture=SDL_CreateTexture(render,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,Chat::w,17*40);
 }
 void Chat::draw(){
     
-    if(Chat::enteringMessage){
-        SDL_SetRenderDrawColor(Chat::render,100,100,100,200);
-        guiRect.x=Chat::x;
-        guiRect.y=Chat::y;
-        guiRect.w=Chat::w;
-        guiRect.h=Chat::h;
-        SDL_RenderFillRect(Chat::render,&guiRect);
-    }
     Chat::posy=3*15+10;
     if(!Chat::enteringMessage){
         int length=Chat::chatEntries.size()>3?Chat::chatEntries.size()-3:0;
@@ -42,15 +35,29 @@ void Chat::draw(){
             }
         }
     }
-    Chat::posy=y+Chat::h-20;
+    Chat::posy=Chat::h-20;
     if(Chat::enteringMessage){
-        for(int i=Chat::chatEntries.size()-1; i>=Chat::messageOffset; i--){
+        SDL_Texture* lastRenderTexture=SDL_GetRenderTarget(Chat::render);
+        SDL_SetRenderTarget(Chat::render,Chat::chatTexture);
+        SDL_SetRenderDrawColor(Chat::render,100,100,100,200);
+        SDL_RenderFillRect(Chat::render,0);
+        for(int i=Chat::chatEntries.size()-1; i>=0; i--){
             for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
                 SDL_QueryTexture(Chat::chatEntries[i].textures[a],0,0,&w2,&h2);
                 renderDraw(Chat::render,Chat::chatEntries[i].textures[a],Chat::x,Chat::posy);
             }
             Chat::posy-=h2+2;
         }
+        SDL_SetRenderTarget(Chat::render,lastRenderTexture);
+        guiRect.x=Chat::x;
+        guiRect.y=Chat::y;
+        guiRect.w=Chat::w;
+        guiRect.h=Chat::h;
+        rect.x=0;
+        rect.y=-Chat::messageOffset;
+        rect.w=Chat::w;
+        rect.h=Chat::h;
+        SDL_RenderCopy(Chat::render,Chat::chatTexture,&rect,&guiRect);
         guiRect.x=Chat::x;
         guiRect.y=400;
         guiRect.w=Chat::w;
@@ -118,12 +125,11 @@ void Chat::update(SDL_Event* ev){
             }
         }
     }
-    if(ev->type==SDL_MOUSEWHEEL){
-        if(Chat::enteringMessage && Chat::isMouseOn(ev->motion.x,ev->motion.y)){
-            Chat::messageOffset+=ev->wheel.y;
-            std::cout<<ev->wheel.y<<std::endl;
-        }
-    }
+    // if(ev->type==SDL_MOUSEWHEEL){
+    //     if(Chat::enteringMessage && Chat::isMouseOn(Chat::app->getMouseX(),Chat::app->getMouseY())){
+    //         Chat::messageOffset+=ev->wheel.y;
+    //     }
+    // }
     
 }
 void Chat::updateEntries(){

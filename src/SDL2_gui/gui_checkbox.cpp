@@ -25,11 +25,11 @@ void GUICheckbox::update(SDL_Event *ev){
     }
 }
 void GUICheckbox::draw(){
-    if(GUICheckbox::checked) _gfx::roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::chr,GUICheckbox::chg,GUICheckbox::chb,255);
-    else _gfx::roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::r,GUICheckbox::g,GUICheckbox::b,255);
+    if(GUICheckbox::checked) roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::chr,GUICheckbox::chg,GUICheckbox::chb,255);
+    else roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::r,GUICheckbox::g,GUICheckbox::b,255);
     if(GUICheckbox::checked){
-        _gfx::thickLineRGBA(GUICheckbox::render,GUICheckbox::x+5,GUICheckbox::y+15,GUICheckbox::x+15,GUICheckbox::y+28,4,255,255,255,255);
-        _gfx::thickLineRGBA(GUICheckbox::render,GUICheckbox::x+14,GUICheckbox::y+27,GUICheckbox::x+27,GUICheckbox::y+5,4,255,255,255,255);
+        thickLineRGBA(GUICheckbox::render,GUICheckbox::x+5,GUICheckbox::y+15,GUICheckbox::x+15,GUICheckbox::y+28,4,255,255,255,255);
+        thickLineRGBA(GUICheckbox::render,GUICheckbox::x+14,GUICheckbox::y+27,GUICheckbox::x+27,GUICheckbox::y+5,4,255,255,255,255);
     }
     SDL_QueryTexture(GUICheckbox::textureText,0,0,&guiRect.w,&guiRect.h);
     guiRect.x=GUICheckbox::x+35;

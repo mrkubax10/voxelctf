@@ -12,6 +12,9 @@
 #include "../editor/editorfilltool.hpp"
 #include "../editor/editorbuildtool.hpp"
 #include "../editor/editorerasetool.hpp"
+#include "../editor/editorteam1flagtool.hpp"
+
+#include "../editor/editorteam2flagtool.hpp"
 #include "../time/timer.hpp"
 #include "../world/skybox.hpp"
 class EditorFrame : public Frame{

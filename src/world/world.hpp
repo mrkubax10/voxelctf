@@ -13,6 +13,7 @@
 class World {
 	Chunk chunks[WORLD_SIZE][WORLD_SIZE];
 	float gravity;
+	
 public:
 	World();
 	void destroy();
@@ -25,6 +26,9 @@ public:
 	void loadMapFromMemory(std::vector<unsigned char> chunkData);
 	void saveMap(std::string name);
 	float getGravity();
+	struct{
+		glm::vec3 team1FlagPosition,team2FlagPosition;
+	} metadata;
 };
 
 #endif /* SRC_WORLD_WORLD_HPP_ */

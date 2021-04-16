@@ -6,6 +6,7 @@ GUIBlockInfo::GUIBlockInfo(int x,int y,TTF_Font* font,SDL_Renderer* render){
     GUIBlockInfo::render=render;
     GUIBlockInfo::currentBlockId=BlockType::AIR;
     GUIBlockInfo::textureBlockName=SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255}));
+    GUIBlockInfo::visible=true;
 }
 std::string blockNames[]={
     "Stone","Cobblestone","Stone Bricks","Grass","Bricks","Sand","Iron","Gold","Crystal","Water","Lava","Dirt","Glass",
