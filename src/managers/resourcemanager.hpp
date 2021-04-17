@@ -11,6 +11,7 @@
 #include "../render/shaderprogram.hpp"
 #include "../render/model.hpp"
 #include <fstream>
+#include "../utils.hpp"
 #include <map>
 class ResourceManager {
 	std::map<std::string,SDL_Texture*> textures;

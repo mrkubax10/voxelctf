@@ -26,6 +26,8 @@ bool ServerConnection::connect(std::string ip,int port,std::string name){
     //!!!!!
     free(sendData);
     ServerConnection::connected=true;
+    ServerConnection::flag1Fetch=false;
+    ServerConnection::flag2Fetch=false;
     return true;
 }
 void ServerConnection::initGame(World* world,TextureAtlas* atlas){
@@ -83,6 +85,7 @@ void ServerConnection::initGame(World* world,TextureAtlas* atlas){
         if(event.type==ENET_EVENT_TYPE_RECEIVE){
             if(event.packet->data[0]==ServerInitializationCommand::PLAYER_INIT){
                 ServerConnection::team=event.packet->data[1];
+                std::cout<<(int)ServerConnection::team<<std::endl;
             }
         }
     }
@@ -147,6 +150,23 @@ void ServerConnection::update(){
                 ServerConnection::chat->addEntry(ServerConnection::app->getLanguageManager()->getFromLanguage("in_newplayer",name));
                 ServerConnection::connectedPlayers.push_back(ConnectedPlayer(name,glm::vec3(10,10,10),event.packet->data[2],event.packet->data[1],ServerConnection::app));
             }
+            else if(event.packet->data[0]==ServerNetworkCommand::FLAG_FETCH){
+                if(event.packet->data[1]==0){
+                    ServerConnection::flag1Fetch=true;
+                }
+                if(event.packet->data[1]==1){
+                    ServerConnection::flag2Fetch=true;
+                }
+            }
+            else if(event.packet->data[0]==ServerNetworkCommand::FLAG_CAPTURE){
+                if(event.packet->data[1]==0){
+                    ServerConnection::flag1Fetch=false;
+                }
+                if(event.packet->data[1]==1){
+                    ServerConnection::flag2Fetch=false;
+                }
+                app->getChat()->addEntry(app->getLanguageManager()->getFromLanguage("in_capture",connectedPlayers[event.packet->data[2]].name));
+            }
         }
     }
     if(ServerConnection::lastActivityResponse+5<time(0)){
@@ -187,6 +207,20 @@ void ServerConnection::sendPosition(glm::vec3 position){
     sendData[11]=((uint8_t*)&position.z)[2];
     sendData[12]=((uint8_t*)&position.z)[3];
     ServerConnection::send(sendData,1+12);
+    free(sendData);
+}
+void ServerConnection::sendFlagCapture(uint8_t team){
+    char* sendData=(char*)malloc(2);
+    sendData[0]=ServerNetworkCommand::FLAG_CAPTURE;
+    sendData[1]=team;
+    ServerConnection::send(sendData,2);
+    free(sendData);
+}
+void ServerConnection::sendFlagFetch(uint8_t team){
+    char* sendData=(char*)malloc(2);
+    sendData[0]=ServerNetworkCommand::FLAG_FETCH;
+    sendData[1]=team;
+    ServerConnection::send(sendData,2);
     free(sendData);
 }
 void ServerConnection::disconnect(){

@@ -36,6 +36,7 @@ Model::Model(std::vector<float> verts,std::vector<float> uvs,std::vector<int> in
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh.EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(int)*indices.size(),indices.data(),GL_DYNAMIC_DRAW);
 	glBindVertexArray(0);
+	Model::scale=glm::vec3(1,1,1);
 	Model::generateTransform();
 }
 void Model::generateTransform(){

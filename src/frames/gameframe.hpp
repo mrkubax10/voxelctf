@@ -15,6 +15,7 @@
 #include "../time/timer.hpp"
 #include "../world/skybox.hpp"
 #include "../SDL2_gui/SDLGui.h"
+#include "../maths/aabb.hpp"
 class GameFrame : public Frame{
     Ray* ray;
     World* world;
@@ -29,6 +30,8 @@ class GameFrame : public Frame{
     GUIButton* buttonExit;
     GUIButton* buttonReturn;
     Model* playerModel;
+    Model* flagModel;
+    bool playerHasFlag;
 public:
     void begin();
     void render();

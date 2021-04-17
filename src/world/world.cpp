@@ -49,7 +49,13 @@ void World::generateMesh(TextureAtlas* atlas){
 		}
 }
 void World::loadMapFromMemory(std::vector<unsigned char> chunkData){
-	int blockDataID=0;
+	World::metadata.team1FlagPosition.x=chunkData[0];
+	World::metadata.team1FlagPosition.y=chunkData[1];
+	World::metadata.team1FlagPosition.z=chunkData[2];
+	World::metadata.team2FlagPosition.x=chunkData[3];
+	World::metadata.team2FlagPosition.y=chunkData[4];
+	World::metadata.team2FlagPosition.z=chunkData[5];
+	int blockDataID=5+1;
 	BlockType lastBlockType=BlockType::AIR;
 	for(int cx=0; cx<WORLD_SIZE*CHUNK_SIZE_WD; cx++){
 		for(int y=0; y<CHUNK_SIZE_H; y++){
@@ -78,6 +84,15 @@ void World::loadMap(std::string mapName,TextureAtlas* atlas){
 		std::cout<<"(Warn) [Map Loader] Cannot load map: Map is for different version"<<std::endl;
 		return;
 	}
+	char* data=(char*)malloc(5+1);
+	file.read(data,5+1);
+	chunkData.push_back(data[0]);
+	chunkData.push_back(data[1]);
+	chunkData.push_back(data[2]);
+	chunkData.push_back(data[3]);
+	chunkData.push_back(data[4]);
+	chunkData.push_back(data[5]);
+	free(data);
 	char* blockData=(char*)malloc(4);
 	while(!file.eof()){
 		file.read(blockData,4);
@@ -95,14 +110,21 @@ void World::loadMap(std::string mapName,TextureAtlas* atlas){
 }
 void World::saveMap(std::string name){
 	std::ofstream file("res/maps/"+name+".blockctf",std::ios::out|std::ios::binary);
+	uint8_t team1Flag[3],team2Flag[3];
+	team1Flag[0]=(uint8_t)World::metadata.team1FlagPosition.x;
+	team1Flag[1]=(uint8_t)World::metadata.team1FlagPosition.y;
+	team1Flag[2]=(uint8_t)World::metadata.team1FlagPosition.z;
+	team2Flag[0]=(uint8_t)World::metadata.team2FlagPosition.x;
+	team2Flag[1]=(uint8_t)World::metadata.team2FlagPosition.y;
+	team2Flag[2]=(uint8_t)World::metadata.team2FlagPosition.z;
 	file.write("BlockCTF",sizeof("BlockCTF"));
 	file.write(GAME_VERSION,sizeof(GAME_VERSION));
-	file.write((char*)&World::metadata.team1FlagPosition.x,1);
-	file.write((char*)&World::metadata.team1FlagPosition.y,1);
-	file.write((char*)&World::metadata.team1FlagPosition.z,1);
-	file.write((char*)&World::metadata.team2FlagPosition.x,1);
-	file.write((char*)&World::metadata.team2FlagPosition.y,1);
-	file.write((char*)&World::metadata.team2FlagPosition.z,1);
+	file.write((char*)&team1Flag[0],1);
+	file.write((char*)&team1Flag[1],1);
+	file.write((char*)&team1Flag[2],1);
+	file.write((char*)&team2Flag[0],1);
+	file.write((char*)&team2Flag[1],1);
+	file.write((char*)&team2Flag[2],1);
 	std::vector<char> mapData;
 	BlockType lastBlockType=BlockType::AIR;
 	mapData.push_back(0);

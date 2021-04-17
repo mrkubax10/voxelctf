@@ -9,7 +9,7 @@
 #define SRC_MATHS_AABB_HPP_
 #include <glm/glm.hpp>
 namespace AABB{
-	bool boxColliding(glm::vec3 playerpos,glm::vec3 blockpos,glm::vec3 asize,glm::vec3 bsize);
+	bool boxColliding(glm::vec3 pos1,glm::vec3 pos2,glm::vec3 asize,glm::vec3 bsize);
 	bool sphereColliding(glm::vec4 a,glm::vec4 b);
 }
 

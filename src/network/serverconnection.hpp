@@ -9,7 +9,7 @@ enum ServerInitializationCommand{
     PLAYER_NAME,PLAYER_DATA,MAP_DATA,PLAYER_INIT,REJECT,STATUS,STATUS_RESPONSE
 };
 enum ServerNetworkCommand{
-    MOVE,ACTIVITY,EXIT,READY,CHAT_MESSAGE,WORLD_DATA,NEW_PLAYER,CONNECTION
+    MOVE,ACTIVITY,EXIT,READY,CHAT_MESSAGE,WORLD_DATA,NEW_PLAYER,CONNECTION,FLAG_FETCH,FLAG_CAPTURE
 };
 class App;
 class ServerConnection{
@@ -24,6 +24,8 @@ class ServerConnection{
     long lastActivityResponse;
     uint8_t team;
 public:
+    bool flag1Fetch;
+    bool flag2Fetch;
     ServerConnection(Chat* chat,App* app);
     void initGame(World* world,TextureAtlas* atlas);
     bool connect(std::string ip,int port,std::string name);
@@ -32,6 +34,8 @@ public:
     void send(char* data,int len);
     void sendChatMessage(std::string message);
     void sendPosition(glm::vec3 position);
+    void sendFlagFetch(uint8_t team);
+    void sendFlagCapture(uint8_t team);
     void disconnect();
     std::vector<ConnectedPlayer> getPlayerList();
     uint8_t getTeam();

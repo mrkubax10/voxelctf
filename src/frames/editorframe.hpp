@@ -34,6 +34,8 @@ class EditorFrame : public Frame{
     uint8_t blockType;
     Timer* updateTimer;
     Skybox* skybox;
+    Model* flagModel;
+    bool renderFlags;
     void createEmptyMap();
 public:
     void begin();

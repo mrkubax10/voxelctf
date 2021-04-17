@@ -39,7 +39,7 @@ void EditorFrame::begin(){
 	EditorFrame::editorTool=new EditorBuildTool;
 	EditorFrame::updateTimer=new Timer(2);
 	EditorFrame::updateTimer->reset();
-	
+	EditorFrame::flagModel=app->getResourceManager()->getOBJModel("test");
 	app->getGUIManager()->add(blockInfo);
 	app->getGUIManager()->add(toolInfo);
     app->getGUIManager()->add(crossair);
@@ -140,11 +140,15 @@ void EditorFrame::render(){
 			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_4){
 				delete editorTool;
 				editorTool=new EditorTeam1FlagTool;
+				renderFlags=true;
 			}
-			if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_5){
+			else if(app->getEvent()->key.keysym.scancode==SDL_SCANCODE_5){
 				delete editorTool;
 				editorTool=new EditorTeam2FlagTool;
+				renderFlags=true;
 			}
+			else
+				renderFlags=false;
 		}
 		
 		app->getGUIManager()->update(app->getEvent());
@@ -158,6 +162,12 @@ void EditorFrame::render(){
 	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
+	flagModel->translate(world->metadata.team1FlagPosition);
+	flagModel->setScale(glm::vec3(0.1,1.7,0.1));
+	flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
+	flagModel->translate(world->metadata.team2FlagPosition);
+	flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
+
 	app->getGL2DRenderer()->start();
 	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);
 	SDL_RenderFillRect(app->getRenderer(),0);

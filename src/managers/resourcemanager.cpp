@@ -61,16 +61,51 @@ Mix_Music* ResourceManager::getMusic(std::string name){
 	return ResourceManager::music[name];
 }
 Model* ResourceManager::getOBJModel(std::string name){
+	if(ResourceManager::models.count(name)){
+		return ResourceManager::models[name];
+	}
 	std::fstream file;
 	file.open("res/models/"+name+".obj",std::ios::in);
 	
 	std::string line;
 	std::vector<float> vertices;
+	std::vector<float> fileuvs;
+	std::vector<float> uvs;
+	std::vector<int> vertexIndices;
+	std::vector<int> uvIndices;
+	std::cout<<"(Log) [ResourceManager] Loaded model "<<name<<std::endl;
 	while(getline(file,line)){
 		if(line[0]=='#')
 			continue;
-		
+		std::vector<std::string> data=split(line,' ');
+		if(data[0]=="v"){
+			float x=std::stof(data[1]);
+			float y=std::stof(data[2]);
+			float z=std::stof(data[3]);
+			vertices.push_back(x);
+			vertices.push_back(y);
+			vertices.push_back(z);
+		}
+		else if(data[0]=="vt"){
+			float x=std::stof(data[1]);
+			float y=std::stof(data[2]);
+			fileuvs.push_back(x);
+			fileuvs.push_back(y);
+		}
+		else if(data[0]=="f"){
+			vertexIndices.push_back(std::stoi(split(data[1],'/')[0])-1);
+			vertexIndices.push_back(std::stoi(split(data[2],'/')[0])-1);
+			vertexIndices.push_back(std::stoi(split(data[3],'/')[0])-1);
+		}
 	}
+	for(int i=0; i<uvIndices.size(); i++){
+		uvs.push_back(fileuvs[uvIndices[i]-1]);
+		uvs.push_back(fileuvs[uvIndices[i+1]-1]);
+	}
+	file.close();
+	Model* model=new Model(vertices,uvs,vertexIndices);
+	ResourceManager::models[name]=model;
+	return model;
 }
 void ResourceManager::destroy(){
 	std::cout<<"(Log) [ResourceManager] Destroying data"<<std::endl;
