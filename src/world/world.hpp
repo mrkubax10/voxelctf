@@ -10,6 +10,8 @@
 #define WORLD_SIZE 16
 #include "chunk.hpp"
 #include "../render/camera.hpp"
+
+class App;
 class World {
 	Chunk chunks[WORLD_SIZE][WORLD_SIZE];
 	float gravity;
@@ -24,6 +26,7 @@ public:
 	void generateMesh(TextureAtlas* atlas);
 	void loadMap(std::string name,TextureAtlas* atlas);
 	void loadMapFromMemory(std::vector<unsigned char> chunkData);
+	void renderEntities(ShaderProgram program,Camera cam,Model* flagModel,App* app);
 	void saveMap(std::string name);
 	float getGravity();
 	struct{

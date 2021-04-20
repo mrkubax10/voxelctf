@@ -6,6 +6,9 @@
  */
 
 #include "world.hpp"
+#include "../framework/app.hpp"
+#include <GL/glew.h>
+#include <GL/gl.h>
 World::World() {
 	World::gravity=0.0001;
 	for(int i=0; i<WORLD_SIZE; i++){
@@ -47,6 +50,18 @@ void World::generateMesh(TextureAtlas* atlas){
 				World::chunks[i][j].generateMesh(atlas);
 			}
 		}
+}
+void World::renderEntities(ShaderProgram program,Camera cam,Model* flagModel,App* app){
+	if(!app->getServerConnection()->flag1Fetch){
+		SDL_GL_BindTexture(app->getResourceManager()->getTexture("team1flag"),0,0);
+		flagModel->translate(metadata.team1FlagPosition);
+		flagModel->draw(program,cam,GL_TRIANGLES);
+	}
+	if(!app->getServerConnection()->flag2Fetch){
+		SDL_GL_BindTexture(app->getResourceManager()->getTexture("team2flag"),0,0);
+		flagModel->translate(metadata.team2FlagPosition);
+		flagModel->draw(program,cam,GL_TRIANGLES);
+	}
 }
 void World::loadMapFromMemory(std::vector<unsigned char> chunkData){
 	World::metadata.team1FlagPosition.x=chunkData[0];

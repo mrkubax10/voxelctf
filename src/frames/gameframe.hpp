@@ -16,6 +16,7 @@
 #include "../world/skybox.hpp"
 #include "../SDL2_gui/SDLGui.h"
 #include "../maths/aabb.hpp"
+#include "../gameplay/hud.hpp"
 class GameFrame : public Frame{
     Ray* ray;
     World* world;
@@ -31,7 +32,7 @@ class GameFrame : public Frame{
     GUIButton* buttonReturn;
     Model* playerModel;
     Model* flagModel;
-    bool playerHasFlag;
+    HUD* hud;
 public:
     void begin();
     void render();

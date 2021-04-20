@@ -61,10 +61,12 @@ void Model::rotate(float pitch,float yaw,float roll){
 void Model::draw(ShaderProgram program,Camera cam,unsigned int mode){
 	program.use();
 	glBindVertexArray(mesh.VAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mesh.EBO);
 	glBindBuffer(GL_ARRAY_BUFFER,mesh.VBO);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER,mesh.TBO);
 	glEnableVertexAttribArray(1);
+	
 
 	program.setMat4("projection",cam.getProjection());
 	program.setMat4("transform",Model::transformation);

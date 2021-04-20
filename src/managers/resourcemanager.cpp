@@ -6,7 +6,8 @@
  */
 
 #include "resourcemanager.hpp"
-
+#include <GL/glew.h>
+#include <GL/gl.h>
 ResourceManager::ResourceManager(SDL_Renderer *render) {
 	ResourceManager::render=render;
 
@@ -37,6 +38,33 @@ SDL_Texture* ResourceManager::getTexture(std::string name){
 	}
 	std::cout<<"(Log) [ResourceManager] Loaded texture "<<name<<std::endl;
 	return ResourceManager::textures[name];
+}
+unsigned int ResourceManager::getNativeTexture(std::string name){
+	if(ResourceManager::nativeTextures.count(name)){
+		return ResourceManager::nativeTextures[name];
+	}
+	SDL_Surface* surf=IMG_Load(std::string("res/textures/"+name+".png").c_str());
+	if(!surf){
+		std::cout<<"(Warn) [ResourceManager] Failed to load native texture "<<name<<std::endl;
+		return 0;
+	}
+	unsigned int texture;
+	unsigned int format;
+	if(surf->format->BytesPerPixel==3)
+		format=GL_RGB;
+	else if(surf->format->BytesPerPixel==4)
+		format=GL_RGBA;
+	else{
+		std::cout<<"(Warn) [ResourceManager] Failed to load native texture "<<name<<std::endl;
+		return 0;
+	}
+	glGenTextures(1,&texture);
+	glBindTexture(GL_TEXTURE_2D,texture);
+	glTexImage2D(GL_TEXTURE_2D,0,format,surf->w,surf->h,0,format,GL_UNSIGNED_BYTE,surf->pixels);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	std::cout<<"(Log) [ResourceManager] Loaded native texture "<<name<<std::endl;
+	return texture;
 }
 ShaderProgram ResourceManager::getShaderProgram(std::string name){
 	if(ResourceManager::shaderprograms.count(name)){
@@ -96,11 +124,15 @@ Model* ResourceManager::getOBJModel(std::string name){
 			vertexIndices.push_back(std::stoi(split(data[1],'/')[0])-1);
 			vertexIndices.push_back(std::stoi(split(data[2],'/')[0])-1);
 			vertexIndices.push_back(std::stoi(split(data[3],'/')[0])-1);
+			uvIndices.push_back(std::stoi(split(data[1],'/')[1])-1);
+			uvIndices.push_back(std::stoi(split(data[2],'/')[1])-1);
+			uvIndices.push_back(std::stoi(split(data[3],'/')[1])-1);
 		}
 	}
 	for(int i=0; i<uvIndices.size(); i++){
-		uvs.push_back(fileuvs[uvIndices[i]-1]);
 		uvs.push_back(fileuvs[uvIndices[i+1]-1]);
+		uvs.push_back(fileuvs[uvIndices[i]-1]);
+		
 	}
 	file.close();
 	Model* model=new Model(vertices,uvs,vertexIndices);

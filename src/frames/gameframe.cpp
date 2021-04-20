@@ -22,7 +22,7 @@ void GameFrame::begin(){
 	GameFrame::ray=new Ray(cam);
 	GameFrame::player=new Player(cam);
 	GameFrame::playerModel=createBoxModel();
-	playerHasFlag=false;
+	player->playerHasFlag=false;
 	flagModel=app->getResourceManager()->getOBJModel("flag");
 	GameFrame::pause=false;
 	app->getGUIManager()->clear();
@@ -31,12 +31,15 @@ void GameFrame::begin(){
 	buttonExit=new GUIButton(0,40,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_exit"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
 	buttonExit->center(app->getWindowW(),app->getWindowH(),false,true);
+	hud=new HUD(app->getRenderer(),player,app->getResourceManager()->getFont("default",20),app);
+	app->getGUIManager()->add(hud);
 	app->getGUIManager()->add(buttonReturn);
 	app->getGUIManager()->add(buttonExit);
 	buttonReturn->setVisible(false);
 	buttonExit->setVisible(false);
 	app->getGUIManager()->add(crossair);
 	app->getGUIManager()->add(app->getChat());
+	
 	app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
 	glViewport(0,0,app->getWindowW(),app->getWindowH());
 	cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
@@ -113,43 +116,37 @@ void GameFrame::render(){
 		playerModel->setScale(glm::vec3(1,1.70,1));
 		glm::vec3 pos=app->getServerConnection()->getPlayerList().at(i).position;
 		playerModel->translate(glm::vec3(pos.x-0.5f,pos.y-1.70f,pos.z-0.5f));
-		// if(app->getServerConnection()->getPlayerList().at(i).team==0)
-		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(0,1,0,1));
-		// else if(app->getServerConnection()->getPlayerList().at(i).team==1)
-		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,0,1));
-		// else
-		// 	app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,1,1));
+		if(app->getServerConnection()->getPlayerList().at(i).team==0)
+			app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(0,1,0,1));
+		else if(app->getServerConnection()->getPlayerList().at(i).team==1)
+			app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,0,1));
+		else
+			app->getResourceManager()->getShaderProgram("object").setVec4("color",glm::vec4(1,0,1,1));
+		
 		playerModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
 		
 	}
-	if(!app->getServerConnection()->flag1Fetch){
-		flagModel->translate(world->metadata.team1FlagPosition);
-		flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
-	}
-	if(!app->getServerConnection()->flag2Fetch){
-		flagModel->translate(world->metadata.team2FlagPosition);
-		flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
-	}
+	world->renderEntities(app->getResourceManager()->getShaderProgram("objecttextured"),*cam,flagModel,app);
 	
-	if(AABB::boxColliding(player->getPosition(),world->metadata.team1FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==1 && !playerHasFlag){
+	if(AABB::boxColliding(player->getPosition(),world->metadata.team1FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==1 && !player->playerHasFlag){
 		app->getServerConnection()->sendFlagFetch(0);
-		playerHasFlag=true;
+		player->playerHasFlag=true;
 		app->getServerConnection()->flag1Fetch=true;
 	}
-	if(AABB::boxColliding(player->getPosition(),world->metadata.team2FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==0 && !playerHasFlag){
+	if(AABB::boxColliding(player->getPosition(),world->metadata.team2FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==0 && !player->playerHasFlag){
 		app->getServerConnection()->sendFlagFetch(1);
-		playerHasFlag=true;
+		player->playerHasFlag=true;
 		app->getServerConnection()->flag2Fetch=true;
 	}
-	if(AABB::boxColliding(player->getPosition(),world->metadata.team1FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==0 && playerHasFlag){
+	if(AABB::boxColliding(player->getPosition(),world->metadata.team1FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==0 && player->playerHasFlag){
 		app->getServerConnection()->flag2Fetch=false;
 		app->getServerConnection()->sendFlagCapture(1);
-		playerHasFlag=false;
+		player->playerHasFlag=false;
 	}
-	if(AABB::boxColliding(player->getPosition(),world->metadata.team2FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==1 && playerHasFlag){
+	if(AABB::boxColliding(player->getPosition(),world->metadata.team2FlagPosition,glm::vec3(0.7,1.5,0.7),glm::vec3(0.1,0.7,0.1)) && app->getServerConnection()->getTeam()==1 && player->playerHasFlag){
 		app->getServerConnection()->flag1Fetch=false;
 		app->getServerConnection()->sendFlagCapture(0);
-		playerHasFlag=false;
+		player->playerHasFlag=false;
 	}
 	app->getGL2DRenderer()->start();
 	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);

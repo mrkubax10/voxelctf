@@ -17,6 +17,8 @@ Player::Player(FPSCamera* cam) {
 	Player::vel.y=-0.05;
 	Player::mass=0.4f;
 	Player::playerSize=glm::vec3(0.5,0.5,0.5);
+	Player::maxHP=50;
+	Player::hp=Player::maxHP;
 }
 void Player::update(const Uint8* keyboard,World* world,Settings* settings,bool editor,bool pause){
 	glm::vec3 dir=glm::vec3(0,0,0);
@@ -135,4 +137,16 @@ glm::vec3 Player::getPosition(){
 }
 void Player::setPosition(glm::vec3 pos){
 	Player::cam->setPosition(pos);
+}
+void Player::setHP(uint8_t hp){
+	Player::hp=hp;
+}
+uint8_t Player::getHP(){
+	return hp;
+}
+void Player::setMaxHP(uint8_t maxhp){
+	Player::maxHP=maxhp;
+}
+uint8_t Player::getMaxHP(){
+	return maxHP;
 }
