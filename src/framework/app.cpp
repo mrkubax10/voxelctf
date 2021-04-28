@@ -26,17 +26,17 @@ App::App(std::string title,int w,int h,Uint32 hints){
     App::settings=new Settings();
     App::resManager=new ResourceManager(App::render);
     App::langManager=new LanguageManager("res/translations");
-    App::guiManager=new GUIManager(App::render);
+    App::guiManager=new GUIManager(this);
     App::textureAtlas=new TextureAtlas(App::render);
     App::textureAtlas->generateTextureAtlas(resManager);
-    App::gl2dRenderer=new GL2DRenderer(App::window,App::render);
-    App::chat=new Chat(5,5,render,resManager->getFont("default",15),this);
+    App::renderer=new Renderer(w,h,resManager->getShaderProgram("2dtextured"),resManager->getShaderProgram("2dcolored"));
+    App::chat=new Chat(5,5,renderer,resManager->getFont("default",15),this);
     App::serverConnection=new ServerConnection(chat,this);
 }
 SDL_Window* App::getWindow(){
     return window;
 }
-SDL_Renderer* App::getRenderer(){
+SDL_Renderer* App::getSDLRenderer(){
     return render;
 }
 bool App::isRunning(){
@@ -74,8 +74,8 @@ int App::getMouseY(){
 Settings* App::getSettings(){
     return settings;
 }
-GL2DRenderer* App::getGL2DRenderer(){
-    return gl2dRenderer;
+Renderer* App::getRenderer(){
+    return renderer;
 }
 std::string App::getTitle(){
     return std::string(SDL_GetWindowTitle(App::window));
@@ -130,7 +130,7 @@ std::string App::getUsername(){
 }
 void App::destroy(){
     App::resManager->destroy();
-    App::gl2dRenderer->destroy();
+    App::renderer->destroy();
     SDL_DestroyWindow(App::window);
     SDL_DestroyRenderer(App::render);
     SDL_GL_DeleteContext(App::contextGL);

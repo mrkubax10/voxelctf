@@ -39,7 +39,7 @@ SDL_Texture* ResourceManager::getTexture(std::string name){
 	std::cout<<"(Log) [ResourceManager] Loaded texture "<<name<<std::endl;
 	return ResourceManager::textures[name];
 }
-unsigned int ResourceManager::getNativeTexture(std::string name){
+Texture* ResourceManager::getNativeTexture(std::string name){
 	if(ResourceManager::nativeTextures.count(name)){
 		return ResourceManager::nativeTextures[name];
 	}
@@ -48,22 +48,10 @@ unsigned int ResourceManager::getNativeTexture(std::string name){
 		std::cout<<"(Warn) [ResourceManager] Failed to load native texture "<<name<<std::endl;
 		return 0;
 	}
-	unsigned int texture;
-	unsigned int format;
-	if(surf->format->BytesPerPixel==3)
-		format=GL_RGB;
-	else if(surf->format->BytesPerPixel==4)
-		format=GL_RGBA;
-	else{
-		std::cout<<"(Warn) [ResourceManager] Failed to load native texture "<<name<<std::endl;
-		return 0;
-	}
-	glGenTextures(1,&texture);
-	glBindTexture(GL_TEXTURE_2D,texture);
-	glTexImage2D(GL_TEXTURE_2D,0,format,surf->w,surf->h,0,format,GL_UNSIGNED_BYTE,surf->pixels);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-	std::cout<<"(Log) [ResourceManager] Loaded native texture "<<name<<std::endl;
+	Texture* texture=new Texture();
+	texture->loadFromSurface(surf);
+	SDL_FreeSurface(surf);
+	ResourceManager::nativeTextures[name]=texture;
 	return texture;
 }
 ShaderProgram ResourceManager::getShaderProgram(std::string name){

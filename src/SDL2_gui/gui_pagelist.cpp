@@ -1,11 +1,11 @@
 #include "gui_pagelist.h"
-GUIPagelist::GUIPagelist(int x,int y,int w,int h,TTF_Font *font,SDL_Renderer *render,int selectedPage,int r,int g,int b){
+GUIPagelist::GUIPagelist(int x,int y,int w,int h,TTF_Font *font,Renderer *renderer,int selectedPage,int r,int g,int b){
     GUIPagelist::x=x;
     GUIPagelist::y=y;
     GUIPagelist::w=w;
     GUIPagelist::h=h;
     GUIPagelist::font=font;
-    GUIPagelist::render=render;
+    GUIPagelist::renderer=renderer;
     GUIPagelist::selectedPage=selectedPage;
     GUIPagelist::r=r;
     GUIPagelist::g=g;
@@ -17,12 +17,11 @@ void GUIPagelist::update(SDL_Event *ev){
             guiRect.x=GUIPagelist::x;
             guiRect.y=GUIPagelist::y;
             for(int i=0; i<GUIPagelist::pages.size(); i++){
-                SDL_QueryTexture(GUIPagelist::pages[i].texturePageName,0,0,&guiRect.w,&guiRect.h);
-                if(ev->motion.x>=guiRect.x && ev->motion.x<=guiRect.x+guiRect.w && ev->motion.y>=guiRect.y && ev->motion.y<=guiRect.y+guiRect.h){
+                if(ev->motion.x>=guiRect.x && ev->motion.x<=guiRect.x+pages[i].texturePageName->getW() && ev->motion.y>=guiRect.y && ev->motion.y<=guiRect.y+pages[i].texturePageName->getH()){
                     GUIPagelist::selectedPage=i;
                     break;
                 }
-                guiRect.x+=guiRect.w;
+                guiRect.x+=pages[i].texturePageName->getW();
             }
         }
     }
@@ -31,23 +30,14 @@ void GUIPagelist::update(SDL_Event *ev){
     }
 }
 void GUIPagelist::draw(){
-    guiRect.x=GUIPagelist::x;
-    guiRect.y=GUIPagelist::y;
-    guiRect.w=GUIPagelist::w;
-    guiRect.h=GUIPagelist::h;
     GUIPagelist::x2=GUIPagelist::x;
-    SDL_SetRenderDrawColor(GUIPagelist::render,GUIPagelist::r,GUIPagelist::g,GUIPagelist::b,255);
-    SDL_RenderFillRect(GUIPagelist::render,&guiRect);
+    renderer->drawColoredRect(glm::vec4((float)r/255.0f,(float)g/255.0f,(float)b/255.0f,1),glm::vec2(x,y),glm::vec2(w,h));
     for(int i=0; i<GUIPagelist::pages.size(); i++){
-        guiRect.y=GUIPagelist::y;
-        guiRect.x=GUIPagelist::x2;
-        SDL_QueryTexture(GUIPagelist::pages[i].texturePageName,0,0,&guiRect.w,&guiRect.h);
-        if(GUIPagelist::selectedPage==i)SDL_SetRenderDrawColor(GUIPagelist::render,GUIPagelist::r-100,GUIPagelist::g-100,GUIPagelist::b-100,255);
-        else SDL_SetRenderDrawColor(GUIPagelist::render,GUIPagelist::r-50,GUIPagelist::g-50,GUIPagelist::b-50,255);
-        SDL_RenderFillRect(GUIPagelist::render,&guiRect);
-        SDL_SetRenderDrawColor(GUIPagelist::render,255,255,255,255);
-        SDL_RenderDrawRect(GUIPagelist::render,&guiRect);
-        SDL_RenderCopy(GUIPagelist::render,GUIPagelist::pages[i].texturePageName,0,&guiRect);
+        if(GUIPagelist::selectedPage==i)
+            renderer->drawColoredRect(glm::vec4((float)(GUIPagelist::r-100)/255.0f,(float)(GUIPagelist::g-100)/255.0f,(float)(GUIPagelist::b-100)/255.0f,1),glm::vec2(x2,y),glm::vec2(pages[i].texturePageName->getW(),pages[i].texturePageName->getH()));
+        else
+            renderer->drawColoredRect(glm::vec4((float)(GUIPagelist::r-50)/255.0f,(float)(GUIPagelist::g-50)/255.0f,(float)(GUIPagelist::b-50)/255.0f,1),glm::vec2(x2,y),glm::vec2(pages[i].texturePageName->getW(),pages[i].texturePageName->getH()));
+
         GUIPagelist::x2+=guiRect.w;
 
     }
@@ -58,7 +48,10 @@ void GUIPagelist::draw(){
 void GUIPagelist::addPage(std::string title){
     GUIPagelist::pages.push_back(_GUIPage());
     GUIPagelist::pages.back().title=title;
-    GUIPagelist::pages.back().texturePageName=SDL_CreateTextureFromSurface(GUIPagelist::render,TTF_RenderUTF8_Blended(GUIPagelist::font,GUIPagelist::pages.back().title.c_str(),{0,0,0}));
+    SDL_Surface* surf=TTF_RenderUTF8_Blended(GUIPagelist::font,GUIPagelist::pages.back().title.c_str(),{0,0,0});
+    GUIPagelist::pages.back().texturePageName=new Texture();
+    GUIPagelist::pages.back().texturePageName->loadFromSurface(surf);
+
 }
 void GUIPagelist::addToPage(int page,GUIComponent* component){
     component->setX(component->getX()+GUIPagelist::x);

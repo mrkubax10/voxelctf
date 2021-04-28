@@ -9,7 +9,7 @@
 #include "../SDL2_gui/SDLGui.h"
 #include "../world/textureatlas.hpp"
 #include "../settings.hpp"
-#include "../render/gl2drenderer.hpp"
+#include "../render/renderer.hpp"
 class App{
     SDL_Window* window;
     SDL_Event event;
@@ -23,7 +23,7 @@ class App{
     GUIManager* guiManager;
     Settings* settings;
     TextureAtlas* textureAtlas;
-    GL2DRenderer* gl2dRenderer;
+    Renderer* renderer;
     Chat* chat;
     int windowW,windowH,mouseX,mouseY;
     std::string editorMapName;
@@ -33,7 +33,7 @@ public:
     ~App();
     void loop();
     SDL_Window* getWindow();
-    SDL_Renderer* getRenderer();
+    SDL_Renderer* getSDLRenderer();
     Frame* getFrame();
     bool isRunning();
     SDL_Event* getEvent();
@@ -43,7 +43,7 @@ public:
     GUIManager* getGUIManager();
     Settings* getSettings();
     TextureAtlas* getTextureAtlas();
-    GL2DRenderer* getGL2DRenderer();
+    Renderer* getRenderer();
     Chat* getChat();
     std::string getEditorMapName();
     SDL_GLContext getGLContext();

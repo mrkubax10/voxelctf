@@ -1,11 +1,11 @@
 #include "gui_messagebox.h"
-GUIMessagebox::GUIMessagebox(int x,int y,int w,int h,std::string title,TTF_Font *font,SDL_Renderer *render,bool opened,bool draggable,int r,int g,int b,int borderr,int borderg,int borderb){
+GUIMessagebox::GUIMessagebox(int x,int y,int w,int h,std::string title,TTF_Font *font,Renderer *renderer,bool opened,bool draggable,int r,int g,int b,int borderr,int borderg,int borderb){
     GUIMessagebox::x=x;
     GUIMessagebox::y=y;
     GUIMessagebox::w=w;
     GUIMessagebox::h=h;
     GUIMessagebox::font=font;
-    GUIMessagebox::render=render;
+    GUIMessagebox::renderer=renderer;
     GUIMessagebox::opened=opened;
     GUIMessagebox::draggable=draggable;
     GUIMessagebox::r=r;
@@ -15,7 +15,9 @@ GUIMessagebox::GUIMessagebox(int x,int y,int w,int h,std::string title,TTF_Font 
     GUIMessagebox::borderg=borderg;
     GUIMessagebox::borderb=borderb;
     GUIMessagebox::title=title;
-    GUIMessagebox::textureTitle=SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,title.c_str(),{0,0,0}));
+    GUIMessagebox::textureTitle=new Texture();
+    SDL_Surface* surf=TTF_RenderUTF8_Blended(font,title.c_str(),{0,0,0});
+    textureTitle->loadFromSurface(surf);
     GUIMessagebox::popupmenu=0;
 }
 void GUIMessagebox::update(SDL_Event *ev){
@@ -36,22 +38,8 @@ void GUIMessagebox::update(SDL_Event *ev){
 }
 void GUIMessagebox::draw(){
     if(GUIMessagebox::opened){
-        SDL_SetRenderDrawColor(GUIMessagebox::render,GUIMessagebox::r,GUIMessagebox::g,GUIMessagebox::b,255);
-        guiRect.x=GUIMessagebox::x;
-        guiRect.y=GUIMessagebox::y;
-        guiRect.w=GUIMessagebox::w;
-        guiRect.h=GUIMessagebox::h;
-        SDL_RenderFillRect(GUIMessagebox::render,&guiRect);
-        guiRect.h=16;
-        SDL_SetRenderDrawColor(GUIMessagebox::render,GUIMessagebox::r,GUIMessagebox::g,GUIMessagebox::b,255);
-        SDL_RenderFillRect(GUIMessagebox::render,&guiRect);
-        guiRect.y=GUIMessagebox::y+16;
-        SDL_SetRenderDrawColor(GUIMessagebox::render,GUIMessagebox::r-50,GUIMessagebox::g-50,GUIMessagebox::b-50,255);
-        SDL_RenderFillRect(GUIMessagebox::render,&guiRect);
-        SDL_QueryTexture(GUIMessagebox::textureTitle,0,0,&guiRect.w,&guiRect.h);
-        guiRect.x=GUIMessagebox::x+2;
-        guiRect.y=GUIMessagebox::y+(32-guiRect.h)/2;
-        SDL_RenderCopy(GUIMessagebox::render,GUIMessagebox::textureTitle,0,&guiRect);
+        renderer->drawColoredRect(glm::vec4(0.4f,0.4f,0.4f,0.9f),glm::vec2(x,y),glm::vec2(w,h));
+        renderer->drawTexturedRect(textureTitle,glm::vec2(x+2,y+2),glm::vec2(textureTitle->getW(),textureTitle->getH()));
         for(int i=0; i<GUIMessagebox::components.size(); i++){
             GUIMessagebox::components[i]->draw();
         }

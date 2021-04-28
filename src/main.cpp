@@ -6,6 +6,7 @@
  */
 #include "framework/app.hpp"
 #include "frames/frameconstants.hpp"
+#include "global.hpp"
 int main(int argc,char *args[]){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
@@ -22,12 +23,12 @@ int main(int argc,char *args[]){
 	GAME_FRAME=new GameFrame();
 	EDITOR_MENU_FRAME=new EditorMenuFrame();
 	EDITOR_FRAME=new EditorFrame();
-	App app("VoxelCTF",1024,720,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+	App* app=new App("VoxelCTF",1024,720,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
 	//app.getSettings()->load("settings.txt");
-	app.setFrame(MENU_FRAME);
-	app.loop();
-	app.getSettings()->save("settings.txt");
-	app.destroy();
+	app->setFrame(MENU_FRAME);
+	app->loop();
+	app->getSettings()->save("settings.txt");
+	app->destroy();
 	TTF_Quit();
 	Mix_Quit();
 	SDL_Quit();

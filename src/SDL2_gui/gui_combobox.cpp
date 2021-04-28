@@ -1,23 +1,27 @@
 #include "gui_combobox.h"
-GUICombobox::GUICombobox(int x,int y,std::vector<std::string> elements,TTF_Font *font,SDL_Renderer *render,int selectedItem,int r,int g,int b,int listr,int listg,int listb){
+GUICombobox::GUICombobox(int x,int y,std::vector<std::string> elements,TTF_Font *font,Renderer* renderer,int selectedItem,int r,int g,int b,int listr,int listg,int listb){
     GUICombobox::x=x;
     GUICombobox::y=y;
     GUICombobox::elements=elements;
     GUICombobox::font=font;
-    GUICombobox::render=render;
+    GUICombobox::renderer=renderer;
     GUICombobox::selectedElement=selectedItem;
-    GUICombobox::textureSelectedElement=SDL_CreateTextureFromSurface(render,TTF_RenderText_Blended(font,elements[selectedElement].c_str(),{0,0,0}));
+    GUICombobox::textureSelectedElement=new Texture();
+    SDL_Surface* surf=TTF_RenderText_Blended(font,elements[selectedElement].c_str(),{0,0,0});
+    textureSelectedElement->loadFromSurface(surf);
+    SDL_FreeSurface(surf);
     GUICombobox::selected=false;
     GUICombobox::expanded=false;
     int w,h;
-    SDL_QueryTexture(GUICombobox::textureSelectedElement,0,0,&w,&h);
-    GUICombobox::w2=w;
-    GUICombobox::h2=h;
+    GUICombobox::w2=textureSelectedElement->getW();
+    GUICombobox::h2=textureSelectedElement->getH();
     GUICombobox::listh=0;
     for(int i=0; i<elements.size(); i++){
-        GUICombobox::textureElements.push_back(SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,elements[i].c_str(),{0,0,0})));
-        SDL_QueryTexture(GUICombobox::textureElements[i],0,0,0,&h);
-        GUICombobox::listh+=h;
+        surf=TTF_RenderUTF8_Blended(font,elements[i].c_str(),{0,0,0});
+        Texture* texture=new Texture();
+        texture->loadFromSurface(surf);
+        GUICombobox::textureElements.push_back(texture);
+        GUICombobox::listh+=textureElements[i]->getH();
     }
     GUICombobox::r=r;
     GUICombobox::g=g;
@@ -34,8 +38,9 @@ void GUICombobox::update(SDL_Event *ev){
             }else if(ev->motion.x>=GUICombobox::x && ev->motion.x<=GUICombobox::x+GUICombobox::w2 && ev->motion.y>=GUICombobox::y+GUICombobox::h2 && ev->motion.y<=GUICombobox::y+GUICombobox::h2+GUICombobox::listh){
                 if(GUICombobox::expanded){
                     GUICombobox::selectedElement=(ev->motion.y-GUICombobox::y)/GUICombobox::h2-1;
-                    SDL_DestroyTexture(GUICombobox::textureSelectedElement);
-                    GUICombobox::textureSelectedElement=SDL_CreateTextureFromSurface(GUICombobox::render,TTF_RenderUTF8_Blended(GUICombobox::font,GUICombobox::elements[GUICombobox::selectedElement].c_str(),{0,0,0}));
+                    SDL_Surface* surf=TTF_RenderUTF8_Blended(GUICombobox::font,GUICombobox::elements[GUICombobox::selectedElement].c_str(),{0,0,0});
+                    GUICombobox::textureSelectedElement->loadFromSurface(surf);
+                    SDL_FreeSurface(surf);
                     GUICombobox::expanded=false;
                 }
             }else{
@@ -46,27 +51,12 @@ void GUICombobox::update(SDL_Event *ev){
 }
 
 void GUICombobox::draw(){
-    guiRect.x=GUICombobox::x;
-    guiRect.y=GUICombobox::y;
-    guiRect.w=GUICombobox::w2+10;
-    guiRect.h=GUICombobox::h2;
-    SDL_SetRenderDrawColor(GUICombobox::render,GUICombobox::r,GUICombobox::g,GUICombobox::b,255);
-    SDL_RenderFillRect(GUICombobox::render,&guiRect);
-    guiRect.x=GUICombobox::x;
-    guiRect.y=GUICombobox::y;
-    SDL_QueryTexture(GUICombobox::textureSelectedElement,0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUICombobox::render,GUICombobox::textureSelectedElement,0,&guiRect);
+    renderer->drawColoredRect(glm::vec4((float)GUICombobox::r/255.0f,(float)GUICombobox::g/255.0f,(float)GUICombobox::b/255.0f,1),glm::vec2(x,y),glm::vec2(w2+10,h2));
+    renderer->drawTexturedRect(textureSelectedElement,glm::vec2(x,y),glm::vec2(textureSelectedElement->getW(),textureSelectedElement->getH()));
     if(GUICombobox::expanded){
-        guiRect.x=GUICombobox::x;
-        guiRect.y=GUICombobox::y+GUICombobox::h2;
-        guiRect.w=GUICombobox::w2;
-        guiRect.h=GUICombobox::listh;
-        SDL_SetRenderDrawColor(GUICombobox::render,GUICombobox::listr,GUICombobox::listg,GUICombobox::listb,255);
-        SDL_RenderFillRect(GUICombobox::render,&guiRect);
+        renderer->drawColoredRect(glm::vec4((float)GUICombobox::listr/255.0f,(float)GUICombobox::listg/255.0f,(float)GUICombobox::listb/255.0f,1),glm::vec2(x,y+h2),glm::vec2(w2,listh));
         for(int i=0; i<GUICombobox::elements.size(); i++){
-            guiRect.y=GUICombobox::y+GUICombobox::h2+i*GUICombobox::h2;
-            SDL_QueryTexture(GUICombobox::textureElements[i],0,0,&guiRect.w,&guiRect.h);
-            SDL_RenderCopy(GUICombobox::render,GUICombobox::textureElements[i],0,&guiRect);
+            renderer->drawTexturedRect(textureElements[i],glm::vec2(x,y+h2*i+h2),glm::vec2(textureElements[i]->getW(),textureElements[i]->getH()));
         }
     }
 }

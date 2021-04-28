@@ -4,9 +4,9 @@
 #include <SDL2/SDL.h>
 #include "gui_global.h"
 class GUIImage : public GUIComponent{
-    SDL_Texture* texture;
+    Texture* texture;
 public:
-    GUIImage(int x,int y,SDL_Renderer* render,SDL_Texture* texture);
+    GUIImage(int x,int y,Renderer* renderer,Texture* texture);
     void update(SDL_Event* ev);
     void draw();
     void setSize(int w,int h);

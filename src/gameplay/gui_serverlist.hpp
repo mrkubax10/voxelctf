@@ -12,9 +12,9 @@
 class GUIServerlist : public GUIComponent{
     struct ListEntry{
         std::string name,ip;
-        SDL_Texture* textureName,*textureIP;
+        Texture* textureName,*textureIP;
     };
-    SDL_Texture* titleServerName,*titleServerIP;
+    Texture* titleServerName,*titleServerIP;
     std::vector<ListEntry> entries;
     int selectedEntry;
     TTF_Font* font;
@@ -23,7 +23,7 @@ class GUIServerlist : public GUIComponent{
     GUITextbox* textboxIP;
     void loadListFromFile();
 public:
-    GUIServerlist(int x,int y,int w,int h,TTF_Font* font,LanguageManager* langManager,SDL_Renderer* render,GUITextbox* textboxIP);
+    GUIServerlist(int x,int y,int w,int h,TTF_Font* font,LanguageManager* langManager,Renderer* renderer,GUITextbox* textboxIP);
     void update(SDL_Event* ev);
     void draw();
     bool isMouseOnList(int mx,int my);

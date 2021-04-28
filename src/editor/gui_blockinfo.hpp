@@ -12,10 +12,10 @@ extern std::string blockNames[];
 class GUIBlockInfo : public GUIComponent{
     TTF_Font* font;
     int currentBlockId;
-    SDL_Texture* textureBlockName;
+    Texture* textureBlockName;
     ResourceManager* resManager;
 public:
-    GUIBlockInfo(int x,int y,TTF_Font* font,SDL_Renderer* render);
+    GUIBlockInfo(int x,int y,TTF_Font* font,Renderer* render);
     void update(SDL_Event* ev);
     void draw();
 };

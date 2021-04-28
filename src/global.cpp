@@ -7,5 +7,4 @@
 #include "global.hpp"
 SDL_Rect rect;
 SDL_Rect rect2;
-
 const char* GAME_VERSION="dev    ";

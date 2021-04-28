@@ -1,9 +1,9 @@
 #include "gui_checkbox.h"
-GUICheckbox::GUICheckbox(int x,int y,std::string text,TTF_Font *font,SDL_Renderer *render,int r,int g,int b,int chr,int chg,int chb){
+GUICheckbox::GUICheckbox(int x,int y,std::string text,TTF_Font *font,Renderer* renderer,int r,int g,int b,int chr,int chg,int chb){
     GUICheckbox::x=x;
     GUICheckbox::y=y;
     GUICheckbox::text=text;
-    GUICheckbox::render=render;
+    GUICheckbox::renderer=renderer;
     GUICheckbox::r=r;
     GUICheckbox::g=g;
     GUICheckbox::b=b;
@@ -13,7 +13,10 @@ GUICheckbox::GUICheckbox(int x,int y,std::string text,TTF_Font *font,SDL_Rendere
     GUICheckbox::checked=false;
     GUICheckbox::selected=false;
     GUICheckbox::font=font;
-    GUICheckbox::textureText=SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,text.c_str(),{255,255,255}));
+    GUICheckbox::textureText=new Texture();
+    SDL_Surface* surf=TTF_RenderUTF8_Blended(font,text.c_str(),{255,255,255});
+    textureText->loadFromSurface(surf);
+    SDL_FreeSurface(surf);
 }
 void GUICheckbox::update(SDL_Event *ev){
     if(ev->type==SDL_MOUSEBUTTONDOWN){
@@ -25,16 +28,11 @@ void GUICheckbox::update(SDL_Event *ev){
     }
 }
 void GUICheckbox::draw(){
-    if(GUICheckbox::checked) roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::chr,GUICheckbox::chg,GUICheckbox::chb,255);
-    else roundedBoxRGBA(GUICheckbox::render,GUICheckbox::x,GUICheckbox::y,GUICheckbox::x+32,GUICheckbox::y+32,5.5,GUICheckbox::r,GUICheckbox::g,GUICheckbox::b,255);
-    if(GUICheckbox::checked){
-        thickLineRGBA(GUICheckbox::render,GUICheckbox::x+5,GUICheckbox::y+15,GUICheckbox::x+15,GUICheckbox::y+28,4,255,255,255,255);
-        thickLineRGBA(GUICheckbox::render,GUICheckbox::x+14,GUICheckbox::y+27,GUICheckbox::x+27,GUICheckbox::y+5,4,255,255,255,255);
-    }
-    SDL_QueryTexture(GUICheckbox::textureText,0,0,&guiRect.w,&guiRect.h);
-    guiRect.x=GUICheckbox::x+35;
-    guiRect.y=GUICheckbox::y+(32-guiRect.h)/2;
-    SDL_RenderCopy(GUICheckbox::render,GUICheckbox::textureText,0,&guiRect);
+    if(GUICheckbox::checked)
+        renderer->drawColoredRect(glm::vec4((float)GUICheckbox::chr/255.0f,(float)GUICheckbox::chg/255.0f,(float)GUICheckbox::chb/255.0f,1),glm::vec2(x,y),glm::vec2(32,32));
+    else
+        renderer->drawColoredRect(glm::vec4((float)GUICheckbox::r/255.0f,(float)GUICheckbox::g/255.0f,(float)GUICheckbox::b/255.0f,1),glm::vec2(x,y),glm::vec2(32,32));
+    renderer->drawTexturedRect(textureText,glm::vec2(x+35,y+(32-textureText->getH())/2),glm::vec2(textureText->getW(),textureText->getH()));
 }
 void GUICheckbox::setChecked(bool checked){
     GUICheckbox::checked=checked;

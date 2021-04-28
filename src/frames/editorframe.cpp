@@ -13,7 +13,7 @@ void EditorFrame::begin(){
     EditorFrame::player=new Player(cam);
 	EditorFrame::skybox=new Skybox();
     app->getGUIManager()->clear();
-	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getTexture("crossair"));
+	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("crossair"));
 	blockInfo=new GUIBlockInfo(2,2,app->getResourceManager()->getFont("default",25),app->getRenderer());
 	buttonReturn=new GUIButton(0,0,100,25,app->getLanguageManager()->getFromCurrentLanguage("editor_return"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonReturn->center(app->getWindowW(),app->getWindowH(),false);
@@ -22,7 +22,7 @@ void EditorFrame::begin(){
 	buttonSaveAndExit=new GUIButton(0,60,100,25,app->getLanguageManager()->getFromCurrentLanguage("editor_saveandexit"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonSaveAndExit->center(app->getWindowW(),app->getWindowH(),false);
 	toolInfo=new GUIToolInfo(200,2,app->getRenderer(),app->getResourceManager());
-	positionInfo=new GUILabel(0,0,"",app->getResourceManager()->getFont("default",15),{255,255,255},app->getRenderer());
+	positionInfo=new GUILabel(0,0,"",app->getRenderer(),app->getResourceManager()->getFont("default",15),{255,255,255});
     
     
     if(fileExists("res/maps/"+app->getEditorMapName()+".blockctf")){
@@ -87,7 +87,6 @@ void EditorFrame::render(){
 			if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
 				glViewport(0,0,app->getEvent()->window.data1,app->getEvent()->window.data2);
 				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getEvent()->window.data1/(float)app->getEvent()->window.data2,0.1f,1000.0f));
-				app->getGL2DRenderer()->setTextureSize(app->getEvent()->window.data1,app->getEvent()->window.data2);
 				buttonReturn->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
 				buttonSave->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
 				buttonSaveAndExit->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
@@ -167,16 +166,11 @@ void EditorFrame::render(){
 	flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
 	flagModel->translate(world->metadata.team2FlagPosition);
 	flagModel->draw(app->getResourceManager()->getShaderProgram("object"),*cam,GL_TRIANGLES);
-
-	app->getGL2DRenderer()->start();
-	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);
-	SDL_RenderFillRect(app->getRenderer(),0);
 	positionInfo->setText("X:"+std::to_string((int)player->getPosition().x)+" Y:"+std::to_string((int)player->getPosition().y)+" Z:"+std::to_string((int)player->getPosition().z));
 	positionInfo->setX(app->getWindowW()-positionInfo->getW()-2);
 	positionInfo->setY(2);
 	crossair->center(app->getWindowW(),app->getWindowH());
 	app->getGUIManager()->draw();
-	app->getGL2DRenderer()->finish(app->getResourceManager()->getShaderProgram("2dtextured"));
 	SDL_GL_SwapWindow(app->getWindow());
 }
 void EditorFrame::finish(){

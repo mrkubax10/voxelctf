@@ -8,7 +8,7 @@ struct _GUIPage{
 public:
     std::vector<GUIComponent*> components;
     std::string title;
-    SDL_Texture* texturePageName;
+    Texture* texturePageName;
 };
 class GUIPagelist:public GUIContainer{
     std::vector<_GUIPage> pages;
@@ -17,7 +17,7 @@ class GUIPagelist:public GUIContainer{
     TTF_Font *font;
     int x2;
 public:
-    GUIPagelist(int x,int y,int w,int h,TTF_Font *font,SDL_Renderer *render,int selectedPage=0,int r=186,int g=255,int b=168);
+    GUIPagelist(int x,int y,int w,int h,TTF_Font *font,Renderer *renderer,int selectedPage=0,int r=186,int g=255,int b=168);
     void update(SDL_Event *ev);
     void draw();
     void addPage(std::string title="Page");

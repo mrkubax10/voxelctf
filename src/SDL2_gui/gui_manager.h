@@ -2,15 +2,17 @@
 #define GUI_MANAGER_H_INCLUDED
 #include "gui_component.h"
 #include <vector>
+class App;
 class GUIManager{
     std::vector<GUIComponent*> components;
-    SDL_Renderer *render;
+    App* app;
 public:
-    GUIManager(SDL_Renderer *render);
+    GUIManager(App* app);
     void add(GUIComponent* component);
     void draw();
     void update(SDL_Event *event);
     void clear();
+    App* getApp();
 };
 
 

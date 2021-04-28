@@ -2,12 +2,13 @@
 #define GUI_COMPONENT_H_INCLUDED
 #include <SDL2/SDL.h>
 #include "gui_effect_transition.h"
+#include "../render/renderer.hpp"
 class GUIComponent{
 protected:
     int x,y,w,h;
     bool selected,visible;
-    SDL_Renderer *render;
     GUIEffectTransition* transition;
+    Renderer* renderer;
 public:
     virtual void draw()=0;
     virtual void update(SDL_Event *ev)=0;

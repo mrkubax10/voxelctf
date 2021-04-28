@@ -8,10 +8,10 @@ class GUICheckbox:public GUIComponent{
     bool checked;
     int r,g,b;
     int chr,chg,chb;
-    SDL_Texture* textureText;
+    Texture* textureText;
     TTF_Font* font;
 public:
-    GUICheckbox(int x,int y,std::string text,TTF_Font *font,SDL_Renderer *render,int r=255,int g=255,int b=255,int chr=0,int chg=200,int chb=255);
+    GUICheckbox(int x,int y,std::string text,TTF_Font *font,Renderer* renderer,int r=255,int g=255,int b=255,int chr=0,int chg=200,int chb=255);
     void update(SDL_Event *ev);
     void draw();
     void setChecked(bool checked);

@@ -8,7 +8,7 @@
 #include "gui_container.h"
 
 GUIContainer::GUIContainer() {
-	// TODO Auto-generated constructor stub
+	
 
 }
 void GUIContainer::setX(int x){

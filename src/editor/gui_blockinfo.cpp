@@ -1,11 +1,14 @@
 #include "gui_blockinfo.hpp"
-GUIBlockInfo::GUIBlockInfo(int x,int y,TTF_Font* font,SDL_Renderer* render){
+GUIBlockInfo::GUIBlockInfo(int x,int y,TTF_Font* font,Renderer* renderer){
     GUIBlockInfo::x=x;
     GUIBlockInfo::y=y;
     GUIBlockInfo::font=font;
-    GUIBlockInfo::render=render;
+    GUIBlockInfo::renderer=renderer;
     GUIBlockInfo::currentBlockId=BlockType::AIR;
-    GUIBlockInfo::textureBlockName=SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255}));
+    GUIBlockInfo::textureBlockName=new Texture();
+    SDL_Surface* surf=TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255});
+    textureBlockName->loadFromSurface(surf);
+    SDL_FreeSurface(surf);
     GUIBlockInfo::visible=true;
 }
 std::string blockNames[]={
@@ -16,20 +19,19 @@ void GUIBlockInfo::update(SDL_Event* ev){
     if(ev->type==SDL_MOUSEWHEEL){
         if(GUIBlockInfo::currentBlockId>BlockType::AIR && ev->wheel.y<0){
             GUIBlockInfo::currentBlockId--;
-            SDL_DestroyTexture(GUIBlockInfo::textureBlockName);
-            GUIBlockInfo::textureBlockName=SDL_CreateTextureFromSurface(GUIBlockInfo::render,TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255}));
+            SDL_Surface* surf=TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255});
+            textureBlockName->loadFromSurface(surf);
+            SDL_FreeSurface(surf);
         }
         if(GUIBlockInfo::currentBlockId<255 && ev->wheel.y>0){
             GUIBlockInfo::currentBlockId++;
-            SDL_DestroyTexture(GUIBlockInfo::textureBlockName);
-            GUIBlockInfo::textureBlockName=SDL_CreateTextureFromSurface(GUIBlockInfo::render,TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255}));
+            SDL_Surface* surf=TTF_RenderUTF8_Blended(font,blockNames[GUIBlockInfo::currentBlockId].c_str(),{255,255,255});
+            textureBlockName->loadFromSurface(surf);
+            SDL_FreeSurface(surf);
 
         }
     }
 }
 void GUIBlockInfo::draw(){
-    guiRect.x=GUIBlockInfo::x;
-    guiRect.y=GUIBlockInfo::y;
-    SDL_QueryTexture(GUIBlockInfo::textureBlockName,0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(render,GUIBlockInfo::textureBlockName,0,&guiRect);
+    renderer->drawTexturedRect(textureBlockName,glm::vec2(x,y),glm::vec2(textureBlockName->getW(),textureBlockName->getH()));
 }

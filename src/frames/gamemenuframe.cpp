@@ -1,17 +1,19 @@
 #include "gamemenuframe.hpp"
 #include "../framework/app.hpp"
 #include "frameconstants.hpp"
+#include <GL/glew.h>
+#include <GL/gl.h>
 void GameMenuFrame::begin(){
     Mix_FadeOutMusic(400);
 	app->getGUIManager()->clear();
-    textboxIp=new GUITextbox(10,40,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer());
-	textboxIpInfo=new GUILabel(10,10,app->getLanguageManager()->getFromCurrentLanguage("enter_ip"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
-	textboxName=new GUITextbox(10,90,200,25,app->getResourceManager()->getFont("default",15),app->getRenderer(),app->getSettings()->lastName);
-    textboxNameInfo=new GUILabel(10,63,app->getLanguageManager()->getFromCurrentLanguage("enter_name"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
-	buttonPlay=new GUIButton(10,140,100,25,      app->getLanguageManager()->getFromCurrentLanguage("play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
+    textboxIp=new GUITextbox(10,40,200,25,app->getRenderer(),app->getResourceManager()->getFont("default",15));
+	textboxIpInfo=new GUILabel(10,10,app->getLanguageManager()->getFromCurrentLanguage("enter_ip"),app->getRenderer(),app->getResourceManager()->getFont("default",20),{255,255,255});
+	textboxName=new GUITextbox(10,90,200,25,app->getRenderer(),app->getResourceManager()->getFont("default",15),app->getSettings()->lastName);
+    textboxNameInfo=new GUILabel(10,63,app->getLanguageManager()->getFromCurrentLanguage("enter_name"),app->getRenderer(),app->getResourceManager()->getFont("default",20),{255,255,255});
+	buttonPlay=new GUIButton(10,140,100,25,app->getLanguageManager()->getFromCurrentLanguage("play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
     serverlist=new GUIServerlist(app->getWindowW()-310,10,300,app->getWindowH()-20,app->getResourceManager()->getFont("default",15),app->getLanguageManager(),app->getRenderer(),textboxIp);
-    textboxServerNameInfo=new GUILabel(10,200,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_addserverinfo"),app->getResourceManager()->getFont("default",20),{255,255,255},app->getRenderer());
-    textboxServerName=new GUITextbox(10,205+textboxServerNameInfo->getH(),200,25,app->getResourceManager()->getFont("default",15),app->getRenderer());
+    textboxServerNameInfo=new GUILabel(10,200,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_addserverinfo"),app->getRenderer(),app->getResourceManager()->getFont("default",20),{255,255,255});
+    textboxServerName=new GUITextbox(10,205+textboxServerNameInfo->getH(),200,25,app->getRenderer(),app->getResourceManager()->getFont("default",15));
     buttonAddServer=new GUIButton(10,240+textboxServerNameInfo->getH(),100,25,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_addserver"),app->getResourceManager()->getFont("default",15),app->getRenderer());
     app->getGUIManager()->add(textboxIp);
 	app->getGUIManager()->add(textboxIpInfo);
@@ -47,14 +49,16 @@ void GameMenuFrame::render(){
             if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
                 serverlist->setX(app->getWindowW()-310);
                 serverlist->setH(app->getWindowH()-20);
+                app->getRenderer()->update(app->getWindowW(),app->getWindowH());
+                glViewport(0,0,app->getWindowW(),app->getWindowH());
             }
         }
         app->getGUIManager()->update(app->getEvent());
     }
-    SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,255);
-    SDL_RenderClear(app->getRenderer());
+    glClearColor(0,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT);
     app->getGUIManager()->draw();
-    SDL_RenderPresent(app->getRenderer());
+    SDL_GL_SwapWindow(app->getWindow());
 }
 void GameMenuFrame::finish(){
     //app->getSettings()->lastName=textboxName->getText();

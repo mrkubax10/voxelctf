@@ -1,19 +1,16 @@
 #include "gui_image.h"
-GUIImage::GUIImage(int x,int y,SDL_Renderer* render,SDL_Texture* texture){
+GUIImage::GUIImage(int x,int y,Renderer* renderer,Texture* texture){
     GUIImage::x=x;
     GUIImage::y=y;
     GUIImage::texture=texture;
-    GUIImage::render=render;
+    GUIImage::renderer=renderer;
     GUIImage::visible=true;
-    SDL_QueryTexture(GUIImage::texture,0,0,&w,&h);
+    GUIImage::w=texture->getW();
+    GUIImage::h=texture->getH();
 }
 void GUIImage::update(SDL_Event* ev){
 
 }
 void GUIImage::draw(){
-    guiRect.x=GUIImage::x;
-    guiRect.y=GUIImage::y;
-    guiRect.w=GUIImage::w;
-    guiRect.h=GUIImage::h;
-    SDL_RenderCopy(GUIImage::render,GUIImage::texture,0,&guiRect);
+    renderer->drawTexturedRect(texture,glm::vec2(x,y),glm::vec2(w,h));
 }

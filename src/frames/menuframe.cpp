@@ -1,12 +1,15 @@
 #include "menuframe.hpp"
 #include "../framework/app.hpp"
 #include "frameconstants.hpp"
+#include <GL/glew.h>
+#include <GL/gl.h>
 void MenuFrame::begin(){
     MenuFrame::app->setTitle("VoxelCTF");
     //Mix_PlayMusic(MenuFrame::app->getResourceManager()->getMusic("menu"),-1);
     MenuFrame::app->getGUIManager()->clear();
-    labelLogo=new GUILabel(10,5,"VoxelCTF",app->getResourceManager()->getFont("default",80),{0,0,255},app->getRenderer());
-	buttonPlay=new GUIButton(15,100,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
+    labelLogo=new GUILabel(10,5,"VoxelCTF",app->getRenderer(),app->getResourceManager()->getFont("default",80),{0,0,255});
+	
+    buttonPlay=new GUIButton(15,100,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
 	buttonFastGame=new GUIButton(15,170,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_fastgame"),app->getResourceManager()->getFont("default",20),app->getRenderer());
 	buttonEditor=new GUIButton(15,240,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_editor"),app->getResourceManager()->getFont("default",20),app->getRenderer());
 	buttonSettings=new GUIButton(15,310,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_settings"),app->getResourceManager()->getFont("default",20),app->getRenderer());
@@ -25,8 +28,8 @@ void MenuFrame::begin(){
     versionString+="BSD";
     #endif
     versionString+=" 2021 (C) mrkubax10";
-    labelVersion=new GUILabel(1,0,versionString,app->getResourceManager()->getFont("default",10),{255,255,255},app->getRenderer());
-    labelVersion->setY(app->getWindowH()-labelVersion->getH()-1);
+    labelVersion=new GUILabel(0,0,versionString,app->getRenderer(),app->getResourceManager()->getFont("default",10),{255,255,255});
+    labelVersion->setY(app->getWindowH()-labelVersion->getH());
     app->getGUIManager()->add(labelLogo);
     app->getGUIManager()->add(buttonPlay);
     app->getGUIManager()->add(buttonFastGame);
@@ -44,7 +47,7 @@ void MenuFrame::begin(){
 	buttonExit->setCallback([](void* argument){
 		((App*)argument)->setRunning(false);
 	},(void*)app);
-    
+    glViewport(0,0,app->getWindowW(),app->getWindowH());
 }
 void MenuFrame::render(){
     while(SDL_PollEvent(MenuFrame::app->getEvent())){
@@ -53,14 +56,17 @@ void MenuFrame::render(){
         if(MenuFrame::app->getEvent()->type==SDL_WINDOWEVENT){
             if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
                 labelVersion->setY(app->getWindowH()-labelVersion->getH()-1);
+                app->getRenderer()->update(app->getWindowW(),app->getWindowH());
+                glViewport(0,0,app->getWindowW(),app->getWindowH());
             }
         }
         app->getGUIManager()->update(app->getEvent());
     }
-    SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,255);
-    SDL_RenderClear(app->getRenderer());
+    glClearColor(0,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT);
     app->getGUIManager()->draw();
-    SDL_RenderPresent(app->getRenderer());
+    
+    SDL_GL_SwapWindow(app->getWindow());
 }
 void MenuFrame::finish(){
     delete labelLogo;

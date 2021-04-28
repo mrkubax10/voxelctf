@@ -1,37 +1,18 @@
 #include "gui_toolinfo.hpp"
-GUIToolInfo::GUIToolInfo(int x,int y,SDL_Renderer* render,ResourceManager* man){
+GUIToolInfo::GUIToolInfo(int x,int y,Renderer* renderer,ResourceManager* man){
     GUIToolInfo::selectedTool=0;
-    GUIToolInfo::render=render;
+    GUIToolInfo::renderer=renderer;
     GUIToolInfo::resManager=man;
     GUIToolInfo::x=x;
     GUIToolInfo::y=y;
     GUIToolInfo::visible=true;
 }
 void GUIToolInfo::draw(){
-    guiRect.x=GUIToolInfo::x;
-    guiRect.y=GUIToolInfo::y;
-    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/editorbuildtool"),0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/editorbuildtool"),0,&guiRect);
-    guiRect.x+=guiRect.w;
-    guiRect.y=GUIToolInfo::y;
-    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/editorfilltool"),0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/editorfilltool"),0,&guiRect);
-    guiRect.x+=guiRect.w;
-    guiRect.y=GUIToolInfo::y;
-    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/editorerasetool"),0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/editorerasetool"),0,&guiRect);
-    guiRect.x+=guiRect.w;
-    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/editorteam1flagtool"),0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/editorteam1flagtool"),0,&guiRect);
-    guiRect.x+=guiRect.w;
-    SDL_QueryTexture(GUIToolInfo::resManager->getTexture("editor/editorteam2flagtool"),0,0,&guiRect.w,&guiRect.h);
-    SDL_RenderCopy(GUIToolInfo::render,GUIToolInfo::resManager->getTexture("editor/editorteam2flagtool"),0,&guiRect);
-    guiRect.x=GUIToolInfo::x+GUIToolInfo::selectedTool*32;
-    guiRect.y=GUIToolInfo::y;
-    guiRect.w=32;
-    guiRect.h=32;
-    SDL_SetRenderDrawColor(GUIToolInfo::render,255,0,0,255);
-    SDL_RenderDrawRect(GUIToolInfo::render,&guiRect);
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool"),glm::vec2(x,y),glm::vec2(GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool")->getW(),GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool")->getH()));
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorfilltool"),glm::vec2(x+32,y),glm::vec2(32,32));
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorerasetool"),glm::vec2(x+32*2,y),glm::vec2(32,32));
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorteam1flagtool"),glm::vec2(x+32*3,y),glm::vec2(32,32));
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorteam2tool"),glm::vec2(x+32*4,y),glm::vec2(32,32));
 }
 void GUIToolInfo::update(SDL_Event* ev){
     if(ev->type==SDL_KEYDOWN){

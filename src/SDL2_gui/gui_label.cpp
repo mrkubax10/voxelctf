@@ -6,22 +6,23 @@
  */
 
 #include "gui_label.h"
-
-GUILabel::GUILabel(int x,int y,std::string text,TTF_Font* font,SDL_Color color,SDL_Renderer *render,int alpha) {
+GUILabel::GUILabel(int x,int y,std::string text,Renderer* renderer,TTF_Font* font,SDL_Color color,int alpha) {
 	GUILabel::x=x;
 	GUILabel::y=y;
 	GUILabel::text=text;
 	GUILabel::font=font;
-	GUILabel::render=render;
 	GUILabel::alpha=alpha;
 	GUILabel::clicked=false;
 	GUILabel::color=color;
 	SDL_Surface* textSurface=TTF_RenderUTF8_Blended(font,text.c_str(),color);
 	GUILabel::visible=true;
-	GUILabel::textureText=SDL_CreateTextureFromSurface(render,textSurface);
-	SDL_SetTextureAlphaMod(GUILabel::textureText,alpha);
-	SDL_QueryTexture(GUILabel::textureText,0,0,&w,&h);
-	SDL_FreeSurface(textSurface);
+	GUILabel::textureText=new Texture();
+	SDL_Surface* surf=TTF_RenderText_Blended(font,text.c_str(),color);
+	GUILabel::textureText->loadFromSurface(surf);
+	GUILabel::w=surf->w;
+	GUILabel::h=surf->h;
+	SDL_FreeSurface(surf);
+	GUILabel::renderer=renderer;
 	
 }
 void GUILabel::update(SDL_Event *ev){
@@ -42,19 +43,16 @@ void GUILabel::update(SDL_Event *ev){
 	}
 }
 void GUILabel::draw(){
-	SDL_QueryTexture(GUILabel::textureText,0,0,&guiRect.w,&guiRect.h);
-	guiRect.x=GUILabel::x;
-	guiRect.y=GUILabel::y;
-	SDL_RenderCopy(GUILabel::render,GUILabel::textureText,0,&guiRect);
+	renderer->drawTexturedRect(textureText,glm::vec2(x,y),glm::vec2(textureText->getW(),textureText->getH()));
 }
 bool GUILabel::isClicked(){
 	return GUILabel::clicked;
 }
 void GUILabel::setText(std::string text){
-	SDL_DestroyTexture(GUILabel::textureText);
 	SDL_Surface* textSurface=TTF_RenderUTF8_Blended(GUILabel::font,text.c_str(),GUILabel::color);
-	GUILabel::textureText=SDL_CreateTextureFromSurface(GUILabel::render,textSurface);
+	GUILabel::textureText->loadFromSurface(textSurface);
 	GUILabel::text=text;
-	SDL_QueryTexture(GUILabel::textureText,0,0,&w,&h);
+	GUILabel::w=textSurface->w;
+	GUILabel::h=textSurface->h;
 	SDL_FreeSurface(textSurface);
 }

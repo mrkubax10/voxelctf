@@ -26,7 +26,7 @@ void GameFrame::begin(){
 	flagModel=app->getResourceManager()->getOBJModel("flag");
 	GameFrame::pause=false;
 	app->getGUIManager()->clear();
-	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getTexture("crossair"));
+	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("crossair"));
 	buttonReturn=new GUIButton(0,10,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_return"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonExit=new GUIButton(0,40,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_exit"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
@@ -39,8 +39,6 @@ void GameFrame::begin(){
 	buttonExit->setVisible(false);
 	app->getGUIManager()->add(crossair);
 	app->getGUIManager()->add(app->getChat());
-	
-	app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
 	glViewport(0,0,app->getWindowW(),app->getWindowH());
 	cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
 
@@ -54,9 +52,9 @@ void GameFrame::render(){
 			if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
 				glViewport(0,0,app->getWindowW(),app->getWindowH());
 				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
-				app->getGL2DRenderer()->setTextureSize(app->getWindowW(),app->getWindowH());
 				buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
 				buttonExit->center(app->getWindowW(),app->getWindowH(),false,true);
+				app->getRenderer()->update(app->getWindowW(),app->getWindowH());
 			}
 		}
 		if(app->getEvent()->type==SDL_KEYDOWN){
@@ -148,12 +146,8 @@ void GameFrame::render(){
 		app->getServerConnection()->sendFlagCapture(0);
 		player->playerHasFlag=false;
 	}
-	app->getGL2DRenderer()->start();
-	SDL_SetRenderDrawColor(app->getRenderer(),0,0,0,0);
-	SDL_RenderFillRect(app->getRenderer(),0);
 	crossair->center(app->getWindowW(),app->getWindowH());
 	app->getGUIManager()->draw();
-	app->getGL2DRenderer()->finish(app->getResourceManager()->getShaderProgram("2dtextured"));
 	SDL_GL_SwapWindow(app->getWindow());
 }
 void GameFrame::finish(){

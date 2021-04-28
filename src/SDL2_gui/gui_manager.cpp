@@ -1,6 +1,7 @@
 #include "gui_manager.h"
-GUIManager::GUIManager(SDL_Renderer *render){
-    GUIManager::render=render;
+#include "../framework/app.hpp"
+GUIManager::GUIManager(App* app){
+    GUIManager::app=app;
 }
 void GUIManager::add(GUIComponent *component){
     GUIManager::components.push_back(component);
@@ -18,4 +19,7 @@ void GUIManager::update(SDL_Event *event){
 }
 void GUIManager::clear(){
 	components.clear();
+}
+App* GUIManager::getApp(){
+    return app;
 }

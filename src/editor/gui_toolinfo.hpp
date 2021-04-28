@@ -8,7 +8,7 @@ class GUIToolInfo : public GUIComponent{
     ResourceManager* resManager;
 public:
     
-    GUIToolInfo(int x,int y,SDL_Renderer* render,ResourceManager* man);
+    GUIToolInfo(int x,int y,Renderer* renderer,ResourceManager* man);
     void draw();
     void update(SDL_Event* ev);
 };

@@ -6,10 +6,10 @@ class App;
 class HUD : public GUIComponent{
     Player* player;
     TTF_Font* font;
-    SDL_Texture* textureHP;
+    Texture* textureHP;
     App* app;
 public:
-    HUD(SDL_Renderer* render,Player* player,TTF_Font* font,App* app);
+    HUD(Renderer* renderer,Player* player,TTF_Font* font,App* app);
     void draw();
     void update(SDL_Event* ev);
     void updateInfo();

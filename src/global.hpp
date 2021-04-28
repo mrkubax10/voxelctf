@@ -20,5 +20,4 @@ extern SDL_Rect rect2;
 extern const char* GAME_VERSION;
 
 
-
 #endif /* SRC_GLOBAL_HPP_ */

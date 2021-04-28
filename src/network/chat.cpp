@@ -1,9 +1,9 @@
 #include "chat.hpp"
 #include "../framework/app.hpp"
-Chat::Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app){
+Chat::Chat(int x,int y,Renderer* renderer,TTF_Font* font,App* app){
     Chat::x=x;
     Chat::y=y;
-    Chat::render=render;
+    Chat::renderer=renderer;
     Chat::w=400;
     Chat::h=390;
     Chat::posy=0;
@@ -11,12 +11,13 @@ Chat::Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app){
     Chat::enteringMessage=false;
     Chat::app=app;
     SDL_Surface* surf=TTF_RenderText_Blended(font," ",{0,0,0});
-    Chat::messageTexture=SDL_CreateTextureFromSurface(render,surf);
+    Chat::messageTexture=new Texture();
+    Chat::messageTexture->loadFromSurface(surf);
     SDL_FreeSurface(surf);
     Chat::textfieldOpened=false;
     Chat::messageBuffer="";
     Chat::visible=true;
-    Chat::chatTexture=SDL_CreateTexture(render,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,Chat::w,17*40);
+    Chat::chatTexture=new RenderTexture(Chat::w,17*40);
 }
 void Chat::draw(){
     
@@ -27,8 +28,7 @@ void Chat::draw(){
             for(int i=Chat::chatEntries.size()-1; i>=length; i--){
                 if(!Chat::chatEntries[i].timedOut){
                     for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
-                        SDL_QueryTexture(Chat::chatEntries[i].textures[a],0,0,&w2,&h2);
-                        renderDraw(Chat::render,Chat::chatEntries[i].textures[a],Chat::x,Chat::posy);
+                        renderer->drawTexturedRect(Chat::chatEntries[i].textures[a],glm::vec2(Chat::x,Chat::posy),glm::vec2(chatEntries[i].textures[a]->getW(),chatEntries[i].textures[a]->getH()));
                     }
                     Chat::posy-=h2+2;
                 }
@@ -37,18 +37,15 @@ void Chat::draw(){
     }
     Chat::posy=Chat::h-20;
     if(Chat::enteringMessage){
-        SDL_Texture* lastRenderTexture=SDL_GetRenderTarget(Chat::render);
-        SDL_SetRenderTarget(Chat::render,Chat::chatTexture);
-        SDL_SetRenderDrawColor(Chat::render,100,100,100,200);
-        SDL_RenderFillRect(Chat::render,0);
+        Chat::chatTexture->use();
+        renderer->drawColoredRect(glm::vec4(100.0f/255.0f,100.0f/255.0f,100.0f/255.0f,1),glm::vec2(0,0),glm::vec2(Chat::w,17*40));
         for(int i=Chat::chatEntries.size()-1; i>=0; i--){
             for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
-                SDL_QueryTexture(Chat::chatEntries[i].textures[a],0,0,&w2,&h2);
-                renderDraw(Chat::render,Chat::chatEntries[i].textures[a],Chat::x,Chat::posy);
+                renderer->drawTexturedRect(chatEntries[i].textures[a],glm::vec2(Chat::x,Chat::posy),glm::vec2(chatEntries[i].textures[a]->getW(),chatEntries[i].textures[a]->getH()));
             }
             Chat::posy-=h2+2;
         }
-        SDL_SetRenderTarget(Chat::render,lastRenderTexture);
+        Chat::chatTexture->useDefault();
         guiRect.x=Chat::x;
         guiRect.y=Chat::y;
         guiRect.w=Chat::w;
@@ -57,29 +54,28 @@ void Chat::draw(){
         rect.y=-Chat::messageOffset;
         rect.w=Chat::w;
         rect.h=Chat::h;
-        SDL_RenderCopy(Chat::render,Chat::chatTexture,&rect,&guiRect);
+        renderer->drawTexturedRect(chatTexture->getTexture(),glm::vec2(Chat::x,Chat::y),glm::vec2(chatTexture->getW(),chatTexture->getH()));
         guiRect.x=Chat::x;
         guiRect.y=400;
         guiRect.w=Chat::w;
         guiRect.h=30;
-        SDL_SetRenderDrawColor(Chat::render,100,100,100,230);
-        SDL_RenderFillRect(Chat::render,&guiRect);
-        SDL_QueryTexture(Chat::messageTexture,0,0,&guiRect.w,&guiRect.h);
-        SDL_RenderCopy(Chat::render,Chat::messageTexture,0,&guiRect);
+        renderer->drawColoredRect(glm::vec4(100.0f/255.0f,100.0f/255.0f,100.0f/255.0f,1),glm::vec2(Chat::x,400),glm::vec2(Chat::w,30));
+        renderer->drawTexturedRect(Chat::messageTexture,glm::vec2(Chat::x,400),glm::vec2(messageTexture->getW(),messageTexture->getH()));
     }
 }
 void Chat::addEntry(std::string str){
     Chat::chatEntries.push_back({str,SDL_GetTicks(),false});
     SDL_Surface* surf=TTF_RenderText_Blended(Chat::font,str.c_str(),{0,0,0});
-    Chat::chatEntries.back().textures.push_back(SDL_CreateTextureFromSurface(Chat::render,surf));
+    Texture* texture=new Texture();
+    texture->loadFromSurface(surf);
+    Chat::chatEntries.back().textures.push_back(texture);
     SDL_FreeSurface(surf);
 }
 void Chat::update(SDL_Event* ev){
     if(ev->type==SDL_TEXTINPUT && Chat::enteringMessage && !Chat::textfieldOpened && Chat::messageBuffer.size()<50){
         Chat::messageBuffer+=ev->text.text;
-        SDL_DestroyTexture(Chat::messageTexture);
         SDL_Surface* surf=TTF_RenderText_Blended(Chat::font,Chat::messageBuffer.c_str(),{0,0,0});
-        Chat::messageTexture=SDL_CreateTextureFromSurface(Chat::render,surf);
+        Chat::messageTexture->loadFromSurface(surf);
         SDL_FreeSurface(surf);
     }
     if(Chat::textfieldOpened)
@@ -100,8 +96,7 @@ void Chat::update(SDL_Event* ev){
                 Chat::app->getServerConnection()->sendChatMessage(Chat::messageBuffer);
                 Chat::messageBuffer="";
                 SDL_Surface* surf=TTF_RenderText_Blended(Chat::font," ",{0,0,0});
-                SDL_DestroyTexture(Chat::messageTexture);
-                Chat::messageTexture=SDL_CreateTextureFromSurface(Chat::render,surf);
+                Chat::messageTexture->loadFromSurface(surf);
                 SDL_FreeSurface(surf);
             }
         }
@@ -114,13 +109,12 @@ void Chat::update(SDL_Event* ev){
         if(ev->key.keysym.scancode==SDL_SCANCODE_BACKSPACE){
             if(Chat::messageBuffer.length()>0){
                 Chat::messageBuffer.pop_back();
-                SDL_DestroyTexture(Chat::messageTexture);
                 SDL_Surface* surf;
                 if(Chat::messageBuffer=="")
                     surf=TTF_RenderText_Blended(Chat::font," ",{0,0,0});
                 else
                     surf=TTF_RenderText_Blended(Chat::font,Chat::messageBuffer.c_str(),{0,0,0});
-                Chat::messageTexture=SDL_CreateTextureFromSurface(Chat::render,surf);
+                Chat::messageTexture->loadFromSurface(surf);
                 SDL_FreeSurface(surf);
             }
         }

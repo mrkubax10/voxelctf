@@ -1,9 +1,9 @@
 
 #include "gui_popupmenu.h"
-GUIPopupmenu::GUIPopupmenu(std::vector<std::string> elements,TTF_Font *font,SDL_Renderer *render,int r,int g,int b){
+GUIPopupmenu::GUIPopupmenu(std::vector<std::string> elements,TTF_Font *font,Renderer *renderer,int r,int g,int b){
     GUIPopupmenu::elements=elements;
     GUIPopupmenu::font=font;
-    GUIPopupmenu::render=render;
+    GUIPopupmenu::renderer=renderer;
     GUIPopupmenu::r=r;
     GUIPopupmenu::g=g;
     GUIPopupmenu::b=b;
@@ -11,13 +11,13 @@ GUIPopupmenu::GUIPopupmenu(std::vector<std::string> elements,TTF_Font *font,SDL_
     GUIPopupmenu::w=0;
     GUIPopupmenu::h=0;
     for(int i=0; i<elements.size(); i++){
-        GUIPopupmenu::textureElements.push_back(SDL_CreateTextureFromSurface(render,TTF_RenderUTF8_Blended(font,elements[i].c_str(),{255,255,255})));
-
-        SDL_QueryTexture(GUIPopupmenu::textureElements[i],0,0,&guiRect.w,&guiRect.h);
-
-        GUIPopupmenu::h+=guiRect.h;
-        if(GUIPopupmenu::w<guiRect.w){
-            GUIPopupmenu::w=guiRect.w;
+        GUIPopupmenu::textureElements.push_back(new Texture());
+        SDL_Surface* surf=TTF_RenderUTF8_Blended(font,elements[i].c_str(),{255,255,255});
+        textureElements.back()->loadFromSurface(surf);
+        SDL_FreeSurface(surf);
+        GUIPopupmenu::h+=textureElements[i]->getH();
+        if(GUIPopupmenu::w<textureElements[i]->getW()){
+            GUIPopupmenu::w=textureElements[i]->getW();
         }
     }
 }
@@ -34,16 +34,10 @@ void GUIPopupmenu::update(SDL_Event *ev){
 }
 void GUIPopupmenu::draw(){
     if(GUIPopupmenu::opened){
-        guiRect.x=GUIPopupmenu::x;
         guiRect.y=GUIPopupmenu::y;
-        guiRect.w=GUIPopupmenu::w;
-        guiRect.h=GUIPopupmenu::h;
-        SDL_SetRenderDrawColor(GUIPopupmenu::render,GUIPopupmenu::r,GUIPopupmenu::g,GUIPopupmenu::b,255);
-        SDL_RenderFillRect(GUIPopupmenu::render,&guiRect);
+        renderer->drawColoredRect(glm::vec4((float)r/255.0f,(float)g/255.0f,(float)b/255.0f,1),glm::vec2(x,y),glm::vec2(w,h));
         for(int i=0; GUIPopupmenu::elements.size(); i++){
-
-            SDL_QueryTexture(GUIPopupmenu::textureElements[i],0,0,&guiRect.w,&guiRect.h);
-            SDL_RenderCopy(GUIPopupmenu::render,GUIPopupmenu::textureElements[i],0,&guiRect);
+            renderer->drawTexturedRect(textureElements[i],glm::vec2(x,guiRect.y),glm::vec2(textureElements[i]->getW(),textureElements[i]->getH()));
             guiRect.y+=guiRect.h;
         }
     }

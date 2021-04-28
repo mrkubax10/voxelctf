@@ -6,29 +6,29 @@
 #include <SDL2/SDL_ttf.h>
 #include "../utils.hpp"
 #include "../SDL2_gui/SDLGui.h"
+#include "../render/rendertexture.hpp"
 struct ChatElement{
     std::string str;
     long sendTime;
     bool timedOut;
-    std::vector<SDL_Texture*> textures;
+    std::vector<Texture*> textures;
     
 };
 class App;
 class Chat : public GUIComponent{
     std::vector<ChatElement> chatEntries;
-    SDL_Renderer* render;
     int posy;
     int w2,h2;
     TTF_Font* font;
     bool enteringMessage;
     std::string messageBuffer;
     App* app;
-    SDL_Texture* messageTexture;
+    Texture* messageTexture;
     bool textfieldOpened;
     int messageOffset=0;
-    SDL_Texture* chatTexture;
+    RenderTexture* chatTexture;
 public:
-    Chat(int x,int y,SDL_Renderer* render,TTF_Font* font,App* app);
+    Chat(int x,int y,Renderer* renderer,TTF_Font* font,App* app);
     void addEntry(std::string str);
     void draw();
     void update(SDL_Event* ev);
