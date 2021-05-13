@@ -1,8 +1,8 @@
 #ifndef SRC_EDITOR_GUI_TOOLINFO_HPP
 #define SRC_EDITOR_GUI_TOOLINFO_HPP
-#include "../SDL2_gui/gui_component.h"
+#include "../gui/gui_component.h"
 #include "../managers/resourcemanager.hpp"
-#include "../SDL2_gui/gui_global.h"
+#include "../gui/gui_global.h"
 class GUIToolInfo : public GUIComponent{
     int selectedTool;
     ResourceManager* resManager;

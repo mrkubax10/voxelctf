@@ -46,19 +46,19 @@ void Chat::draw(){
             Chat::posy-=h2+2;
         }
         Chat::chatTexture->useDefault();
-        guiRect.x=Chat::x;
-        guiRect.y=Chat::y;
-        guiRect.w=Chat::w;
-        guiRect.h=Chat::h;
+        // guiRect.x=Chat::x;
+        // guiRect.y=Chat::y;
+        // guiRect.w=Chat::w;
+        // guiRect.h=Chat::h;
         rect.x=0;
         rect.y=-Chat::messageOffset;
         rect.w=Chat::w;
         rect.h=Chat::h;
         renderer->drawTexturedRect(chatTexture->getTexture(),glm::vec2(Chat::x,Chat::y),glm::vec2(chatTexture->getW(),chatTexture->getH()));
-        guiRect.x=Chat::x;
-        guiRect.y=400;
-        guiRect.w=Chat::w;
-        guiRect.h=30;
+        // guiRect.x=Chat::x;
+        // guiRect.y=400;
+        // guiRect.w=Chat::w;
+        // guiRect.h=30;
         renderer->drawColoredRect(glm::vec4(100.0f/255.0f,100.0f/255.0f,100.0f/255.0f,1),glm::vec2(Chat::x,400),glm::vec2(Chat::w,30));
         renderer->drawTexturedRect(Chat::messageTexture,glm::vec2(Chat::x,400),glm::vec2(messageTexture->getW(),messageTexture->getH()));
     }

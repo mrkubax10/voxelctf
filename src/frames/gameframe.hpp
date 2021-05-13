@@ -5,7 +5,6 @@
 #include "../world/world.hpp"
 #include "../gameplay/player.hpp"
 #include "../editor/editortool.hpp"
-#include "../SDL2_gui/SDLGui.h"
 #include "../editor/gui_blockinfo.hpp"
 #include "../editor/gui_toolinfo.hpp"
 #include "../render/fpscamera.hpp"
@@ -14,7 +13,8 @@
 #include "../editor/editorerasetool.hpp"
 #include "../time/timer.hpp"
 #include "../world/skybox.hpp"
-#include "../SDL2_gui/SDLGui.h"
+#include "../gui/gui_image.h"
+#include "../gui/gui_button.h"
 #include "../maths/aabb.hpp"
 #include "../gameplay/hud.hpp"
 class GameFrame : public Frame{

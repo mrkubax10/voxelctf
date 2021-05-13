@@ -6,13 +6,6 @@ App::App(std::string title,int w,int h,Uint32 hints){
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     App::window=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,hints);
-    App::render=SDL_CreateRenderer(window,0,0);
-    if(!App::render){
-        
-        App::render=SDL_CreateRenderer(window,0,SDL_RENDERER_SOFTWARE);
-        std::cout<<"(Warn) [App] Creating software renderer"<<std::endl;
-    }
-    
     App::contextGL=SDL_GL_CreateContext(App::window);
     if(App::contextGL==0){
 		std::cout<<"(Error) [OpenGL] Failed to create OpenGL context version 3.3! Try using OSMesa compiled version of game."<<std::endl;
@@ -24,20 +17,17 @@ App::App(std::string title,int w,int h,Uint32 hints){
     App::frame=0;
     App::running=true;
     App::settings=new Settings();
-    App::resManager=new ResourceManager(App::render);
+    App::resManager=new ResourceManager();
     App::langManager=new LanguageManager("res/translations");
     App::guiManager=new GUIManager(this);
-    App::textureAtlas=new TextureAtlas(App::render);
-    App::textureAtlas->generateTextureAtlas(resManager);
     App::renderer=new Renderer(w,h,resManager->getShaderProgram("2dtextured"),resManager->getShaderProgram("2dcolored"));
+    App::textureAtlas=new TextureAtlas(App::renderer);
+    App::textureAtlas->generateTextureAtlas(resManager);
     App::chat=new Chat(5,5,renderer,resManager->getFont("default",15),this);
     App::serverConnection=new ServerConnection(chat,this);
 }
 SDL_Window* App::getWindow(){
     return window;
-}
-SDL_Renderer* App::getSDLRenderer(){
-    return render;
 }
 bool App::isRunning(){
     return running;
@@ -132,7 +122,6 @@ void App::destroy(){
     App::resManager->destroy();
     App::renderer->destroy();
     SDL_DestroyWindow(App::window);
-    SDL_DestroyRenderer(App::render);
     SDL_GL_DeleteContext(App::contextGL);
 }
 App::~App(){}

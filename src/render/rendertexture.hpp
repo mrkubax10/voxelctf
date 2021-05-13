@@ -14,5 +14,6 @@ public:
     Texture* getTexture();
     int getW();
     int getH();
+    void destroy();
 };
 #endif

@@ -6,7 +6,7 @@
 #include "../network/serverconnection.hpp"
 #include "../managers/resourcemanager.hpp"
 #include "../managers/languagemanager.hpp"
-#include "../SDL2_gui/SDLGui.h"
+#include "../gui/gui_manager.hpp"
 #include "../world/textureatlas.hpp"
 #include "../settings.hpp"
 #include "../render/renderer.hpp"
@@ -14,7 +14,6 @@ class App{
     SDL_Window* window;
     SDL_Event event;
     Frame* frame;
-    SDL_Renderer* render;
     bool running;
     ResourceManager* resManager;
     LanguageManager* langManager;
@@ -33,7 +32,6 @@ public:
     ~App();
     void loop();
     SDL_Window* getWindow();
-    SDL_Renderer* getSDLRenderer();
     Frame* getFrame();
     bool isRunning();
     SDL_Event* getEvent();

@@ -1,6 +1,9 @@
 #include "textureatlas.hpp"
-TextureAtlas::TextureAtlas(SDL_Renderer* render){
-    TextureAtlas::render=render;
+#include <GL/glew.h>
+#include <GL/gl.h>
+TextureAtlas::TextureAtlas(Renderer* renderer){
+    TextureAtlas::renderer=renderer;
+    TextureAtlas::renderTexture=new RenderTexture(TextureAtlas::maxTextureSize,textureSize);
 }
 void TextureAtlas::generateTextureAtlas(ResourceManager* man){
     std::fstream file;
@@ -20,37 +23,38 @@ void TextureAtlas::generateTextureAtlas(ResourceManager* man){
         }
     }
     file.close();
-    TextureAtlas::texture=SDL_CreateTexture(render,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_TARGET,TextureAtlas::maxTextureSize,textureSize);
-    SDL_SetRenderTarget(render,TextureAtlas::texture);
+    TextureAtlas::renderTexture->use();
+    glClearColor(0,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT);
     int temp=0;
     for(int i=0; i<textureData.size(); i++){
         if(textureData[i][0]=='[' && textureData[i][textureData[i].length()-1]==']'){
             currentBlockID=(BlockType)std::stoi(textureData[i].substr(1,textureData[i].length()-1));
         }else{
             if(split(textureData[i],'=')[0]=="right"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].right=(float)temp/(float)textureSize;
             }
             
             else if(split(textureData[i],'=')[0]=="left"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].left=(float)temp/(float)textureSize;
             }
             else if(split(textureData[i],'=')[0]=="top"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].top=(float)temp/(float)textureSize;
             }
             
             else if(split(textureData[i],'=')[0]=="bottom"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].bottom=(float)temp/(float)textureSize;
             }
             else if(split(textureData[i],'=')[0]=="front"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].front=(float)temp/(float)textureSize;
             }
             else if(split(textureData[i],'=')[0]=="all"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].right=(float)temp/(float)textureSize;
                 TextureAtlas::blockUVs[currentBlockID].left=(float)temp/(float)textureSize;
                 TextureAtlas::blockUVs[currentBlockID].bottom=(float)temp/(float)textureSize;
@@ -59,27 +63,28 @@ void TextureAtlas::generateTextureAtlas(ResourceManager* man){
                 TextureAtlas::blockUVs[currentBlockID].front=(float)temp/(float)textureSize;
             }
             else if(split(textureData[i],'=')[0]=="side"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].right=(float)temp/(float)textureSize;
                 TextureAtlas::blockUVs[currentBlockID].left=(float)temp/(float)textureSize;
                 TextureAtlas::blockUVs[currentBlockID].back=(float)temp/(float)textureSize;
                 TextureAtlas::blockUVs[currentBlockID].front=(float)temp/(float)textureSize;
             }
             else if(split(textureData[i],'=')[0]=="back"){
-                renderDrawScaled(render,man->getTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),0,temp,TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize);
+                renderer->drawTexturedRect(man->getNativeTexture("blocks/"+split(split(textureData[i],'=')[1],'.')[0]),glm::vec2(0,temp),glm::vec2(TextureAtlas::maxTextureSize,TextureAtlas::maxTextureSize));
                 TextureAtlas::blockUVs[currentBlockID].back=(float)temp/(float)textureSize;
             }
             temp+=TextureAtlas::maxTextureSize;
         }
     }
-    SDL_SetRenderTarget(render,0);
+    TextureAtlas::renderTexture->useDefault();
+    
     TextureAtlas::textureBlockSize=(float)TextureAtlas::maxTextureSize/(float)TextureAtlas::textureSize;
 }
 TextureAtlasBlockUV TextureAtlas::getBlockUV(uint8_t type){
     return TextureAtlas::blockUVs[(BlockType)type];
 }
 void TextureAtlas::use(){
-    SDL_GL_BindTexture(TextureAtlas::texture,0,0);
+    TextureAtlas::renderTexture->getTexture()->use();
 }
 float TextureAtlas::getTextureBlockSize(){
     return TextureAtlas::textureBlockSize;

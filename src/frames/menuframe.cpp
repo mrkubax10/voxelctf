@@ -8,7 +8,6 @@ void MenuFrame::begin(){
     //Mix_PlayMusic(MenuFrame::app->getResourceManager()->getMusic("menu"),-1);
     MenuFrame::app->getGUIManager()->clear();
     labelLogo=new GUILabel(10,5,"VoxelCTF",app->getRenderer(),app->getResourceManager()->getFont("default",80),{0,0,255});
-	
     buttonPlay=new GUIButton(15,100,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_play"),app->getResourceManager()->getFont("default",20),app->getRenderer());
 	buttonFastGame=new GUIButton(15,170,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_fastgame"),app->getResourceManager()->getFont("default",20),app->getRenderer());
 	buttonEditor=new GUIButton(15,240,200,50,app->getLanguageManager()->getFromCurrentLanguage("menu_editor"),app->getResourceManager()->getFont("default",20),app->getRenderer());
@@ -65,7 +64,6 @@ void MenuFrame::render(){
     glClearColor(0,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
     app->getGUIManager()->draw();
-    
     SDL_GL_SwapWindow(app->getWindow());
 }
 void MenuFrame::finish(){

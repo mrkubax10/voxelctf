@@ -1,14 +1,14 @@
 #ifndef SRC_GAMEPLAY_GUI_SERVERLIST_HPP
 #define SRC_GAMEPLAY_GUI_SERVERLIST_HPP
-#include "../SDL2_gui/gui_component.h"
+#include "../gui/gui_component.h"
 #include <vector>
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include "../managers/languagemanager.hpp"
-#include "../SDL2_gui/gui_global.h"
+#include "../gui/gui_global.h"
 #include "../utils.hpp"
-#include "../SDL2_gui/gui_textbox.h"
-#define GUI_SERVERLIST_ENTRY_HEIGHT 20
+#include "../gui/gui_textbox.h"
+#define GUI_SERVERLIST_ENTRY_HEIGHT 18
 class GUIServerlist : public GUIComponent{
     struct ListEntry{
         std::string name,ip;

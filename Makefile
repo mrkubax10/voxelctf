@@ -2,13 +2,13 @@
 CC        := g++
 LD        := g++
 
-MODULES   := world world/blockmetadata SDL2_gui render network maths managers gameplay editor time frames framework .
+MODULES   := world world/blockmetadata gui render network maths managers gameplay editor time frames framework .
 SRC_DIR   := $(addprefix src/,$(MODULES))
 BUILD_DIR := $(addprefix build/,$(MODULES))
 
 SRC       := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.cpp))
 OBJ       := $(patsubst src/%.cpp,build/%.o,$(SRC))
-INCLUDES  := $(addprefix -I,$(SRC_DIR)) -I../rapidjson1
+INCLUDES  := $(addprefix -I,$(SRC_DIR))
 
 vpath %.cpp $(SRC_DIR)
 

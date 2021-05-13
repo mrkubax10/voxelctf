@@ -60,7 +60,7 @@ void GUIServerlist::update(SDL_Event* ev){
     if(ev->type==SDL_MOUSEBUTTONDOWN){
         if(ev->button.button==SDL_BUTTON_LEFT){
             if(GUIServerlist::isMouseOnList(ev->motion.x,ev->motion.y)){
-                int selectedEntryID=(ev->motion.y+GUIServerlist::y)/GUI_SERVERLIST_ENTRY_HEIGHT-1;
+                int selectedEntryID=(ev->motion.y-GUIServerlist::y)/GUI_SERVERLIST_ENTRY_HEIGHT;
                 if(selectedEntryID<=GUIServerlist::entries.size()){
                     GUIServerlist::selectedEntry=selectedEntryID;
                     GUIServerlist::textboxIP->setText(GUIServerlist::entries[GUIServerlist::selectedEntry-1].ip);
@@ -69,7 +69,6 @@ void GUIServerlist::update(SDL_Event* ev){
                     GUIServerlist::textboxIP->setText("");
                     GUIServerlist::selectedEntry=-1;
                 }
-                    
             }
         }
     }
@@ -81,7 +80,7 @@ void GUIServerlist::draw(){
     GUIServerlist::titleIPX=GUIServerlist::x+(GUIServerlist::w-guiRect.w)/2+30;
     renderer->drawTexturedRect(titleServerIP,glm::vec2(titleIPX,GUIServerlist::y+1),glm::vec2(titleServerIP->getW(),titleServerIP->getH()));
     if(GUIServerlist::selectedEntry>=0){
-        renderer->drawColoredRect(glm::vec4(0.2f,0.2f,0.2f,1),glm::vec2(x,GUIServerlist::selectedEntry*GUI_SERVERLIST_ENTRY_HEIGHT+GUIServerlist::y+GUI_SERVERLIST_ENTRY_HEIGHT/2),glm::vec2(w,GUI_SERVERLIST_ENTRY_HEIGHT));
+        renderer->drawColoredRect(glm::vec4(0.5f,0.5f,0.5f,1),glm::vec2(x,GUIServerlist::selectedEntry*GUI_SERVERLIST_ENTRY_HEIGHT+GUIServerlist::y+GUI_SERVERLIST_ENTRY_HEIGHT/2),glm::vec2(w,GUI_SERVERLIST_ENTRY_HEIGHT));
     }
     for(int i=0; i<GUIServerlist::entries.size(); i++){
         renderer->drawTexturedRect(entries[i].textureName,glm::vec2(GUIServerlist::x+2,GUI_SERVERLIST_ENTRY_HEIGHT*i+32),glm::vec2(entries[i].textureName->getW(),entries[i].textureName->getH()));

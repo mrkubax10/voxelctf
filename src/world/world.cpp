@@ -53,12 +53,12 @@ void World::generateMesh(TextureAtlas* atlas){
 }
 void World::renderEntities(ShaderProgram program,Camera cam,Model* flagModel,App* app){
 	if(!app->getServerConnection()->flag1Fetch){
-		SDL_GL_BindTexture(app->getResourceManager()->getTexture("team1flag"),0,0);
+		app->getResourceManager()->getNativeTexture("team1flag")->use();
 		flagModel->translate(metadata.team1FlagPosition);
 		flagModel->draw(program,cam,GL_TRIANGLES);
 	}
 	if(!app->getServerConnection()->flag2Fetch){
-		SDL_GL_BindTexture(app->getResourceManager()->getTexture("team2flag"),0,0);
+		app->getResourceManager()->getNativeTexture("team2flag")->use();
 		flagModel->translate(metadata.team2FlagPosition);
 		flagModel->draw(program,cam,GL_TRIANGLES);
 	}

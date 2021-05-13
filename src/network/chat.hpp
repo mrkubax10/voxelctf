@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "../utils.hpp"
-#include "../SDL2_gui/SDLGui.h"
+#include "../gui/gui_component.hpp"
 #include "../render/rendertexture.hpp"
 struct ChatElement{
     std::string str;

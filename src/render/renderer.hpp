@@ -18,10 +18,11 @@ class Renderer {
 	ShaderProgram textured,colored;
 public:
 	Renderer(int windowW,int windowH,ShaderProgram s1,ShaderProgram s2);
-	void drawTexturedRect(ShaderProgram program,Texture* texture,glm::vec2 pos,glm::vec2 scale=glm::vec2(1,1));
+	void drawTexturedRect(ShaderProgram program,Texture* texture,glm::vec2 pos,glm::vec2 scale);
 	void drawColoredRect(ShaderProgram program,glm::vec4 color,glm::vec2 pos,glm::vec2 scale=glm::vec2(1,1));
-	void drawTexturedRect(Texture* texture,glm::vec2 pos,glm::vec2 scale=glm::vec2(1,1));
+	void drawTexturedRect(Texture* texture,glm::vec2 pos,glm::vec2 scale);
 	void drawColoredRect(glm::vec4 color,glm::vec2 pos,glm::vec2 scale=glm::vec2(1,1));
+	void drawTexturedRect(Texture* texture,glm::vec2 pos);
 	void update(int windowW,int windowH);
 	void destroy();
 };

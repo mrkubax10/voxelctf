@@ -14,9 +14,9 @@ HUD::HUD(Renderer* renderer,Player* player,TTF_Font* font,App* app){
     HUD::visible=true;
 }
 void HUD::draw(){
-    renderer->drawTexturedRect(HUD::textureHP,glm::vec2(HUD::app->getWindowW()-guiRect.w-2,2),glm::vec2(HUD::textureHP->getW(),HUD::textureHP->getH()));
+    renderer->drawTexturedRect(HUD::textureHP,glm::vec2(HUD::app->getWindowW()-HUD::textureHP->getW()-2,2),glm::vec2(HUD::textureHP->getW(),HUD::textureHP->getH()));
     if(HUD::player->playerHasFlag){
-        renderer->drawTexturedRect(app->getResourceManager()->getNativeTexture("hud_flag"),glm::vec2(app->getWindowW()-guiRect.w-2,app->getWindowH()-guiRect.h-2),glm::vec2(app->getResourceManager()->getNativeTexture("hud_flag")->getW(),app->getResourceManager()->getNativeTexture("hud_flag")->getH()));
+        renderer->drawTexturedRect(app->getResourceManager()->getNativeTexture("hud_flag"),glm::vec2(app->getWindowW()-app->getResourceManager()->getNativeTexture("hud_flag")->getW()-2,app->getWindowH()-app->getResourceManager()->getNativeTexture("hud_flag")->getH()-2),glm::vec2(app->getResourceManager()->getNativeTexture("hud_flag")->getW(),app->getResourceManager()->getNativeTexture("hud_flag")->getH()));
     }
 }
 void HUD::update(SDL_Event* ev){

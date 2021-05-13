@@ -45,6 +45,7 @@ Renderer::Renderer(int windowW,int windowH,ShaderProgram s1,ShaderProgram s2){
 	Renderer::colored=s2;
 }
 void Renderer::drawTexturedRect(ShaderProgram program,Texture* texture,glm::vec2 pos,glm::vec2 scale){
+	
 	if(glIsEnabled(GL_DEPTH_TEST))
 		glDisable(GL_DEPTH_TEST);
 	program.use();
@@ -61,12 +62,12 @@ void Renderer::drawTexturedRect(ShaderProgram program,Texture* texture,glm::vec2
 	Renderer::transformation=glm::translate(Renderer::transformation,glm::vec3(pos.x,pos.y,0));
 	Renderer::transformation=glm::scale(Renderer::transformation,glm::vec3(scale.x,scale.y,1));
 	program.setMat4("transform",Renderer::transformation);
+	
 	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
 void Renderer::drawColoredRect(ShaderProgram program,glm::vec4 color,glm::vec2 pos,glm::vec2 scale){
-
 	program.use();
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER,vbo);
@@ -80,6 +81,9 @@ void Renderer::drawColoredRect(ShaderProgram program,glm::vec4 color,glm::vec2 p
 	program.setMat4("transform",Renderer::transformation);
 	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 	glDisableVertexAttribArray(0);
+}
+void Renderer::drawTexturedRect(Texture* texture,glm::vec2 pos){
+	Renderer::drawTexturedRect(textured,texture,pos,glm::vec2(texture->getW(),texture->getH()));
 }
 void Renderer::drawTexturedRect(Texture* texture,glm::vec2 pos,glm::vec2 scale){
 	Renderer::drawTexturedRect(textured,texture,pos,scale);

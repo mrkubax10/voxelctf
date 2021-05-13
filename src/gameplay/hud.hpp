@@ -1,6 +1,6 @@
 #ifndef SRC_GAMEPLAY_HUD_HPP
 #define SRC_GAMEPLAY_HUD_HPP
-#include "../SDL2_gui/gui_component.h"
+#include "../gui/gui_component.h"
 #include "player.hpp"
 class App;
 class HUD : public GUIComponent{
