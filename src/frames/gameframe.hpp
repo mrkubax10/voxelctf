@@ -13,8 +13,8 @@
 #include "../editor/editorerasetool.hpp"
 #include "../time/timer.hpp"
 #include "../world/skybox.hpp"
-#include "../gui/gui_image.h"
-#include "../gui/gui_button.h"
+#include "../gui/gui_image.hpp"
+#include "../gui/gui_button.hpp"
 #include "../maths/aabb.hpp"
 #include "../gameplay/hud.hpp"
 class GameFrame : public Frame{

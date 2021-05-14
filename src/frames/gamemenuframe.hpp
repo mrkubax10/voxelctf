@@ -1,9 +1,9 @@
 #ifndef SRC_FRAMES_GAMEMENUFRAME_HPP
 #define SRC_FRAMES_GAMEMENUFRAME_HPP
 #include "../framework/frame.hpp"
-#include "../gui/gui_button.h"
-#include "../gui/gui_label.h"
-#include "../gui/gui_textbox.h"
+#include "../gui/gui_button.hpp"
+#include "../gui/gui_label.hpp"
+#include "../gui/gui_textbox.hpp"
 #include "../gameplay/gui_serverlist.hpp"
 class GameMenuFrame : public Frame{
     GUITextbox* textboxIp;

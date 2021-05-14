@@ -1,13 +1,13 @@
 #ifndef SRC_SDL2_GUI_GUI_BLOCKINFO_HPP
 #define SRC_SDL2_GUI_GUI_BLOCKINFO_HPP
-#include "gui_component.h"
+#include "../gui/gui_component.hpp"
 #include "../world/block.hpp"
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "../managers/resourcemanager.hpp"
 #include "../utils.hpp"
-#include "gui_global.h"
+#include "../gui/gui_global.hpp"
 extern std::string blockNames[];
 class GUIBlockInfo : public GUIComponent{
     TTF_Font* font;

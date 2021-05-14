@@ -14,10 +14,9 @@ GUILabel::GUILabel(int x,int y,std::string text,Renderer* renderer,TTF_Font* fon
 	GUILabel::alpha=alpha;
 	GUILabel::clicked=false;
 	GUILabel::color=color;
-	SDL_Surface* textSurface=TTF_RenderUTF8_Blended(font,text.c_str(),color);
 	GUILabel::visible=true;
 	GUILabel::textureText=new Texture();
-	SDL_Surface* surf=TTF_RenderText_Blended(font,text.c_str(),color);
+	SDL_Surface* surf=TTF_RenderUTF8_Blended(font,text.c_str(),color);
 	GUILabel::textureText->loadFromSurface(surf);
 	GUILabel::w=surf->w;
 	GUILabel::h=surf->h;

@@ -6,6 +6,7 @@ App::App(std::string title,int w,int h,Uint32 hints){
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     App::window=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,hints);
+    SDL_SetWindowIcon(window,IMG_Load("res/textures/hud/hud_flag.png"));
     App::contextGL=SDL_GL_CreateContext(App::window);
     if(App::contextGL==0){
 		std::cout<<"(Error) [OpenGL] Failed to create OpenGL context version 3.3! Try using OSMesa compiled version of game."<<std::endl;
@@ -14,6 +15,8 @@ App::App(std::string title,int w,int h,Uint32 hints){
 	}
 	SDL_GL_MakeCurrent(window,App::contextGL);
 	glewInit();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     App::frame=0;
     App::running=true;
     App::settings=new Settings();
