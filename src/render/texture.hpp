@@ -12,5 +12,6 @@ public:
     int getW();
     int getH();
     void destroy();
+    void updateSize();
 };
 #endif

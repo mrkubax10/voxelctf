@@ -68,6 +68,8 @@ void Renderer::drawTexturedRect(ShaderProgram program,Texture* texture,glm::vec2
 	glDisableVertexAttribArray(1);
 }
 void Renderer::drawColoredRect(ShaderProgram program,glm::vec4 color,glm::vec2 pos,glm::vec2 scale){
+	if(glIsEnabled(GL_DEPTH_TEST))
+		glDisable(GL_DEPTH_TEST);
 	program.use();
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER,vbo);

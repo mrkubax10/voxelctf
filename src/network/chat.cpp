@@ -45,7 +45,7 @@ void Chat::draw(){
             }
             Chat::posy-=h2+2;
         }
-        Chat::chatTexture->useDefault();
+        RenderTexture::useDefault(app->getWindowW(),app->getWindowH());
         // guiRect.x=Chat::x;
         // guiRect.y=Chat::y;
         // guiRect.w=Chat::w;

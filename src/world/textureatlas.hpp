@@ -5,13 +5,14 @@
 #include "../managers/resourcemanager.hpp"
 #include <fstream>
 #include "../utils.hpp"
-#include "../render/rendertexture.hpp"
+#include "../render/texture.hpp"
 #include "../render/renderer.hpp"
 struct TextureAtlasBlockUV{
     float left,right,top,bottom,back,front;
 };
 class TextureAtlas{
-    RenderTexture* renderTexture;
+    SDL_Surface* surface;
+    Texture* texture;
     std::map<BlockType,TextureAtlasBlockUV> blockUVs;
     Renderer* renderer;
     int maxTextureSize;
@@ -23,5 +24,6 @@ public:
     TextureAtlasBlockUV getBlockUV(uint8_t type);
     void use();
     float getTextureBlockSize();
+    Texture* getTexture();
 };
 #endif

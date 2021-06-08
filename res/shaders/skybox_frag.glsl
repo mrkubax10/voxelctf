@@ -1,7 +1,7 @@
 #version 330 core
-in vec3 outColorValue;
+in vec3 outUV;
 out vec4 outColor;
-
+uniform samplerCube textureid;
 void main(){
-    outColor=vec4(outColorValue,1);
+    outColor=texture(textureid,outUV);
 }

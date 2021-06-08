@@ -20,12 +20,13 @@ App::App(std::string title,int w,int h,Uint32 hints){
     App::frame=0;
     App::running=true;
     App::settings=new Settings();
-    App::resManager=new ResourceManager();
+    App::resManager=new ResourceManager(this);
     App::langManager=new LanguageManager("res/translations");
     App::guiManager=new GUIManager(this);
     App::renderer=new Renderer(w,h,resManager->getShaderProgram("2dtextured"),resManager->getShaderProgram("2dcolored"));
     App::textureAtlas=new TextureAtlas(App::renderer);
     App::textureAtlas->generateTextureAtlas(resManager);
+    RenderTexture::useDefault(App::getWindowW(),App::getWindowH());
     App::chat=new Chat(5,5,renderer,resManager->getFont("default",15),this);
     App::serverConnection=new ServerConnection(chat,this);
 }

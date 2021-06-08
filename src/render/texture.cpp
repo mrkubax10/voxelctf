@@ -33,7 +33,14 @@ void Texture::loadFromSurface(SDL_Surface* surf){
         internalFormat=GL_RGBA;
         pixelFormat=GL_ALPHA;
         unpackAlignment=1;
-        std::cout<<(int)surf->format->BytesPerPixel<<std::endl;
+    }
+    else if(surf->format->format==SDL_PIXELFORMAT_RGB24){
+        internalFormat=GL_RGBA;
+        pixelFormat=GL_RGB;
+    }
+    else if(surf->format->format==SDL_PIXELFORMAT_RGB888){
+        internalFormat=GL_RGB;
+        pixelFormat=0x80E1;
     }
     else
         std::cout<<"(Warn) [Texture] Invalid pixel format: "<<surf->format->format<<std::endl;
@@ -61,4 +68,9 @@ int Texture::getH(){
 }
 void Texture::destroy(){
     glDeleteTextures(1,&id);
+}
+void Texture::updateSize(){
+    Texture::use();
+    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_WIDTH,&w);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D,0,GL_TEXTURE_HEIGHT,&h);
 }

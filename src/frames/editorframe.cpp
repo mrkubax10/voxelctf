@@ -11,7 +11,7 @@ void EditorFrame::begin(){
     EditorFrame::ray=new Ray(cam);
     EditorFrame::world=new World();
     EditorFrame::player=new Player(cam);
-	EditorFrame::skybox=new Skybox();
+	EditorFrame::skybox=new Skybox(app->getResourceManager());
     app->getGUIManager()->clear();
 	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("crossair"));
 	blockInfo=new GUIBlockInfo(2,2,app->getResourceManager()->getFont("default",25),app->getRenderer());

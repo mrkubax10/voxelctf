@@ -77,7 +77,7 @@ void MenuFrame::render(){
         }
         app->getGUIManager()->update(app->getEvent());
     }
-    glClearColor(0,0,0,1);
+    glClearColor(0,0,1,1);
     glClear(GL_COLOR_BUFFER_BIT);
     app->getGUIManager()->draw();
     SDL_GL_SwapWindow(app->getWindow());

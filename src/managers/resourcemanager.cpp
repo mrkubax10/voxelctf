@@ -8,9 +8,11 @@
 #include "resourcemanager.hpp"
 #include <GL/glew.h>
 #include <GL/gl.h>
-ResourceManager::ResourceManager() {
-
-
+#include "../render/rendertexture.hpp"
+#include "../framework/app.hpp"
+ResourceManager::ResourceManager(App* app) {
+	ResourceManager::app=app;
+	ResourceManager::dummyTexture=ResourceManager::createDummyTexture();
 }
 
 TTF_Font* ResourceManager::getFont(std::string name,int size){
@@ -33,13 +35,13 @@ Texture* ResourceManager::getNativeTexture(std::string name){
 	}
 	SDL_Surface* surf=IMG_Load(std::string("res/textures/"+name+".png").c_str());
 	if(!surf){
-		std::cout<<"(Warn) [ResourceManager] Failed to load native texture "<<name<<std::endl;
-		return 0;
+		return ResourceManager::dummyTexture;
 	}
 	Texture* texture=new Texture();
 	texture->loadFromSurface(surf);
 	SDL_FreeSurface(surf);
 	ResourceManager::nativeTextures[name]=texture;
+	std::cout<<"(Log) [ResourceManager] Loaded texture "<<name<<std::endl;
 	return texture;
 }
 ShaderProgram ResourceManager::getShaderProgram(std::string name){
@@ -115,6 +117,14 @@ Model* ResourceManager::getOBJModel(std::string name){
 	ResourceManager::models[name]=model;
 	return model;
 }
+SDL_Surface* ResourceManager::getSurface(std::string name){
+	if(ResourceManager::surfaces.count(name)){
+		return ResourceManager::surfaces[name];
+	}
+	ResourceManager::surfaces[name]=IMG_Load(std::string("res/textures/"+name+".png").c_str());
+	std::cout<<"(Log) [ResourceManager] Loaded surface "<<name<<std::endl;
+	return ResourceManager::surfaces[name];
+}
 void ResourceManager::destroy(){
 	std::cout<<"(Log) [ResourceManager] Destroying data"<<std::endl;
 	for(std::map<std::string,ShaderProgram>::iterator i=ResourceManager::shaderprograms.begin(); i!=ResourceManager::shaderprograms.end(); i++){
@@ -123,4 +133,12 @@ void ResourceManager::destroy(){
 	for(std::map<std::string,Mix_Music*>::iterator i=ResourceManager::music.begin(); i!=ResourceManager::music.end(); i++){
 		Mix_FreeMusic(i->second);
 	}
+}
+Texture* ResourceManager::createDummyTexture(){
+	RenderTexture* temp=new RenderTexture(32,32);
+	temp->use();
+	glClearColor(0.5f,0,0.5f,1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	RenderTexture::useDefault(app->getWindowW(),app->getWindowH());
+	return temp->getTexture();
 }

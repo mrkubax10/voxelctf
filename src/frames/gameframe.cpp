@@ -15,7 +15,7 @@ void GameFrame::begin(){
 	GameFrame::activityTimer->reset();
 	GameFrame::positionTimer=new Timer(30);
 	GameFrame::positionTimer->reset();
-	GameFrame::skybox=new Skybox();
+	GameFrame::skybox=new Skybox(app->getResourceManager());
 	app->getServerConnection()->initGame(world,app->getTextureAtlas());
 	GameFrame::cam=new FPSCamera();
     GameFrame::cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
@@ -26,7 +26,7 @@ void GameFrame::begin(){
 	flagModel=app->getResourceManager()->getOBJModel("flag");
 	GameFrame::pause=false;
 	app->getGUIManager()->clear();
-	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("crossair"));
+	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("hud/crossair"));
 	buttonReturn=new GUIButton(0,10,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_return"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonExit=new GUIButton(0,40,100,25,app->getLanguageManager()->getFromCurrentLanguage("in_exit"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonReturn->center(app->getWindowW(),app->getWindowH(),false,true);
@@ -105,7 +105,8 @@ void GameFrame::render(){
 		app->getServerConnection()->sendPosition(player->getPosition());
 	if(activityTimer->update())
 		app->getServerConnection()->updateActivity();
-	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
+	skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
+	
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
 	app->getServerConnection()->update();

@@ -5,11 +5,13 @@
 #include "../render/shaderprogram.hpp"
 #include "../render/fpscamera.hpp"
 #include "../utils.hpp"
+#include "../managers/resourcemanager.hpp"
 class Skybox{
-    unsigned int vao,vbo,colorBuffer;
-    std::vector<float> colorValues;
+    unsigned int vao,vbo,texture;
+    SDL_Surface** surfaces;
+    SDL_Surface** rgb8888Surfaces;
 public:
-    Skybox();
+    Skybox(ResourceManager* man);
     void draw(ShaderProgram program,Camera cam);
     void destroy();
 };
