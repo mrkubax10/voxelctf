@@ -87,6 +87,23 @@ void Renderer::drawColoredRect(ShaderProgram program,glm::vec4 color,glm::vec2 p
 void Renderer::drawTexturedRect(Texture* texture,glm::vec2 pos){
 	Renderer::drawTexturedRect(textured,texture,pos,glm::vec2(texture->getW(),texture->getH()));
 }
+void Renderer::drawTexturedRect(Texture* texture,glm::vec2 pos,uint8_t flags){
+	if(flags==RendererFlags::FLIP_HORIZONTALLY)
+		textured.setInt("flipHorizontally",1);
+	else if(flags==RendererFlags::FLIP_VERTICALLY)
+		textured.setInt("flipVertically",1);
+	else if(flags==RendererFlags::FLIP_HORIZONTALLY|RendererFlags::FLIP_VERTICALLY){
+		textured.setInt("flipHorizontally",1);
+		textured.setInt("flipVertically",1);
+	}
+	else{
+		textured.setInt("flipHorizontally",0);
+		textured.setInt("flipVertically",0);
+	}
+	Renderer::drawTexturedRect(textured,texture,pos,glm::vec2(texture->getW(),texture->getH()));
+	textured.setInt("flipHorizontally",0);
+	textured.setInt("flipVertically",0);
+}
 void Renderer::drawTexturedRect(Texture* texture,glm::vec2 pos,glm::vec2 scale){
 	Renderer::drawTexturedRect(textured,texture,pos,scale);
 }

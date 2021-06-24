@@ -12,7 +12,7 @@ void GUIToolInfo::draw(){
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorfilltool"),glm::vec2(x+32,y),glm::vec2(32,32));
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorerasetool"),glm::vec2(x+32*2,y),glm::vec2(32,32));
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorteam1flagtool"),glm::vec2(x+32*3,y),glm::vec2(32,32));
-    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorteam2tool"),glm::vec2(x+32*4,y),glm::vec2(32,32));
+    renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorteam2flagtool"),glm::vec2(x+32*4,y),glm::vec2(32,32));
 }
 void GUIToolInfo::update(SDL_Event* ev){
     if(ev->type==SDL_KEYDOWN){

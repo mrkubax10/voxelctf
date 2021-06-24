@@ -123,6 +123,13 @@ void World::loadMap(std::string mapName,TextureAtlas* atlas){
 	World::loadMapFromMemory(chunkData);
 	World::generateMesh(atlas);
 }
+void World::createDefaultMap(){
+	for(int x=0; x<WORLD_SIZE*CHUNK_SIZE_WD; x++){
+		for(int z=0; z<WORLD_SIZE*CHUNK_SIZE_WD; z++){
+			World::setBlock(x,0,z,BlockType::POLISHED_STONE);
+		}
+	}
+}
 void World::saveMap(std::string name){
 	std::ofstream file("res/maps/"+name+".blockctf",std::ios::out|std::ios::binary);
 	uint8_t team1Flag[3],team2Flag[3];

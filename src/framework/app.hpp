@@ -2,14 +2,15 @@
 #define SRC_FRAMEWORK_APP_HPP
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "frame.hpp"
-#include "../network/serverconnection.hpp"
-#include "../managers/resourcemanager.hpp"
-#include "../managers/languagemanager.hpp"
-#include "../gui/gui_manager.hpp"
-#include "../world/textureatlas.hpp"
-#include "../settings.hpp"
-#include "../render/renderer.hpp"
+#include "framework/frame.hpp"
+#include "network/serverconnection.hpp"
+#include "managers/resourcemanager.hpp"
+#include "managers/languagemanager.hpp"
+#include "gui/gui_manager.hpp"
+#include "world/textureatlas.hpp"
+#include "settings.hpp"
+#include "render/renderer.hpp"
+#include "render/rendertexture.hpp"
 class App{
     SDL_Window* window;
     SDL_Event event;
@@ -23,6 +24,7 @@ class App{
     Settings* settings;
     TextureAtlas* textureAtlas;
     Renderer* renderer;
+    RenderTexture* windowTexture;
     Chat* chat;
     int windowW,windowH,mouseX,mouseY;
     std::string editorMapName;
@@ -50,6 +52,7 @@ public:
     int getWindowH();
     int getMouseX();
     int getMouseY();
+    RenderTexture* getWindowRenderTexture();
     void setFrame(Frame* frame);
     void setRunning(bool running);
     void setEditorMapName(std::string editorMapName);

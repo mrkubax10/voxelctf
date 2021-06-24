@@ -13,7 +13,7 @@ void EditorFrame::begin(){
     EditorFrame::player=new Player(cam);
 	EditorFrame::skybox=new Skybox(app->getResourceManager());
     app->getGUIManager()->clear();
-	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("crossair"));
+	crossair=new GUIImage(0,0,app->getRenderer(),app->getResourceManager()->getNativeTexture("hud/crossair"));
 	blockInfo=new GUIBlockInfo(2,2,app->getResourceManager()->getFont("default",25),app->getRenderer());
 	buttonReturn=new GUIButton(0,0,100,25,app->getLanguageManager()->getFromCurrentLanguage("editor_return"),app->getResourceManager()->getFont("default",15),app->getRenderer());
 	buttonReturn->center(app->getWindowW(),app->getWindowH(),false);
@@ -23,16 +23,14 @@ void EditorFrame::begin(){
 	buttonSaveAndExit->center(app->getWindowW(),app->getWindowH(),false);
 	toolInfo=new GUIToolInfo(200,2,app->getRenderer(),app->getResourceManager());
 	positionInfo=new GUILabel(0,0,"",app->getRenderer(),app->getResourceManager()->getFont("default",15),{255,255,255});
-    
-    
     if(fileExists("res/maps/"+app->getEditorMapName()+".blockctf")){
 		world->loadMap(app->getEditorMapName(),app->getTextureAtlas());
-		world->generateMesh(app->getTextureAtlas());
 		std::cout<<"(Log) [Editor] Loaded map "<<app->getEditorMapName()<<std::endl;
 	}
     else{
-		
+		world->createDefaultMap();
 	}
+	world->generateMesh(app->getTextureAtlas());
     EditorFrame::blockType=BlockType::STONE;
     SDL_CaptureMouse(SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -87,6 +85,7 @@ void EditorFrame::render(){
 			if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
 				glViewport(0,0,app->getEvent()->window.data1,app->getEvent()->window.data2);
 				cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getEvent()->window.data1/(float)app->getEvent()->window.data2,0.1f,1000.0f));
+				app->getRenderer()->update(app->getEvent()->window.data1,app->getEvent()->window.data2);
 				buttonReturn->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
 				buttonSave->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
 				buttonSaveAndExit->center(app->getEvent()->window.data1,app->getEvent()->window.data2,false);
@@ -158,7 +157,7 @@ void EditorFrame::render(){
 		player->update(keyboard,world,app->getSettings(),true,pause);
 	if(!pause)
 		cam->update(app->getMouseX(),app->getMouseY(),app->getSettings());
-	//skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
+	skybox->draw(app->getResourceManager()->getShaderProgram("skybox"),*cam);
     app->getTextureAtlas()->use();
 	world->draw(*cam,app->getResourceManager()->getShaderProgram("world"),app->getResourceManager()->getShaderProgram("fluid"));
 	flagModel->translate(world->metadata.team1FlagPosition);

@@ -79,7 +79,6 @@ void Skybox::draw(ShaderProgram program,Camera cam){
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP,texture);
     glDepthMask(GL_FALSE);
-    
     program.use();
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER,vbo);

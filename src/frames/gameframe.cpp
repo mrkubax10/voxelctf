@@ -41,10 +41,10 @@ void GameFrame::begin(){
 	app->getGUIManager()->add(app->getChat());
 	glViewport(0,0,app->getWindowW(),app->getWindowH());
 	cam->setProjection(glm::perspective(glm::radians(app->getSettings()->fov),(float)app->getWindowW()/(float)app->getWindowH(),0.1f,1000.0f));
-
 }
 void GameFrame::render(){
     const Uint8* keyboard=SDL_GetKeyboardState(0);
+	timeStart=SDL_GetTicks();
     while(SDL_PollEvent(app->getEvent())){
         if(app->getEvent()->type==SDL_QUIT)
             app->setRunning(false);
@@ -150,6 +150,8 @@ void GameFrame::render(){
 	crossair->center(app->getWindowW(),app->getWindowH());
 	app->getGUIManager()->draw();
 	SDL_GL_SwapWindow(app->getWindow());
+	timeEnd=SDL_GetTicks();
+	SDL_SetWindowTitle(app->getWindow(),std::string("VoxelCTF  FPS: "+std::to_string(1000/(timeEnd-timeStart))).c_str());
 }
 void GameFrame::finish(){
     world->destroy();

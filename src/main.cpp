@@ -8,7 +8,7 @@
 #include "frames/frameconstants.hpp"
 #include "global.hpp"
 int main(int argc,char *args[]){
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Init(SDL_INIT_EVENTS);
 	if(TTF_Init()==-1){
 		std::cout<<"(Err) [SDL2_ttf] Failed to initialize: "<<TTF_GetError()<<std::endl;
 		return 0;

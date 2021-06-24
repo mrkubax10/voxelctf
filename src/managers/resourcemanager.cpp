@@ -135,10 +135,10 @@ void ResourceManager::destroy(){
 	}
 }
 Texture* ResourceManager::createDummyTexture(){
-	RenderTexture* temp=new RenderTexture(32,32);
-	temp->use();
-	glClearColor(0.5f,0,0.5f,1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	RenderTexture::useDefault(app->getWindowW(),app->getWindowH());
-	return temp->getTexture();
+	Texture* temp=new Texture();
+	SDL_Surface* surf=SDL_CreateRGBSurface(0,32,32,24,0xff000000,0x00ff0000,0x0000ff00,0x000000ff);
+	SDL_FillRect(surf,0,SDL_MapRGB(surf->format,255,255,0));
+	temp->loadFromSurface(surf);
+	SDL_FreeSurface(surf);
+	return temp;
 }

@@ -33,6 +33,7 @@ class GameFrame : public Frame{
     Model* playerModel;
     Model* flagModel;
     HUD* hud;
+    long timeStart,timeEnd;
 public:
     void begin();
     void render();

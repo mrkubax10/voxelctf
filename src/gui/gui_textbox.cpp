@@ -49,7 +49,11 @@ void GUITextbox::update(SDL_Event *ev){
         if(ev->key.keysym.sym==SDLK_BACKSPACE && (GUITextbox::active || GUITextbox::selected)){
             if(GUITextbox::buffer.length()>0){
                 GUITextbox::buffer.pop_back();
-                SDL_Surface* surf=TTF_RenderUTF8_Blended(GUITextbox::font,GUITextbox::buffer.c_str(),{255,255,255});
+                SDL_Surface* surf;
+                if(GUITextbox::buffer=="")
+                    surf=TTF_RenderUTF8_Blended(GUITextbox::font," ",{255,255,255});
+                else
+                    surf=TTF_RenderUTF8_Blended(GUITextbox::font,GUITextbox::buffer.c_str(),{255,255,255});
                 textureBuffer->loadFromSurface(surf);
                 SDL_FreeSurface(surf);
             }

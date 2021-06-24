@@ -28,6 +28,7 @@ public:
 	void loadMapFromMemory(std::vector<unsigned char> chunkData);
 	void renderEntities(ShaderProgram program,Camera cam,Model* flagModel,App* app);
 	void saveMap(std::string name);
+	void createDefaultMap();
 	float getGravity();
 	struct{
 		glm::vec3 team1FlagPosition,team2FlagPosition;

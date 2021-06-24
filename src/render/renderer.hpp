@@ -11,6 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "camera.hpp"
 #include "texture.hpp"
+enum RendererFlags{
+	NONE,FLIP_HORIZONTALLY,FLIP_VERTICALLY
+};
 class Renderer {
 	unsigned int vao,vbo,tbo,ebo;
 	Camera* camera;
@@ -23,6 +26,7 @@ public:
 	void drawTexturedRect(Texture* texture,glm::vec2 pos,glm::vec2 scale);
 	void drawColoredRect(glm::vec4 color,glm::vec2 pos,glm::vec2 scale=glm::vec2(1,1));
 	void drawTexturedRect(Texture* texture,glm::vec2 pos);
+	void drawTexturedRect(Texture* texture,glm::vec2 pos,uint8_t flags);
 	void update(int windowW,int windowH);
 	void destroy();
 };
