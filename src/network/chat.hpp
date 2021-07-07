@@ -12,7 +12,6 @@ struct ChatElement{
     long sendTime;
     bool timedOut;
     std::vector<Texture*> textures;
-    
 };
 class App;
 class Chat : public GUIComponent{
@@ -26,7 +25,6 @@ class Chat : public GUIComponent{
     Texture* messageTexture;
     bool textfieldOpened;
     int messageOffset=0;
-    RenderTexture* chatTexture;
 public:
     Chat(int x,int y,Renderer* renderer,TTF_Font* font,App* app);
     void addEntry(std::string str);

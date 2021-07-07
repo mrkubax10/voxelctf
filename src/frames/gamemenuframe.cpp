@@ -15,6 +15,7 @@ void GameMenuFrame::begin(){
     textboxServerNameInfo=new GUILabel(10,200,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_addserverinfo"),app->getRenderer(),app->getResourceManager()->getFont("default",20),{255,255,255});
     textboxServerName=new GUITextbox(10,205+textboxServerNameInfo->getH(),200,25,app->getRenderer(),app->getResourceManager()->getFont("default",15));
     buttonAddServer=new GUIButton(10,240+textboxServerNameInfo->getH(),100,25,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_addserver"),app->getResourceManager()->getFont("default",15),app->getRenderer());
+    buttonBack=new GUIButton(5,app->getWindowH()-30,100,25,app->getLanguageManager()->getFromCurrentLanguage("gamemenu_back"),app->getResourceManager()->getFont("default",15),app->getRenderer());
     app->getGUIManager()->add(textboxIp);
 	app->getGUIManager()->add(textboxIpInfo);
 	app->getGUIManager()->add(textboxName);
@@ -24,34 +25,36 @@ void GameMenuFrame::begin(){
     app->getGUIManager()->add(textboxServerNameInfo);
     app->getGUIManager()->add(textboxServerName);
     app->getGUIManager()->add(buttonAddServer);
+    app->getGUIManager()->add(buttonBack);
+    buttonPlay->setCallback([&](void* argument){
+        if(textboxName->getText()!="" && textboxIp->getText()!=""){
+            if(app->getServerConnection()->connect(textboxIp->getText(),1255,textboxName->getText())){
+                app->setUsername(textboxName->getText());
+                app->setFrame(GAME_FRAME);
+            }
+        }
+    },0);
+    buttonAddServer->setCallback([&](void* argument){
+        serverlist->addServer(textboxServerName->getText(),textboxIp->getText());
+        textboxServerName->setText("");
+    },0);
+    buttonBack->setCallback([&](void* argument){
+        app->setFrame(MENU_FRAME);
+    },0);
 }
 void GameMenuFrame::render(){
     while(SDL_PollEvent(app->getEvent())){
         if(app->getEvent()->type==SDL_QUIT)
             app->setRunning(false);
-        if(app->getEvent()->type==SDL_MOUSEBUTTONDOWN){
-            if(app->getEvent()->button.button==SDL_BUTTON_LEFT){
-                if(buttonPlay->isMouseOn(app->getEvent()->motion.x,app->getEvent()->motion.y)){
-                    if(app->getServerConnection()->connect(textboxIp->getText(),1255,textboxName->getText())){
-                        app->setUsername(textboxName->getText());
-                        app->setFrame(GAME_FRAME);
-                    }
-                }
-                if(buttonAddServer->isMouseOn(app->getEvent()->motion.x,app->getEvent()->motion.y)){
-                    if(textboxServerName->getText()!="" && textboxIp->getText()!=""){
-                        serverlist->addServer(textboxServerName->getText(),textboxIp->getText());
-                        textboxServerName->setText("");
-                    }
-                }
-            }
-        }
         if(app->getEvent()->type==SDL_WINDOWEVENT){
             if(app->getEvent()->window.event==SDL_WINDOWEVENT_RESIZED){
                 serverlist->setX(app->getWindowW()-310);
                 serverlist->setH(app->getWindowH()-20);
+                buttonBack->setY(app->getWindowH()-30);
                 app->getRenderer()->update(app->getWindowW(),app->getWindowH());
                 glViewport(0,0,app->getWindowW(),app->getWindowH());
             }
+            
         }
         app->getGUIManager()->update(app->getEvent());
     }

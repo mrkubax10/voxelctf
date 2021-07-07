@@ -8,6 +8,7 @@ class EditorMenuFrame : public Frame{
     GUILabel* menuInfo;
 	GUITextbox* mapName;
 	GUIButton* edit;
+    GUIButton* buttonBack;
 public:
     void begin();
     void render();

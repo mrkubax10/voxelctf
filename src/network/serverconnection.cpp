@@ -226,11 +226,8 @@ void ServerConnection::sendFlagFetch(uint8_t team){
 void ServerConnection::disconnect(){
     if(!ServerConnection::connected)
         return;
-    char* sendData=(char*)malloc(1);
-    sendData[0]=ServerNetworkCommand::EXIT;
-    ServerConnection::send(sendData,1);
-    free(sendData);
     ServerConnection::connected=false;
+    enet_peer_disconnect(ServerConnection::socket,0);
 }
 std::vector<ConnectedPlayer> ServerConnection::getPlayerList(){
     return connectedPlayers;

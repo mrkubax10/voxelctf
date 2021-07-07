@@ -8,6 +8,7 @@ GUIToolInfo::GUIToolInfo(int x,int y,Renderer* renderer,ResourceManager* man){
     GUIToolInfo::visible=true;
 }
 void GUIToolInfo::draw(){
+    renderer->drawColoredRect(glm::vec4(1,0,0,1),glm::vec2(GUIToolInfo::selectedTool*32+GUIToolInfo::x-1,GUIToolInfo::y-1),glm::vec2(34,34));
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool"),glm::vec2(x,y),glm::vec2(GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool")->getW(),GUIToolInfo::resManager->getNativeTexture("editor/editorbuildtool")->getH()));
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorfilltool"),glm::vec2(x+32,y),glm::vec2(32,32));
     renderer->drawTexturedRect(GUIToolInfo::resManager->getNativeTexture("editor/editorerasetool"),glm::vec2(x+32*2,y),glm::vec2(32,32));

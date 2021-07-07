@@ -2,9 +2,9 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 App::App(std::string title,int w,int h,Uint32 hints){
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3);
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,3);
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
     App::window=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,hints);
     SDL_SetWindowIcon(App::window,IMG_Load("res/textures/hud/hud_flag.png"));
     App::contextGL=SDL_GL_CreateContext(App::window);
@@ -19,6 +19,7 @@ App::App(std::string title,int w,int h,Uint32 hints){
     SDL_GL_SetSwapInterval(0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    std::cout<<"(Log) [App] Initialized OpenGL rendering system: vendor: "<<glGetString(GL_VENDOR)<<", renderer/device: "<<glGetString(GL_RENDERER)<<", OpenGL version: "<<glGetString(GL_VERSION)<<std::endl;
     App::frame=0;
     App::running=true;
     App::settings=new Settings();

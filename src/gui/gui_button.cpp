@@ -35,7 +35,7 @@ void GUIButton::update(SDL_Event *ev){
         if(ev->button.button==SDL_BUTTON_LEFT){
             if(GUIButton::isMouseOn(ev->motion.x,ev->motion.y)){
                 if(GUIButton::callback!=0)
-                    (*callback)(argument);
+                    callback(argument);
             }
         }
     }
@@ -43,7 +43,7 @@ void GUIButton::update(SDL_Event *ev){
 void GUIButton::setSelected(bool selected){
     GUIButton::selected=selected;
 }
-void GUIButton::setCallback(void (*f)(void*),void* argument){
-    GUIButton::callback=f;
+void GUIButton::setCallback(std::function<void (void*)> callback,void* argument){
+    GUIButton::callback=callback;
     GUIButton::argument=argument;
 }

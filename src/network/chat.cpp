@@ -17,54 +17,35 @@ Chat::Chat(int x,int y,Renderer* renderer,TTF_Font* font,App* app){
     Chat::textfieldOpened=false;
     Chat::messageBuffer="";
     Chat::visible=true;
-    Chat::chatTexture=new RenderTexture(Chat::w,17*40);
 }
 void Chat::draw(){
-    
-    Chat::posy=3*15+10;
-    if(!Chat::enteringMessage){
+    Chat::posy=Chat::y;
+    if(!Chat::enteringMessage && Chat::chatEntries.size()>0){
         int length=Chat::chatEntries.size()>3?Chat::chatEntries.size()-3:0;
-        if(Chat::chatEntries.size()>0){
-            for(int i=Chat::chatEntries.size()-1; i>=length; i--){
-                if(!Chat::chatEntries[i].timedOut){
-                    for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
-                        renderer->drawTexturedRect(Chat::chatEntries[i].textures[a],glm::vec2(Chat::x,Chat::posy),glm::vec2(chatEntries[i].textures[a]->getW(),chatEntries[i].textures[a]->getH()));
-                    }
-                    Chat::posy-=h2+2;
+        for(int i=Chat::chatEntries.size()-1; i>=length; i--){
+            if(!Chat::chatEntries[i].timedOut){
+                for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
+                    renderer->drawTexturedRect(Chat::chatEntries[i].textures[a],glm::vec2(Chat::x,Chat::posy),glm::vec2(chatEntries[i].textures[a]->getW(),chatEntries[i].textures[a]->getH()));
                 }
+                Chat::posy-=Chat::chatEntries[i].textures[0]->getH();
             }
         }
     }
     Chat::posy=Chat::h-20;
     if(Chat::enteringMessage){
-        Chat::chatTexture->use();
-        renderer->drawColoredRect(glm::vec4(100.0f/255.0f,100.0f/255.0f,100.0f/255.0f,1),glm::vec2(0,0),glm::vec2(Chat::w,17*40));
+        renderer->drawColoredRect(glm::vec4(0.4f,0.4f,0.4f,0.7f),glm::vec2(Chat::x,Chat::y),glm::vec2(Chat::w,Chat::h));
         for(int i=Chat::chatEntries.size()-1; i>=0; i--){
             for(int a=0; a<Chat::chatEntries[i].textures.size(); a++){
                 renderer->drawTexturedRect(chatEntries[i].textures[a],glm::vec2(Chat::x,Chat::posy),glm::vec2(chatEntries[i].textures[a]->getW(),chatEntries[i].textures[a]->getH()));
             }
-            Chat::posy-=h2+2;
+            Chat::posy-=Chat::chatEntries[i].textures[0]->getH();
         }
-        RenderTexture::useDefault(app->getWindowW(),app->getWindowH());
-        // guiRect.x=Chat::x;
-        // guiRect.y=Chat::y;
-        // guiRect.w=Chat::w;
-        // guiRect.h=Chat::h;
-        rect.x=0;
-        rect.y=-Chat::messageOffset;
-        rect.w=Chat::w;
-        rect.h=Chat::h;
-        renderer->drawTexturedRect(chatTexture->getTexture(),glm::vec2(Chat::x,Chat::y),glm::vec2(chatTexture->getW(),chatTexture->getH()));
-        // guiRect.x=Chat::x;
-        // guiRect.y=400;
-        // guiRect.w=Chat::w;
-        // guiRect.h=30;
         renderer->drawColoredRect(glm::vec4(100.0f/255.0f,100.0f/255.0f,100.0f/255.0f,1),glm::vec2(Chat::x,400),glm::vec2(Chat::w,30));
         renderer->drawTexturedRect(Chat::messageTexture,glm::vec2(Chat::x,400),glm::vec2(messageTexture->getW(),messageTexture->getH()));
     }
 }
 void Chat::addEntry(std::string str){
-    Chat::chatEntries.push_back({str,SDL_GetTicks(),false});
+    Chat::chatEntries.push_back({str,SDL_GetTicks()});
     SDL_Surface* surf=TTF_RenderText_Blended(Chat::font,str.c_str(),{0,0,0});
     Texture* texture=new Texture();
     texture->loadFromSurface(surf);
@@ -91,7 +72,8 @@ void Chat::update(SDL_Event* ev){
     if(ev->type==SDL_KEYDOWN && Chat::enteringMessage){
         if(ev->key.keysym.scancode==SDL_SCANCODE_RETURN){
             if(Chat::messageBuffer.length()>0){
-                
+                if(Chat::chatEntries.size()>=18)
+                    Chat::chatEntries.erase(Chat::chatEntries.begin());
                 Chat::addEntry(app->getUsername()+": "+Chat::messageBuffer);
                 Chat::app->getServerConnection()->sendChatMessage(Chat::messageBuffer);
                 Chat::messageBuffer="";
@@ -119,19 +101,10 @@ void Chat::update(SDL_Event* ev){
             }
         }
     }
-    // if(ev->type==SDL_MOUSEWHEEL){
-    //     if(Chat::enteringMessage && Chat::isMouseOn(Chat::app->getMouseX(),Chat::app->getMouseY())){
-    //         Chat::messageOffset+=ev->wheel.y;
-    //     }
-    // }
-    
 }
 void Chat::updateEntries(){
     for(int i=0; i<Chat::chatEntries.size(); i++){
         if(Chat::chatEntries[i].sendTime+10000<=SDL_GetTicks()){
-            // for(int a=0; a<Chat::chatEntries[i].textures.size(); a++)
-            //     SDL_DestroyTexture(Chat::chatEntries[i].textures[a]);
-            //Chat::chatEntries.erase(Chat::chatEntries.begin()+i);
             Chat::chatEntries[i].timedOut=true;
         }
     }

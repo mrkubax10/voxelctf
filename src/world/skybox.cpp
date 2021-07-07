@@ -65,6 +65,8 @@ Skybox::Skybox(ResourceManager* man){
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i,0,GL_RGB,2048,2048,0,0x80E1,GL_UNSIGNED_BYTE,rgb8888Surfaces[i]->pixels);
         SDL_FreeSurface(rgb8888Surfaces[i]);
     }
+    delete[] Skybox::surfaces;
+    delete[] Skybox::rgb8888Surfaces;
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
